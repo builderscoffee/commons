@@ -6,6 +6,9 @@ import eu.builderscoffee.commons.commands.NetworkCommands;
 import eu.builderscoffee.commons.configuration.MessageConfiguration;
 import eu.builderscoffee.commons.listeners.PlayerListener;
 import lombok.Getter;
+import net.luckperms.api.LuckPerms;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import static eu.builderscoffee.api.configuration.Configurations.readOrCreateConfiguration;
@@ -19,11 +22,17 @@ public class Main  extends JavaPlugin {
     private MessageConfiguration messages;
 
     @Getter
+    private LuckPerms luckyPerms;
+
+    @Getter
     private InventoryManager inventoryManager;
 
     @Override
     public void onEnable() {
         instance = this;
+
+        RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
+        if(provider != null) luckyPerms = provider.getProvider();
 
         messages = readOrCreateConfiguration(this, MessageConfiguration.class);
 

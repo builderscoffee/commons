@@ -15,7 +15,10 @@ public final class MessageConfiguration {
     String commandBadSyntaxe = "bad syntaxe";
 
     // Event
-    String onJoinMessage = "[+] %player% ";
-    String onQuitMessage = "[-] %player% ";
+    String onJoinMessage = "&8[&2+&8] &7%player% ";
+    String onQuitMessage = "&8[&2-&8] &7%player% ";
+
+    // ChatFormat
+    String chatFormatMessage = "&7%prefix%%player%%suffix% &8>> &f%message%";
 
 }
