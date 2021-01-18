@@ -5,17 +5,17 @@ import lombok.Data;
 
 @Data
 @Configuration("messages")
-public class MessageConfiguration {
+public final class MessageConfiguration {
 
     //Global
-    private String prefix = "[BC]";
+    String prefix = "[BC]";
 
     // Command
-    private String commandMustBePlayer = "Vous devez être un joueur";
-    private String commandBadSyntaxe = "bad syntaxe";
+    String commandMustBePlayer = "Vous devez être un joueur";
+    String commandBadSyntaxe = "bad syntaxe";
 
-
-    private String onJoinMessage = "[+] %player% ";
-    private String onQuitMessage = "[-] %player% ";
+    // Event
+    String onJoinMessage = "[+] %player% ";
+    String onQuitMessage = "[-] %player% ";
 
 }

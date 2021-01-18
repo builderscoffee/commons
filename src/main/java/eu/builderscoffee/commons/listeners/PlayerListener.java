@@ -12,12 +12,12 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        event.setJoinMessage(Main.getInstance().getMessageConfiguration().getOnJoinMessage().replace("%player%", player.getName()));
+        event.setJoinMessage(Main.getInstance().getMessages().getOnJoinMessage().replace("%player%", player.getName()));
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        event.setQuitMessage(Main.getInstance().getMessageConfiguration().getOnQuitMessage().replace("%player%", player.getName()));
+        event.setQuitMessage(Main.getInstance().getMessages().getOnQuitMessage().replace("%player%", player.getName()));
     }
 }

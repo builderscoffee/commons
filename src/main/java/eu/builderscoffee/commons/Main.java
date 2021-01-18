@@ -4,7 +4,6 @@ import eu.builderscoffee.api.gui.InventoryManager;
 import eu.builderscoffee.api.utils.Plugins;
 import eu.builderscoffee.commons.commands.NetworkCommands;
 import eu.builderscoffee.commons.configuration.MessageConfiguration;
-import eu.builderscoffee.commons.inventory.NetworkInventory;
 import eu.builderscoffee.commons.listeners.PlayerListener;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -17,7 +16,7 @@ public class Main  extends JavaPlugin {
     private static Main instance;
     //Configuration
     @Getter
-    private MessageConfiguration messageConfiguration;
+    private MessageConfiguration messages;
 
     @Getter
     private InventoryManager inventoryManager;
@@ -26,7 +25,7 @@ public class Main  extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
-        //messageConfiguration = readOrCreateConfiguration(this, MessageConfiguration.class);
+        messages = readOrCreateConfiguration(this, MessageConfiguration.class);
 
         inventoryManager = new InventoryManager(this);
         inventoryManager.init();
