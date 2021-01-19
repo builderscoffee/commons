@@ -2,8 +2,6 @@ package eu.builderscoffee.commons.listeners;
 
 import eu.builderscoffee.commons.Main;
 import net.luckperms.api.cacheddata.CachedMetaData;
-import net.luckperms.api.model.data.DataType;
-import net.luckperms.api.query.QueryMode;
 import net.luckperms.api.query.QueryOptions;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -36,12 +34,12 @@ public class PlayerListener implements Listener {
         String prefix = "";
         String suffix = "";
 
-        if(Main.getInstance().getLuckyPerms() != null) {
+        if (Main.getInstance().getLuckyPerms() != null) {
             QueryOptions queryOptions = Main.getInstance().getLuckyPerms().getContextManager().getQueryOptions(player);
             String primaryGroup = Main.getInstance().getLuckyPerms().getUserManager().getUser(player.getName()).getPrimaryGroup();
             CachedMetaData cachedMetaData = Main.getInstance().getLuckyPerms().getGroupManager().getGroup(primaryGroup).getCachedData().getMetaData(queryOptions);
-            prefix = cachedMetaData.getPrefix() != null? cachedMetaData.getPrefix() : "";
-            suffix = cachedMetaData.getSuffix() != null? cachedMetaData.getSuffix() : "";
+            prefix = cachedMetaData.getPrefix() != null ? cachedMetaData.getPrefix() : "";
+            suffix = cachedMetaData.getSuffix() != null ? cachedMetaData.getSuffix() : "";
         }
 
         event.setCancelled(true);
