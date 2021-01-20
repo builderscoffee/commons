@@ -1,6 +1,5 @@
 package eu.builderscoffee.commons.inventory;
 
-import com.google.common.collect.Lists;
 import eu.builderscoffee.api.gui.ClickableItem;
 import eu.builderscoffee.api.gui.SmartInventory;
 import eu.builderscoffee.api.gui.content.InventoryContents;
@@ -8,8 +7,11 @@ import eu.builderscoffee.api.gui.content.InventoryProvider;
 import eu.builderscoffee.api.gui.content.SlotPos;
 import eu.builderscoffee.api.utils.ItemBuilder;
 import eu.builderscoffee.commons.Main;
+import eu.builderscoffee.commons.configuration.MessageConfiguration;
 import eu.builderscoffee.commons.utils.BungeeUtils;
 import eu.builderscoffee.commons.utils.packets.BookUtil;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -19,9 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class NetworkInventory implements InventoryProvider {
 
@@ -32,10 +32,11 @@ public class NetworkInventory implements InventoryProvider {
             .title(ChatColor.WHITE + "Menu Builders Coffee")
             .manager(Main.getInstance().getInventoryManager())
             .build();
+    private final Main main = Main.getInstance();
+    private final MessageConfiguration messages = main.getMessages();
     ClickableItem blackGlasses = ClickableItem.empty(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 15));
     ClickableItem greyGlasses = ClickableItem.empty(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 7));
     ClickableItem lightgreyGlasses = ClickableItem.empty(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 8));
-    private Main main = Main.getInstance();
 
     @Override
     public void init(Player player, InventoryContents contents) {
@@ -57,44 +58,48 @@ public class NetworkInventory implements InventoryProvider {
 
 
         // Serveur hub
-        contents.set(1, 3, ClickableItem.of(new ItemStack(Material.NETHER_STAR),
+        contents.set(1, 3, ClickableItem.of(new ItemBuilder(Material.NETHER_STAR).setName(messages.getHubItem().replace("&", "§")).build(),
                 e -> BungeeUtils.sendPlayerToServer(main, player, "hub")));
         // Serveur BuildBattle
-        contents.set(1, 5, ClickableItem.of(new ItemStack(Material.ENCHANTMENT_TABLE),
+        contents.set(1, 5, ClickableItem.of(new ItemBuilder(Material.ENCHANTMENT_TABLE).setName(messages.getBuildBattleItem().replace("&", "§")).build(),
                 e -> BungeeUtils.sendPlayerToServer(main, player, "plot")));
         // Régles du serveur
-        contents.set(3, 3, ClickableItem.of(new ItemStack(Material.BOOK_AND_QUILL),
+        contents.set(3, 3, ClickableItem.of(new ItemBuilder(Material.BOOK_AND_QUILL).setName(messages.getRulesBookItem().replace("&", "§")).build(),
                 e -> {
+                    List<String> pages = new ArrayList<>();
+                    messages.getPages().forEach(s -> {
+                        TextComponent page0 = new TextComponent(s);
+                        page0.addExtra("\n");
+                        pages.add(ComponentSerializer.toString(page0));
+                    });
                     ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
-                    BookMeta bm = (BookMeta) book.getItemMeta();
-                    List<List<String>> pages = Lists.newArrayList(Main.getInstance().getMessages().getPages());
-                    bm.setAuthor("Builders Coffee");
-                    bm.setTitle("Régles builders coffee");
-                    book.setItemMeta(bm);
-                    BookUtil.
-                    BookUtil.setPages(bm, Arrays.asList("CAPPUCINO","IRISH COFFEE", "CAFE LIEGOIS"));
+                    BookMeta meta = (BookMeta) book.getItemMeta();
+                    meta.setTitle("");
+                    meta.setAuthor("");
+                    BookUtil.setPages(meta, pages);
+                    book.setItemMeta(meta);
                     BookUtil.openBook(book, player);
                 }));
         // Nous soutenir
-        ItemStack diamond = new ItemBuilder(Material.DIAMOND).setName("Nous soutenir").build();
-        diamond.addUnsafeEnchantment(Enchantment.LUCK, 1);
+        ItemStack diamond = new ItemBuilder(Material.DIAMOND).setName(messages.getSupportUsItem().replace("&", "§")).build();
         diamond.getItemMeta().addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        diamond.addUnsafeEnchantment(Enchantment.LUCK, 1);
         contents.set(3, 4, ClickableItem.of(diamond, e -> player.closeInventory()));
         // Expresso
-        contents.set(3, 5, ClickableItem.of(new ItemStack(Material.FLOWER_POT_ITEM),
+        contents.set(3, 5, ClickableItem.of(new ItemBuilder(Material.FLOWER_POT_ITEM).setName(messages.getExpressoItem().replace("&", "§")).build(),
                 e -> player.sendMessage(ChatColor.GOLD + "CAPUCINO")));
         // Quitter
-        contents.set(5, 0, ClickableItem.of(new ItemStack(Material.BARRIER),
-                e -> player.sendMessage(ChatColor.GOLD + "CAPUCINO")));
+        contents.set(5, 0, ClickableItem.of(new ItemBuilder(Material.BARRIER).setName(messages.getCloseItem().replace("&", "§")).build(),
+                e -> contents.inventory().close(player)));
         // Cosmétiques
-        contents.set(5, 8, ClickableItem.of(new ItemStack(Material.CHEST),
-                e -> player.sendMessage(ChatColor.GOLD + "CAPUCINO")));
+        contents.set(5, 8, ClickableItem.of(new ItemBuilder(Material.CHEST).setName(messages.getCosmeticsItem().replace("&", "§")).build(),
+                e -> player.sendMessage(ChatColor.RED + "Il n'y a pas de grains de cafés en stock")));
 
 
     }
 
     @Override
     public void update(Player player, InventoryContents contents) {
-
+        // Nothing to do here
     }
 }

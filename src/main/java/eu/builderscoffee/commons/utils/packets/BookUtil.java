@@ -1,7 +1,5 @@
 package eu.builderscoffee.commons.utils.packets;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -97,6 +95,7 @@ public class BookUtil {
     public static void setPages(BookMeta metadata, List<String> pages) {
         List<Object> p;
         Object page;
+
         try {
             p = (List<Object>) getField(PackageType.CRAFTBUKKIT_INVENTORY.getClass("CraftMetaBook"), true, "pages").get(metadata);
             for (String text : pages) {

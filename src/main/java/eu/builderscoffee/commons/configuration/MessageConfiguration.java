@@ -1,13 +1,11 @@
 package eu.builderscoffee.commons.configuration;
 
-import com.google.common.collect.Lists;
 import eu.builderscoffee.api.configuration.annotation.Configuration;
-import eu.builderscoffee.commons.utils.packets.BookUtil;
 import lombok.Data;
 import lombok.Getter;
 
-import java.beans.Transient;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
 @Data
 @Configuration("messages")
@@ -19,6 +17,23 @@ public final class MessageConfiguration {
     // Command
     String commandMustBePlayer = "Vous devez être un joueur";
     String commandBadSyntaxe = "bad syntaxe";
+    //Network
+    // - Hub Item
+    String hubItem = "&aHub";
+    // - BuildBattle Item
+    String buildBattleItem = "&aBuildBattle";
+    // - Rules Book
+    String rulesBookItem = "&aRégles du serveur";
+    @Getter
+    List<String> pages = Arrays.asList("Hello", "Builders Coffee");
+    // - SupportUs Item
+    String supportUsItem = "&fNous soutenir";
+    // - Expresso Item
+    String expressoItem = "&6Expresso";
+    // - CloseMenu Item
+    String closeItem = "&cQuitter le menu";
+    // - Cosmetics Item
+    String CosmeticsItem = "&aCosmétiques";
 
     // Event
     String onJoinMessage = "&8[&2+&8] &7%player% ";
@@ -27,9 +42,5 @@ public final class MessageConfiguration {
     // ChatFormat
     String chatFormatMessage = "&7%prefix%%player%%suffix% &8>> &f%message%";
 
-    // Rules Book
-    @Getter
-    //List<BookUtil.Page> Bookpages = Lists.newArrayList(new BookUtil.Page(Arrays.asList("Hello","Builders Coffee")));
-    List<List<String >> pages = Arrays.asList(new ArrayList<>(Collections.singletonList("Pages 1")), new ArrayList<>(Collections.singletonList("Pages 2")));
 
 }

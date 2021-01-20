@@ -1,7 +1,7 @@
 package eu.builderscoffee.commons.listeners;
 
 import eu.builderscoffee.commons.Main;
-import net.luckperms.api.cacheddata.CachedMetaData;
+import lombok.val;
 import net.luckperms.api.query.QueryOptions;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -10,6 +10,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+
+import java.util.Objects;
 
 public class PlayerListener implements Listener {
 
@@ -36,8 +38,8 @@ public class PlayerListener implements Listener {
 
         if (Main.getInstance().getLuckyPerms() != null) {
             QueryOptions queryOptions = Main.getInstance().getLuckyPerms().getContextManager().getQueryOptions(player);
-            String primaryGroup = Main.getInstance().getLuckyPerms().getUserManager().getUser(player.getName()).getPrimaryGroup();
-            CachedMetaData cachedMetaData = Main.getInstance().getLuckyPerms().getGroupManager().getGroup(primaryGroup).getCachedData().getMetaData(queryOptions);
+            val primaryGroup = Objects.requireNonNull(Main.getInstance().getLuckyPerms().getUserManager().getUser(player.getName())).getPrimaryGroup();
+            val cachedMetaData = Objects.requireNonNull(Main.getInstance().getLuckyPerms().getGroupManager().getGroup(primaryGroup)).getCachedData().getMetaData(queryOptions);
             prefix = cachedMetaData.getPrefix() != null ? cachedMetaData.getPrefix() : "";
             suffix = cachedMetaData.getSuffix() != null ? cachedMetaData.getSuffix() : "";
         }
