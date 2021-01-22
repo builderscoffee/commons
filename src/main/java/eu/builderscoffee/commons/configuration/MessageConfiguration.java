@@ -36,7 +36,7 @@ public final class MessageConfiguration {
     String CosmeticsItem = "&aCosmétiques";
 
     // Event
-    String onJoinMessage = "&8[&2+&8] &7%player% ";
+    String onJoinMessage = "&8[&2+&8] &7%prefix%%player%%suffix% ";
     String onQuitMessage = "&8[&2-&8] &7%player% ";
 
     // ChatFormat
