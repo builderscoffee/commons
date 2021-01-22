@@ -28,11 +28,14 @@ public class PlayerListener implements Listener {
             QueryOptions queryOptions = Main.getInstance().getLuckyPerms().getContextManager().getQueryOptions(player);
             val primaryGroup = Objects.requireNonNull(Main.getInstance().getLuckyPerms().getUserManager().getUser(player.getName())).getPrimaryGroup();
             val cachedMetaData = Objects.requireNonNull(Main.getInstance().getLuckyPerms().getGroupManager().getGroup(primaryGroup)).getCachedData().getMetaData(queryOptions);
+            val weight = Objects.requireNonNull(Main.getInstance().getLuckyPerms().getGroupManager().getGroup(primaryGroup)).getWeight().getAsInt();
             prefix = cachedMetaData.getPrefix() != null ? cachedMetaData.getPrefix() : "";
             suffix = cachedMetaData.getSuffix() != null ? cachedMetaData.getSuffix() : "";
-            String teamName = player.getName();
 
-            player.setPlayerListName(prefix + player.getName() + suffix);
+            String teamName = player.getName().length() > 13? player.getName().substring(0, 13) : player.getName();
+            teamName = (999 - weight) + teamName;
+
+            player.setPlayerListName(prefix.replace("&", "§") + player.getName() + suffix.replace("&", "§"));
 
             for (Player loopPlayer : Bukkit.getOnlinePlayers()) {
                 Scoreboard scoreboard = loopPlayer.getScoreboard();
@@ -43,10 +46,10 @@ public class PlayerListener implements Listener {
             }
         }
 
-        event.setJoinMessage(Main.getInstance().getMessages().getOnJoinMessage().replace("&", "§")
-                .replace("%player%", player.getName())
-                .replace("%prefix%", prefix)
-                .replace("%suffix%", suffix));
+        event.setJoinMessage(Main.getInstance().getMessages().getOnJoinMessage().replace("%player%", player.getName())
+                                                                                .replace("%prefix%", prefix)
+                                                                                .replace("%suffix%", suffix)
+                                                                                .replace("&", "§"));
     }
 
     @EventHandler
@@ -73,10 +76,10 @@ public class PlayerListener implements Listener {
 
         event.setCancelled(true);
 
-        Bukkit.broadcastMessage(Main.getInstance().getMessages().getChatFormatMessage().replace("&", "§")
-                .replace("%player%", player.getName())
-                .replace("%prefix%", prefix)
-                .replace("%suffix%", suffix)
-                .replace("%message%", message));
+        Bukkit.broadcastMessage(Main.getInstance().getMessages().getChatFormatMessage().replace("%player%", player.getName())
+                                                                                        .replace("%prefix%", prefix)
+                                                                                        .replace("%suffix%", suffix)
+                                                                                        .replace("%message%", message)
+                                                                                        .replace("&", "§"));
     }
 }
