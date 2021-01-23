@@ -7,3 +7,9 @@ depend: [ BuildersCoffeeAPI ]
 commands:
   network:
     description: Ouvre le menu network
+  menu:
+    description: Ouvre le menu network
+  hub:
+    description: Se déplace dans le serveur hub
+  lobby:
+    description: Se déplace dans le serveur hub

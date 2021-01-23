@@ -2,6 +2,7 @@ package eu.builderscoffee.commons;
 
 import eu.builderscoffee.api.gui.InventoryManager;
 import eu.builderscoffee.api.utils.Plugins;
+import eu.builderscoffee.commons.commands.HubCommand;
 import eu.builderscoffee.commons.commands.NetworkCommands;
 import eu.builderscoffee.commons.configuration.MessageConfiguration;
 import eu.builderscoffee.commons.listeners.PlayerListener;
@@ -42,6 +43,9 @@ public class Main extends JavaPlugin {
         Plugins.registerListeners(this, new PlayerListener());
 
         this.getCommand("network").setExecutor(new NetworkCommands());
+        this.getCommand("menu").setExecutor(new NetworkCommands());
+        this.getCommand("hub").setExecutor(new HubCommand());
+        this.getCommand("lobby").setExecutor(new HubCommand());
     }
 
     @Override
