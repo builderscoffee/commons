@@ -10,6 +10,7 @@ import eu.builderscoffee.commons.Main;
 import eu.builderscoffee.commons.configuration.MessageConfiguration;
 import eu.builderscoffee.commons.utils.BungeeUtils;
 import eu.builderscoffee.commons.utils.packets.BookUtil;
+import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.ChatColor;
@@ -19,6 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,18 +84,31 @@ public class NetworkInventory implements InventoryProvider {
                 }));
         // Nous soutenir
         ItemStack diamond = new ItemBuilder(Material.DIAMOND).setName(messages.getSupportUsItem().replace("&", "§")).build();
-        diamond.getItemMeta().addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        diamond.addUnsafeEnchantment(Enchantment.LUCK, 1);
-        contents.set(3, 4, ClickableItem.of(diamond, e -> player.closeInventory()));
+        ItemMeta diamondMeta = diamond.getItemMeta();
+        diamondMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        diamondMeta.addEnchant(Enchantment.LUCK, 1, false);
+        diamond.setItemMeta(diamondMeta);
+        contents.set(3, 4, ClickableItem.of(diamond, e -> {
+                    TextComponent message = new TextComponent("\n\n§fhttps://fr.tipeee.com/builders-coffee\n\n");
+                    message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://fr.tipeee.com/builders-coffee"));
+                    player.spigot().sendMessage(message);
+                    player.closeInventory();
+
+                }));
         // Expresso
         contents.set(3, 5, ClickableItem.of(new ItemBuilder(Material.FLOWER_POT_ITEM).setName(messages.getExpressoItem().replace("&", "§")).build(),
-                e -> player.sendMessage(ChatColor.GOLD + "CAPUCINO")));
+                e -> {
+                    TextComponent message = new TextComponent("\n\n§fhttps://builderscoffee.eu/portfolio/les-expressos/\n\n");
+                    message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://builderscoffee.eu/portfolio/les-expressos/"));
+                    player.spigot().sendMessage(message);
+                    player.closeInventory();
+                }));
         // Quitter
         contents.set(5, 0, ClickableItem.of(new ItemBuilder(Material.BARRIER).setName(messages.getCloseItem().replace("&", "§")).build(),
                 e -> contents.inventory().close(player)));
         // Cosmétiques
         contents.set(5, 8, ClickableItem.of(new ItemBuilder(Material.CHEST).setName(messages.getCosmeticsItem().replace("&", "§")).build(),
-                e -> player.sendMessage(ChatColor.RED + "Il n'y a pas de grains de cafés en stock")));
+                e -> player.sendMessage("§cIl n'y a pas de grains de cafés en stock")));
 
 
     }
