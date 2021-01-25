@@ -28,8 +28,16 @@ public final class MessageConfiguration {
     List<String> pages = Arrays.asList("Hello", "Builders Coffee");
     // - SupportUs Item
     String supportUsItem = "&fNous soutenir";
+    // - SupportUs ChatMessage
+    String supportChatMessage = "https://fr.tipeee.com/builders-coffee";
+    // - SupportUs Link
+    String supportLink = "\n\n§fhttps://fr.tipeee.com/builders-coffee\n\n";
     // - Expresso Item
     String expressoItem = "&6Expresso";
+    // - Expresso ChatMessage
+    String expressoChatMessage = "\n\n§fhttps://builderscoffee.eu/portfolio/les-expressos/\n\n";
+    // - Expresso Link
+    String expressoLink = "https://builderscoffee.eu/portfolio/les-expressos/";
     // - CloseMenu Item
     String closeItem = "&cQuitter le menu";
     // - Cosmetics Item
@@ -41,6 +49,7 @@ public final class MessageConfiguration {
 
     // ChatFormat
     String chatFormatMessage = "&7%prefix%%player%%suffix% &8>> &f%message%";
+
 
 
 }

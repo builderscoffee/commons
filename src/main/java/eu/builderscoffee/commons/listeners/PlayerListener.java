@@ -29,31 +29,37 @@ public class PlayerListener implements Listener {
         String prefix = "";
         String suffix = "";
 
+        // Creating teams from LuckyPerms
+        Bukkit.getOnlinePlayers().forEach(loopPlayer -> {
+            loopPlayer.getScoreboard().getTeams().forEach(team -> team.unregister());
+        });
+
         if (Main.getInstance().getLuckyPerms() != null) {
-            QueryOptions queryOptions = Main.getInstance().getLuckyPerms().getContextManager().getQueryOptions(player);
-            val primaryGroup = Objects.requireNonNull(Main.getInstance().getLuckyPerms().getUserManager().getUser(player.getName())).getPrimaryGroup();
-            val cachedMetaData = Objects.requireNonNull(Main.getInstance().getLuckyPerms().getGroupManager().getGroup(primaryGroup)).getCachedData().getMetaData(queryOptions);
-            int weight = Objects.requireNonNull(Main.getInstance().getLuckyPerms().getGroupManager().getGroup(primaryGroup)).getWeight().getAsInt();
-            prefix = cachedMetaData.getPrefix() != null ? cachedMetaData.getPrefix() : "";
-            suffix = cachedMetaData.getSuffix() != null ? cachedMetaData.getSuffix() : "";
-
-            String teamName = player.getName().length() > 13? player.getName().substring(0, 13) : player.getName();
-            for(int i = 0; i < 3 - Math.ceil(Math.log(weight <= 1? 2 : weight)); i++) {
-                teamName = 0 + teamName;
-            }
-            teamName = weight + teamName;
-
-            player.setPlayerListName(prefix.replace("&", "§") + player.getName() + suffix.replace("&", "§"));
-
             for (Player loopPlayer : Bukkit.getOnlinePlayers()) {
-                Scoreboard scoreboard = loopPlayer.getScoreboard();
+                val queryOptions = Main.getInstance().getLuckyPerms().getContextManager().getQueryOptions(loopPlayer);
+                val primaryGroup = Objects.requireNonNull(Main.getInstance().getLuckyPerms().getUserManager().getUser(loopPlayer.getName())).getPrimaryGroup();
+                val cachedMetaData = Objects.requireNonNull(Main.getInstance().getLuckyPerms().getGroupManager().getGroup(primaryGroup)).getCachedData().getMetaData(queryOptions);
+                int weight = Math.abs(1000 - Objects.requireNonNull(Main.getInstance().getLuckyPerms().getGroupManager().getGroup(primaryGroup)).getWeight().getAsInt());
+                prefix = cachedMetaData.getPrefix() != null ? cachedMetaData.getPrefix() : "";
+                suffix = cachedMetaData.getSuffix() != null ? cachedMetaData.getSuffix() : "";
 
-                val team = scoreboard.getTeam(teamName) == null ? scoreboard.registerNewTeam(teamName) : scoreboard.getTeam(teamName);
+                String teamName = primaryGroup.length() > 13 ? weight + primaryGroup.substring(0, 13) : weight + primaryGroup;
+                for (int i = 0; i < 3 - String.valueOf(weight).length(); i++) {
+                    teamName = "0" + teamName;
+                }
 
-                team.addPlayer(player);
+                loopPlayer.setPlayerListName(prefix.replace("&", "§") + loopPlayer.getName() + suffix.replace("&", "§"));
+
+                for(Player loopPlayer2: Bukkit.getOnlinePlayers()) {
+                    Scoreboard scoreboard = loopPlayer2.getScoreboard();
+                    val team = scoreboard.getTeam(teamName) == null ? scoreboard.registerNewTeam(teamName) : scoreboard.getTeam(teamName);
+
+                    team.addPlayer(loopPlayer);
+                }
             }
         }
 
+        // Join message
         event.setJoinMessage(Main.getInstance().getMessages().getOnJoinMessage().replace("%player%", player.getName())
                                                                                 .replace("%prefix%", prefix)
                                                                                 .replace("%suffix%", suffix)

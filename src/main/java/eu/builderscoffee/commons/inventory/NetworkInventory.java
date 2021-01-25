@@ -89,8 +89,8 @@ public class NetworkInventory implements InventoryProvider {
         diamondMeta.addEnchant(Enchantment.LUCK, 1, false);
         diamond.setItemMeta(diamondMeta);
         contents.set(3, 4, ClickableItem.of(diamond, e -> {
-                    TextComponent message = new TextComponent("\n\n§fhttps://fr.tipeee.com/builders-coffee\n\n");
-                    message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://fr.tipeee.com/builders-coffee"));
+                    TextComponent message = new TextComponent(messages.getSupportChatMessage());
+                    message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, messages.getSupportLink()));
                     player.spigot().sendMessage(message);
                     player.closeInventory();
 
@@ -98,8 +98,8 @@ public class NetworkInventory implements InventoryProvider {
         // Expresso
         contents.set(3, 5, ClickableItem.of(new ItemBuilder(Material.FLOWER_POT_ITEM).setName(messages.getExpressoItem().replace("&", "§")).build(),
                 e -> {
-                    TextComponent message = new TextComponent("\n\n§fhttps://builderscoffee.eu/portfolio/les-expressos/\n\n");
-                    message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://builderscoffee.eu/portfolio/les-expressos/"));
+                    TextComponent message = new TextComponent(messages.getExpressoChatMessage());
+                    message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, messages.getExpressoLink()));
                     player.spigot().sendMessage(message);
                     player.closeInventory();
                 }));
@@ -108,7 +108,7 @@ public class NetworkInventory implements InventoryProvider {
                 e -> contents.inventory().close(player)));
         // Cosmétiques
         contents.set(5, 8, ClickableItem.of(new ItemBuilder(Material.CHEST).setName(messages.getCosmeticsItem().replace("&", "§")).build(),
-                e -> player.sendMessage("§cIl n'y a pas de grains de cafés en stock")));
+                e -> player.sendMessage("§cIl n'y a pas de grains de café en stock")));
 
 
     }
