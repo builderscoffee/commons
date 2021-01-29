@@ -29,9 +29,9 @@ public final class MessageConfiguration {
     // - SupportUs Item
     String supportUsItem = "&fNous soutenir";
     // - SupportUs ChatMessage
-    String supportChatMessage = "https://fr.tipeee.com/builders-coffee";
+    String supportChatMessage = "\n\n§fhttps://fr.tipeee.com/builders-coffee\n\n";
     // - SupportUs Link
-    String supportLink = "\n\n§fhttps://fr.tipeee.com/builders-coffee\n\n";
+    String supportLink = "https://fr.tipeee.com/builders-coffee";
     // - Expresso Item
     String expressoItem = "&6Expresso";
     // - Expresso ChatMessage

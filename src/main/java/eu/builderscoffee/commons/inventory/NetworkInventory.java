@@ -93,7 +93,6 @@ public class NetworkInventory implements InventoryProvider {
                     message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, messages.getSupportLink()));
                     player.spigot().sendMessage(message);
                     player.closeInventory();
-
                 }));
         // Expresso
         contents.set(3, 5, ClickableItem.of(new ItemBuilder(Material.FLOWER_POT_ITEM).setName(messages.getExpressoItem().replace("&", "§")).build(),
