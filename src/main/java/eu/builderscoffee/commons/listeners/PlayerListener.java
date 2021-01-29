@@ -1,23 +1,18 @@
 package eu.builderscoffee.commons.listeners;
 
-import eu.builderscoffee.api.utils.HeaderAndFooter;
 import eu.builderscoffee.commons.Main;
+import eu.builderscoffee.commons.utils.LuckPermsUtils;
 import lombok.val;
 import net.luckperms.api.query.QueryOptions;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.block.Block;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
 
 import java.util.Objects;
 
@@ -26,43 +21,35 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
-        String prefix = "";
-        String suffix = "";
 
         // Creating teams from LuckyPerms
         Bukkit.getOnlinePlayers().forEach(loopPlayer -> {
             loopPlayer.getScoreboard().getTeams().forEach(team -> team.unregister());
         });
 
-        if (Main.getInstance().getLuckyPerms() != null) {
-            for (Player loopPlayer : Bukkit.getOnlinePlayers()) {
-                val queryOptions = Main.getInstance().getLuckyPerms().getContextManager().getQueryOptions(loopPlayer);
-                val primaryGroup = Objects.requireNonNull(Main.getInstance().getLuckyPerms().getUserManager().getUser(loopPlayer.getName())).getPrimaryGroup();
-                val cachedMetaData = Objects.requireNonNull(Main.getInstance().getLuckyPerms().getGroupManager().getGroup(primaryGroup)).getCachedData().getMetaData(queryOptions);
-                int weight = Math.abs(1000 - Objects.requireNonNull(Main.getInstance().getLuckyPerms().getGroupManager().getGroup(primaryGroup)).getWeight().getAsInt());
-                prefix = cachedMetaData.getPrefix() != null ? cachedMetaData.getPrefix() : "";
-                suffix = cachedMetaData.getSuffix() != null ? cachedMetaData.getSuffix() : "";
+        for (Player loopPlayer : Bukkit.getOnlinePlayers()) {
+            final String primaryGroup = LuckPermsUtils.getPrimaryGroup(loopPlayer);
+            final int weight = LuckPermsUtils.getWeight(loopPlayer);
 
-                String teamName = primaryGroup.length() > 13 ? weight + primaryGroup.substring(0, 13) : weight + primaryGroup;
-                for (int i = 0; i < 3 - String.valueOf(weight).length(); i++) {
-                    teamName = "0" + teamName;
-                }
+            String teamName = primaryGroup.length() > 13 ? weight + primaryGroup.substring(0, 13) : weight + primaryGroup;
+            for (int i = 0; i < 3 - String.valueOf(weight).length(); i++) {
+                teamName = "0" + teamName;
+            }
 
-                loopPlayer.setPlayerListName(prefix.replace("&", "§") + loopPlayer.getName() + suffix.replace("&", "§"));
+            loopPlayer.setPlayerListName(LuckPermsUtils.getPrefix(loopPlayer).replace("&", "§") + loopPlayer.getName() + LuckPermsUtils.getSuffix(loopPlayer).replace("&", "§"));
 
-                for(Player loopPlayer2: Bukkit.getOnlinePlayers()) {
-                    Scoreboard scoreboard = loopPlayer2.getScoreboard();
-                    val team = scoreboard.getTeam(teamName) == null ? scoreboard.registerNewTeam(teamName) : scoreboard.getTeam(teamName);
+            for(Player loopPlayer2: Bukkit.getOnlinePlayers()) {
+                Scoreboard scoreboard = loopPlayer2.getScoreboard();
+                val team = scoreboard.getTeam(teamName) == null ? scoreboard.registerNewTeam(teamName) : scoreboard.getTeam(teamName);
 
-                    team.addPlayer(loopPlayer);
-                }
+                team.addPlayer(loopPlayer);
             }
         }
 
         // Join message
         event.setJoinMessage(Main.getInstance().getMessages().getOnJoinMessage().replace("%player%", player.getName())
-                                                                                .replace("%prefix%", prefix)
-                                                                                .replace("%suffix%", suffix)
+                                                                                .replace("%prefix%", LuckPermsUtils.getPrefix(player))
+                                                                                .replace("%suffix%", LuckPermsUtils.getSuffix(player))
                                                                                 .replace("&", "§"));
     }
 
@@ -74,7 +61,14 @@ public class PlayerListener implements Listener {
                 .replace("%player%", player.getName()));
 
         player.getScoreboard().getTeams().forEach(team -> {
-            team.unregister();
+            boolean online = false;
+            for (OfflinePlayer offlinePlayer : team.getPlayers()) {
+                if(offlinePlayer.isOnline()) {
+                    online = true;
+                }
+            }
+            if(!online)
+                team.unregister();
         });
     }
 

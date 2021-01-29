@@ -49,7 +49,4 @@ public final class MessageConfiguration {
 
     // ChatFormat
     String chatFormatMessage = "&7%prefix%%player%%suffix% &8>> &f%message%";
-
-
-
 }
