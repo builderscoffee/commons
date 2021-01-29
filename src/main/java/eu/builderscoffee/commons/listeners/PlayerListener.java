@@ -29,7 +29,7 @@ public class PlayerListener implements Listener {
 
         for (Player loopPlayer : Bukkit.getOnlinePlayers()) {
             final String primaryGroup = LuckPermsUtils.getPrimaryGroup(loopPlayer);
-            final int weight = LuckPermsUtils.getWeight(loopPlayer);
+            final int weight = Math.abs(1000 - LuckPermsUtils.getWeight(loopPlayer));
 
             String teamName = primaryGroup.length() > 13 ? weight + primaryGroup.substring(0, 13) : weight + primaryGroup;
             for (int i = 0; i < 3 - String.valueOf(weight).length(); i++) {
@@ -47,10 +47,15 @@ public class PlayerListener implements Listener {
         }
 
         // Join message
-        event.setJoinMessage(Main.getInstance().getMessages().getOnJoinMessage().replace("%player%", player.getName())
-                                                                                .replace("%prefix%", LuckPermsUtils.getPrefix(player))
-                                                                                .replace("%suffix%", LuckPermsUtils.getSuffix(player))
-                                                                                .replace("&", "§"));
+        if(LuckPermsUtils.getWeight(player) > Main.getInstance().getMessages().getShowJoinMessageWeight()){
+            event.setJoinMessage(Main.getInstance().getMessages().getOnJoinMessage().replace("%player%", player.getName())
+                    .replace("%prefix%", LuckPermsUtils.getPrefix(player))
+                    .replace("%suffix%", LuckPermsUtils.getSuffix(player))
+                    .replace("&", "§"));
+        }
+        else{
+            event.setJoinMessage(null);
+        }
     }
 
     @EventHandler

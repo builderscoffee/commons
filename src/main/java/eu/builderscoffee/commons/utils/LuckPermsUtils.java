@@ -52,7 +52,7 @@ public class LuckPermsUtils {
             final String primaryGroup = getPrimaryGroup(player);
             final QueryOptions queryOptions = getQueryOptions(player);
             val cachedMetaData = Objects.requireNonNull(Main.getInstance().getLuckyPerms().getGroupManager().getGroup(primaryGroup)).getCachedData().getMetaData(queryOptions);
-            return Math.abs(1000 - Objects.requireNonNull(Main.getInstance().getLuckyPerms().getGroupManager().getGroup(primaryGroup)).getWeight().getAsInt());
+            return Objects.requireNonNull(Main.getInstance().getLuckyPerms().getGroupManager().getGroup(primaryGroup)).getWeight().getAsInt();
         }
         return -1;
     }
