@@ -70,7 +70,7 @@ public class NetworkInventory implements InventoryProvider {
                 e -> {
                     List<String> pages = new ArrayList<>();
                     messages.getPages().forEach(s -> {
-                        TextComponent page0 = new TextComponent(s);
+                        TextComponent page0 = new TextComponent(s.replace("&", "§"));
                         page0.addExtra("\n");
                         pages.add(ComponentSerializer.toString(page0));
                     });
