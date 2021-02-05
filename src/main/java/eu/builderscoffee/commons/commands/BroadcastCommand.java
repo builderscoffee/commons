@@ -23,14 +23,14 @@ public class BroadcastCommand implements CommandExecutor {
                 Bukkit.broadcastMessage(main.getMessages().getBroadcastFormatMessage().replace("%message%", message)
                         .replace("&", "§")
                 );
+                return false;
             }
-            else{
-                sender.sendMessage("§cLe message doit être plus long que 3 charactères !");
-            }
+
+            sender.sendMessage("§cLe message doit être plus long que 3 charactères !");
+            return true;
         }
-        else{
-            sender.sendMessage("§cVous n'avez pas la permission !");
-        }
+
+        sender.sendMessage("§cVous n'avez pas la permission !");
         return true;
     }
 }

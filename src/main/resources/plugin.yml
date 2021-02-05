@@ -9,6 +9,8 @@ commands:
     description: Ouvre le menu network
   menu:
     description: Ouvre le menu network
+  profil:
+    description: Ouvre le menu profil
   hub:
     description: Se déplace dans le serveur hub
   lobby:

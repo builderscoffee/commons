@@ -5,6 +5,7 @@ import eu.builderscoffee.api.utils.Plugins;
 import eu.builderscoffee.commons.commands.BroadcastCommand;
 import eu.builderscoffee.commons.commands.HubCommand;
 import eu.builderscoffee.commons.commands.NetworkCommands;
+import eu.builderscoffee.commons.commands.ProfileCommand;
 import eu.builderscoffee.commons.configuration.MessageConfiguration;
 import eu.builderscoffee.commons.listeners.PlayerListener;
 import lombok.Getter;
@@ -41,10 +42,13 @@ public class Main extends JavaPlugin {
         inventoryManager = new InventoryManager(this);
         inventoryManager.init();
 
+        // Listeneres
         Plugins.registerListeners(this, new PlayerListener());
 
+        // Commandes
         this.getCommand("network").setExecutor(new NetworkCommands());
         this.getCommand("menu").setExecutor(new NetworkCommands());
+        this.getCommand("profil").setExecutor(new ProfileCommand());
         this.getCommand("hub").setExecutor(new HubCommand());
         this.getCommand("lobby").setExecutor(new HubCommand());
         this.getCommand("broadcast").setExecutor(new BroadcastCommand());

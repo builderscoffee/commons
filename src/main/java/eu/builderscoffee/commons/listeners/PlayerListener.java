@@ -103,6 +103,4 @@ public class PlayerListener implements Listener {
                 .replace("%message%", message)
                 .replace("&", "§"));
     }
-
-
 }
