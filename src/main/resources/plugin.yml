@@ -13,3 +13,6 @@ commands:
     description: Se déplace dans le serveur hub
   lobby:
     description: Se déplace dans le serveur hub
+  broadcast:
+    aliases: [bc]
+    description: Envoi un message important

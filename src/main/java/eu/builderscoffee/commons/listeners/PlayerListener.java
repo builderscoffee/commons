@@ -62,8 +62,13 @@ public class PlayerListener implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event) {
         final Player player = event.getPlayer();
 
-        event.setQuitMessage(Main.getInstance().getMessages().getOnQuitMessage().replace("&", "§")
-                .replace("%player%", player.getName()));
+        if(LuckPermsUtils.getWeight(player) > Main.getInstance().getMessages().getShowQuitMessageWeight()){
+            event.setQuitMessage(Main.getInstance().getMessages().getOnQuitMessage().replace("&", "§")
+                    .replace("%player%", player.getName()));
+        }
+        else{
+            event.setQuitMessage(null);
+        }
 
         player.getScoreboard().getTeams().forEach(team -> {
             boolean online = false;
@@ -92,12 +97,12 @@ public class PlayerListener implements Listener {
             suffix = cachedMetaData.getSuffix() != null ? cachedMetaData.getSuffix() : "";
         }
 
-        event.setCancelled(true);
-
-        Bukkit.broadcastMessage(Main.getInstance().getMessages().getChatFormatMessage().replace("%player%", player.getName())
-                                                                                        .replace("%prefix%", prefix)
-                                                                                        .replace("%suffix%", suffix)
-                                                                                        .replace("%message%", message)
-                                                                                        .replace("&", "§"));
+        event.setFormat(Main.getInstance().getMessages().getChatFormatMessage().replace("%player%", player.getName())
+                .replace("%prefix%", prefix)
+                .replace("%suffix%", suffix)
+                .replace("%message%", message)
+                .replace("&", "§"));
     }
+
+
 }
