@@ -43,7 +43,7 @@ public final class MessageConfiguration {
     // - Cosmetics Item
     String CosmeticsItem = "&aCosmétiques";
 
-    // Event
+    // Event§
     String onJoinMessage = "&8[&2+&8] &7%prefix%%player%%suffix% ";
     int showJoinMessageWeight = 750;
     String onQuitMessage = "&8[&2-&8] &7%player% ";
