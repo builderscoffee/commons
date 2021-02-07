@@ -1,10 +1,12 @@
 package eu.builderscoffee.commons;
 
+import com.zaxxer.hikari.HikariDataSource;
 import eu.builderscoffee.api.gui.InventoryManager;
 import eu.builderscoffee.api.utils.Plugins;
 import eu.builderscoffee.commons.commands.HubCommand;
 import eu.builderscoffee.commons.commands.NetworkCommands;
 import eu.builderscoffee.commons.configuration.MessageConfiguration;
+import eu.builderscoffee.commons.configuration.SQLCredentials;
 import eu.builderscoffee.commons.listeners.PlayerListener;
 import lombok.Getter;
 import lombok.val;
@@ -23,33 +25,50 @@ public class Main extends JavaPlugin {
     private MessageConfiguration messages;
 
     @Getter
+    private SQLCredentials sqlCredentials;
+
+    @Getter
     private LuckPerms luckyPerms;
 
     @Getter
     private InventoryManager inventoryManager;
 
+    @Getter
+    private HikariDataSource hikari;
+
     @Override
     public void onEnable() {
+        // Instance
         instance = this;
 
+        // Service Provider
         val provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
         if (provider != null) luckyPerms = provider.getProvider();
 
+        // Configuration
         messages = readOrCreateConfiguration(this, MessageConfiguration.class);
+        sqlCredentials = readOrCreateConfiguration(this, SQLCredentials.class);
 
+        // Inventory Api
         inventoryManager = new InventoryManager(this);
         inventoryManager.init();
 
+        // Listeners
         Plugins.registerListeners(this, new PlayerListener());
 
+        // Commands
         this.getCommand("network").setExecutor(new NetworkCommands());
         this.getCommand("menu").setExecutor(new NetworkCommands());
         this.getCommand("hub").setExecutor(new HubCommand());
         this.getCommand("lobby").setExecutor(new HubCommand());
+
+        // Database
+        getLogger().info("Connexion à la base de donnée...");
+        hikari = new HikariDataSource(sqlCredentials.toHikari());
     }
 
     @Override
     public void onDisable() {
-
+        hikari.close();
     }
 }
