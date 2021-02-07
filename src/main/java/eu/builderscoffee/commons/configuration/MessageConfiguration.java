@@ -47,7 +47,11 @@ public final class MessageConfiguration {
     String onJoinMessage = "&8[&2+&8] &7%prefix%%player%%suffix% ";
     int showJoinMessageWeight = 750;
     String onQuitMessage = "&8[&2-&8] &7%player% ";
+    int showQuitMessageWeight = 750;
 
     // ChatFormat
     String chatFormatMessage = "&7%prefix%%player%%suffix% &8>> &f%message%";
+
+    // BroadcastFormat
+    String broadcastFormatMessage = "&8&m----------&8&m------\n\n&6&lBuilders Coffee &8>> &e%message%\n\n&8&m----------&8&m------";
 }

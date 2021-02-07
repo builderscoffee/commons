@@ -95,7 +95,7 @@
             <artifactId>BuildersCoffeApi</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/libs/builderscoffeeapi-1.0-SNAPSHOT.jar</systemPath>
+            <systemPath>${project.basedir}/../library/builderscoffeeapi-1.0-SNAPSHOT.jar</systemPath>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/io.requery/requery -->
