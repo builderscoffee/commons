@@ -2,6 +2,7 @@ package eu.builderscoffee.commons.listeners;
 
 import eu.builderscoffee.commons.Main;
 import eu.builderscoffee.commons.data.Profil;
+import eu.builderscoffee.commons.data.ProfilEntity;
 import eu.builderscoffee.commons.utils.LuckPermsUtils;
 import io.requery.reactivex.ReactiveEntityStore;
 import lombok.val;
@@ -23,6 +24,15 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
+        // Update Profil
+        val profil = Main.getInstance().getProfilCache().get(player.getUniqueId());
+        if(profil == null) {
+            player.kickPlayer("§Erreur lors du chargement des données (Join event?)");
+            return;
+        }
+
+        if(!player.getName().equalsIgnoreCase(profil.getName()))
+            profil.setName(player.getName());
 
         // Creating teams from LuckyPerms
         Bukkit.getOnlinePlayers().forEach(loopPlayer -> {
@@ -59,8 +69,6 @@ public class PlayerListener implements Listener {
             event.setJoinMessage(null);
         }
 
-        ReactiveEntityStore<Profil> data;
-        //data.select(Profil.class).orderBy(Profil.ID.)
 
     }
 

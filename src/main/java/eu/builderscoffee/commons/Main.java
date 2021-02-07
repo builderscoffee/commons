@@ -7,8 +7,14 @@ import eu.builderscoffee.commons.commands.HubCommand;
 import eu.builderscoffee.commons.commands.NetworkCommands;
 import eu.builderscoffee.commons.configuration.MessageConfiguration;
 import eu.builderscoffee.commons.configuration.SQLCredentials;
+import eu.builderscoffee.commons.data.Models;
 import eu.builderscoffee.commons.data.Profil;
+import eu.builderscoffee.commons.data.ProfilEntity;
 import eu.builderscoffee.commons.listeners.PlayerListener;
+import eu.builderscoffee.commons.utils.Cache;
+import io.requery.sql.EntityDataStore;
+import io.requery.sql.SchemaModifier;
+import io.requery.sql.TableCreationMode;
 import lombok.Getter;
 import lombok.val;
 import net.luckperms.api.LuckPerms;
@@ -17,6 +23,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static eu.builderscoffee.api.configuration.Configurations.readOrCreateConfiguration;
 
@@ -40,9 +47,11 @@ public class Main extends JavaPlugin {
     @Getter
     private HikariDataSource hikari;
 
-    // Data
     @Getter
-    private List<Profil> profils = new ArrayList<>();
+    private EntityDataStore<Profil> profilStore;
+
+    @Getter
+    private Cache<UUID, ProfilEntity> profilCache;
 
     @Override
     public void onEnable() {
@@ -73,6 +82,8 @@ public class Main extends JavaPlugin {
         // Database
         getLogger().info("Connexion à la base de donnée...");
         hikari = new HikariDataSource(sqlCredentials.toHikari());
+        profilStore = new EntityDataStore<>(hikari, Models.DEFAULT);
+        new SchemaModifier(hikari, Models.DEFAULT).createTables(TableCreationMode.CREATE_NOT_EXISTS);
     }
 
     @Override

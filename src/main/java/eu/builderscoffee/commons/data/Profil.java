@@ -1,9 +1,11 @@
 package eu.builderscoffee.commons.data;
 
+import eu.builderscoffee.commons.Main;
 import io.requery.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.val;
 
 import java.util.UUID;
 
@@ -31,4 +33,20 @@ public abstract class Profil {
      */
     @Getter @Setter
     String name = "";
+
+    /**
+     * Créer une nouvelle entité pour cette table
+     *
+     * @param uniqueId UUID du joueur
+     * @return Entité
+     */
+    public static ProfilEntity getOrCreate(UUID uniqueId) {
+        val cached = Main.getInstance().getProfilCache().get(uniqueId);
+        if(cached == null) {
+            val profil = new ProfilEntity();
+            profil.setUniqueId(uniqueId);
+            return profil;
+        }
+        return cached;
+    }
 }
