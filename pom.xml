@@ -95,7 +95,7 @@
             <artifactId>BuildersCoffeApi</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/../library/builderscoffeeapi-1.0-SNAPSHOT.jar</systemPath>
+            <systemPath>${project.basedir}/libs/builderscoffeeapi-1.0-SNAPSHOT.jar</systemPath>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/io.requery/requery -->
@@ -106,12 +106,11 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.zaxxer/HikariCP -->
         <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
-            <version>3.4.5</version>
+            <version>4.0.1</version>
         </dependency>
-
-
     </dependencies>
 </project>
