@@ -1,7 +1,9 @@
 package eu.builderscoffee.commons.listeners;
 
 import eu.builderscoffee.commons.Main;
+import eu.builderscoffee.commons.data.Profil;
 import eu.builderscoffee.commons.utils.LuckPermsUtils;
+import io.requery.reactivex.ReactiveEntityStore;
 import lombok.val;
 import net.luckperms.api.query.QueryOptions;
 import org.bukkit.Bukkit;
@@ -56,6 +58,10 @@ public class PlayerListener implements Listener {
         else{
             event.setJoinMessage(null);
         }
+
+        ReactiveEntityStore<Profil> data;
+        //data.select(Profil.class).orderBy(Profil.ID.)
+
     }
 
     @EventHandler

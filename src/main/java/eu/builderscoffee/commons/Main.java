@@ -7,12 +7,16 @@ import eu.builderscoffee.commons.commands.HubCommand;
 import eu.builderscoffee.commons.commands.NetworkCommands;
 import eu.builderscoffee.commons.configuration.MessageConfiguration;
 import eu.builderscoffee.commons.configuration.SQLCredentials;
+import eu.builderscoffee.commons.data.Profil;
 import eu.builderscoffee.commons.listeners.PlayerListener;
 import lombok.Getter;
 import lombok.val;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static eu.builderscoffee.api.configuration.Configurations.readOrCreateConfiguration;
 
@@ -35,6 +39,10 @@ public class Main extends JavaPlugin {
 
     @Getter
     private HikariDataSource hikari;
+
+    // Data
+    @Getter
+    private List<Profil> profils = new ArrayList<>();
 
     @Override
     public void onEnable() {

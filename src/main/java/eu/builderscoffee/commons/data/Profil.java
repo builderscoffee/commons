@@ -16,7 +16,7 @@ import java.util.UUID;
 public abstract class Profil {
 
     @Column(nullable = false, unique = true)
-    @Generated @Key @Getter
+    @Key @Generated @Getter
     int id;
 
     /**
