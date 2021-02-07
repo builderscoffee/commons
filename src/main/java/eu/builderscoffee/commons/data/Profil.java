@@ -1,6 +1,5 @@
 package eu.builderscoffee.commons.data;
 
-import eu.builderscoffee.commons.Main;
 import io.requery.*;
 import lombok.Getter;
 import lombok.Setter;
