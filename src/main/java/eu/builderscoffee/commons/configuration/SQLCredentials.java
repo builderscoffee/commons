@@ -19,7 +19,7 @@ public class SQLCredentials {
     public HikariConfig toHikari() {
         val config = new HikariConfig();
 
-        config.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        config.setDriverClassName("com.mysql.jdbc.Driver");
         config.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database);
         config.setUsername(username);
         config.setPassword(password);
