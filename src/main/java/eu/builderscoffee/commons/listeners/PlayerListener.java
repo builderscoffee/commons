@@ -25,9 +25,9 @@ public class PlayerListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
         // Update Profil
-        val profil = Main.getInstance().getProfilCache().get(player.getUniqueId());
+        val profil = Main.getInstance().getProfilCache().get(player.getUniqueId().toString());
         if(profil == null) {
-            player.kickPlayer("§Erreur lors du chargement des données (Join event?)");
+            player.kickPlayer("§cErreur lors du chargement des données (Join event?)");
             return;
         }
 

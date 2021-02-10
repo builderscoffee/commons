@@ -27,7 +27,7 @@ public abstract class DataStatueEvent extends Event {
             return handlerList;
         }
 
-        private final UUID uniqueId;
+        private final String uniqueId;
     }
 
     @EqualsAndHashCode(callSuper = true)
@@ -41,6 +41,6 @@ public abstract class DataStatueEvent extends Event {
             return handlerList;
         }
 
-        private final UUID uniqueId;
+        private final String uniqueId;
     }
 }

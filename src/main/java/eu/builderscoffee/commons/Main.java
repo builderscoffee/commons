@@ -5,11 +5,11 @@ import eu.builderscoffee.api.gui.InventoryManager;
 import eu.builderscoffee.api.utils.Plugins;
 import eu.builderscoffee.commons.commands.HubCommand;
 import eu.builderscoffee.commons.commands.NetworkCommands;
+import eu.builderscoffee.commons.commands.ProfileCommand;
 import eu.builderscoffee.commons.configuration.MessageConfiguration;
 import eu.builderscoffee.commons.configuration.SQLCredentials;
-import eu.builderscoffee.commons.data.Models;
-import eu.builderscoffee.commons.data.Profil;
-import eu.builderscoffee.commons.data.ProfilEntity;
+import eu.builderscoffee.commons.data.*;
+import eu.builderscoffee.commons.listeners.ConnexionListener;
 import eu.builderscoffee.commons.listeners.PlayerListener;
 import eu.builderscoffee.commons.utils.Cache;
 import io.requery.sql.EntityDataStore;
@@ -20,10 +20,6 @@ import lombok.val;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 import static eu.builderscoffee.api.configuration.Configurations.readOrCreateConfiguration;
 
@@ -48,10 +44,25 @@ public class Main extends JavaPlugin {
     private HikariDataSource hikari;
 
     @Getter
+    private EntityDataStore<Note> notesStore;
+
+    @Getter
+    private EntityDataStore<BuildbattleTheme> buildbattleThemeStore;
+
+    @Getter
+    private EntityDataStore<ExpressoType> expressoTypseStore;
+
+    @Getter
+    private EntityDataStore<Buildbattle> buildbattlesStore;
+
+    @Getter
+    private EntityDataStore<Saison> saisonsStore;
+
+    @Getter
     private EntityDataStore<Profil> profilStore;
 
     @Getter
-    private Cache<UUID, ProfilEntity> profilCache;
+    private Cache<String, ProfilEntity> profilCache = new Cache<>();
 
     @Override
     public void onEnable() {
@@ -72,16 +83,23 @@ public class Main extends JavaPlugin {
 
         // Listeners
         Plugins.registerListeners(this, new PlayerListener());
+        Plugins.registerListeners(this, new ConnexionListener());
 
         // Commands
         this.getCommand("network").setExecutor(new NetworkCommands());
         this.getCommand("menu").setExecutor(new NetworkCommands());
         this.getCommand("hub").setExecutor(new HubCommand());
         this.getCommand("lobby").setExecutor(new HubCommand());
+        this.getCommand("profil").setExecutor(new ProfileCommand());
 
         // Database
         getLogger().info("Connexion à la base de donnée...");
         hikari = new HikariDataSource(sqlCredentials.toHikari());
+        notesStore = new EntityDataStore<>(hikari, Models.DEFAULT);
+        buildbattleThemeStore = new EntityDataStore<>(hikari, Models.DEFAULT);
+        expressoTypseStore = new EntityDataStore<>(hikari, Models.DEFAULT);
+        buildbattlesStore = new EntityDataStore<>(hikari, Models.DEFAULT);
+        saisonsStore = new EntityDataStore<>(hikari, Models.DEFAULT);
         profilStore = new EntityDataStore<>(hikari, Models.DEFAULT);
         new SchemaModifier(hikari, Models.DEFAULT).createTables(TableCreationMode.CREATE_NOT_EXISTS);
     }
