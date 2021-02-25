@@ -2,9 +2,12 @@ package eu.builderscoffee.commons.data;
 
 import io.requery.*;
 import io.requery.query.MutableResult;
+import io.requery.query.Order;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.sql.Timestamp;
 
 /***
  * {@link Saison} est l'objet utilisé pour stocker les saisons.
@@ -18,9 +21,13 @@ public class Saison {
     @Key @Generated @Getter
     int id;
 
-    @Column(nullable = false, unique = true, length = 32)
+    @Column(name = "begin_date", nullable = false, value = "CURRENT_TIMESTAMP")
     @Getter @Setter
-    String name;
+    Timestamp beginDate;
+
+    @Column(name = "end_date", nullable = false, value = "CURRENT_TIMESTAMP")
+    @Getter @Setter
+    Timestamp endDate;
 
     @OneToMany(mappedBy = "id_saison")
     @Getter

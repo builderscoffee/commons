@@ -1,27 +1,23 @@
 package eu.builderscoffee.commons.commands;
 
 import eu.builderscoffee.commons.Main;
-import eu.builderscoffee.commons.inventory.ProfileInventory;
-import eu.builderscoffee.commons.utils.Cache;
-import lombok.Getter;
+import eu.builderscoffee.commons.data.ProfilEntity;
+import eu.builderscoffee.commons.inventory.ProfilInventory;
 import lombok.val;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-
-import java.util.Deque;
-import java.util.Map;
 
 public class ProfileCommand  implements CommandExecutor {
 
-    @Getter
-    private static Cache<Player, String> requestProfile = new Cache<>();
-
     public static boolean argLength0(Player player) {
-        requestProfile.put(player, player.getName());
-        ProfileInventory.INVENTORY.open(player);
+        openProfile(player, player.getName());
+        return true;
+    }
+
+    public static boolean argLength1(Player player, String arg0) {
+        openProfile(player, arg0);
         return true;
     }
 
@@ -34,6 +30,9 @@ public class ProfileCommand  implements CommandExecutor {
             switch (args.length) {
                 case 0:
                     ret = argLength0(player);
+                    break;
+                case 1:
+                    ret = argLength1(player, args[0]);
                     break;
                 default:
                     break;
@@ -48,5 +47,19 @@ public class ProfileCommand  implements CommandExecutor {
 
         sender.sendMessage(Main.getInstance().getMessages().getCommandMustBePlayer());
         return true;
+    }
+
+    private static boolean openProfile(Player player, String targetName){
+        val storeProfil = Main.getInstance().getProfilStore();
+        val profilEntity = storeProfil.select(ProfilEntity.class)
+                .where(ProfilEntity.NAME.lower().like(targetName.toLowerCase() + "%"))
+                .get().firstOrNull();
+        if(profilEntity != null)
+        {
+            new ProfilInventory(profilEntity).INVENTORY.open(player);
+            return true;
+        }
+        player.sendMessage("§cCe joueur n'existe pas");
+        return false;
     }
 }

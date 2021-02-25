@@ -50,7 +50,7 @@ public class Main extends JavaPlugin {
     private EntityDataStore<BuildbattleTheme> buildbattleThemeStore;
 
     @Getter
-    private EntityDataStore<ExpressoType> expressoTypseStore;
+    private EntityDataStore<BuildbattleType> expressoTypseStore;
 
     @Getter
     private EntityDataStore<Buildbattle> buildbattlesStore;
@@ -60,6 +60,9 @@ public class Main extends JavaPlugin {
 
     @Getter
     private EntityDataStore<Profil> profilStore;
+
+    @Getter
+    private EntityDataStore<Cosmetique> cosmetiquesStore;
 
     @Getter
     private Cache<String, ProfilEntity> profilCache = new Cache<>();
@@ -81,6 +84,18 @@ public class Main extends JavaPlugin {
         inventoryManager = new InventoryManager(this);
         inventoryManager.init();
 
+        // Database
+        getLogger().info("Connexion à la base de donnée...");
+        hikari = new HikariDataSource(sqlCredentials.toHikari());
+        saisonsStore = new EntityDataStore<>(hikari, Models.DEFAULT);
+        buildbattleThemeStore = new EntityDataStore<>(hikari, Models.DEFAULT);
+        expressoTypseStore = new EntityDataStore<>(hikari, Models.DEFAULT);
+        buildbattlesStore = new EntityDataStore<>(hikari, Models.DEFAULT);
+        profilStore = new EntityDataStore<>(hikari, Models.DEFAULT);
+        notesStore = new EntityDataStore<>(hikari, Models.DEFAULT);
+        cosmetiquesStore = new EntityDataStore<>(hikari, Models.DEFAULT);
+        new SchemaModifier(hikari, Models.DEFAULT).createTables(TableCreationMode.CREATE_NOT_EXISTS);
+
         // Listeners
         Plugins.registerListeners(this, new PlayerListener());
         Plugins.registerListeners(this, new ConnexionListener());
@@ -91,17 +106,6 @@ public class Main extends JavaPlugin {
         this.getCommand("hub").setExecutor(new HubCommand());
         this.getCommand("lobby").setExecutor(new HubCommand());
         this.getCommand("profil").setExecutor(new ProfileCommand());
-
-        // Database
-        getLogger().info("Connexion à la base de donnée...");
-        hikari = new HikariDataSource(sqlCredentials.toHikari());
-        notesStore = new EntityDataStore<>(hikari, Models.DEFAULT);
-        buildbattleThemeStore = new EntityDataStore<>(hikari, Models.DEFAULT);
-        expressoTypseStore = new EntityDataStore<>(hikari, Models.DEFAULT);
-        buildbattlesStore = new EntityDataStore<>(hikari, Models.DEFAULT);
-        saisonsStore = new EntityDataStore<>(hikari, Models.DEFAULT);
-        profilStore = new EntityDataStore<>(hikari, Models.DEFAULT);
-        new SchemaModifier(hikari, Models.DEFAULT).createTables(TableCreationMode.CREATE_NOT_EXISTS);
     }
 
     @Override

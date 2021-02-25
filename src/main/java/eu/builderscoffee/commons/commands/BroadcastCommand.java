@@ -1,12 +1,10 @@
 package eu.builderscoffee.commons.commands;
 
 import eu.builderscoffee.commons.Main;
-import eu.builderscoffee.commons.utils.BungeeUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public class BroadcastCommand implements CommandExecutor {
 

@@ -6,14 +6,13 @@ import lombok.Getter;
 import lombok.ToString;
 
 /***
- * {@link ExpressoType} est l'objet utilisé pour stocker types d'Expresso.
+ * {@link BuildbattleType} est l'objet utilisé pour stocker types d'Expresso.
  */
 @Entity
-@Table(name = "expresso_types")
+@Table(name = "buildbattle_types")
 @ToString
-public class ExpressoType {
+public class BuildbattleType {
 
-    @Column(nullable = false, unique = true, length = 11)
     @Key @Generated @Getter
     int id;
 
@@ -21,7 +20,7 @@ public class ExpressoType {
     @Getter
     String name;
 
-    @OneToMany(mappedBy = "id_expresso")
+    @OneToMany(mappedBy = "id_type")
     @Getter
     MutableResult<BuildbattleEntity> buildbattles;
 }

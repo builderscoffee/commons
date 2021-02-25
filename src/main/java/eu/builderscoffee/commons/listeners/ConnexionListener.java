@@ -28,11 +28,11 @@ public class ConnexionListener implements Listener {
                 () -> Bukkit.getServer().getPluginManager().callEvent(new DataStatueEvent.Save(event.getPlayer().getUniqueId().toString())));
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    /*@EventHandler(priority = EventPriority.MONITOR)
     public void onKick(PlayerKickEvent event) {
         Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(),
                 () -> Bukkit.getServer().getPluginManager().callEvent(new DataStatueEvent.Save(event.getPlayer().getUniqueId().toString())));
-    }
+    }*/
 
     @EventHandler
     public void onLoad(DataStatueEvent.Load event) {
@@ -55,7 +55,9 @@ public class ConnexionListener implements Listener {
         val uniqueId = event.getUniqueId();
         val entity = instance.getProfilCache().get(uniqueId);
         if(entity == null) {
-            instance.getLogger().log(Level.INFO,"Le joueur "+ uniqueId + " n'avait pas de donnée");
+            int currentLine = new Throwable().getStackTrace()[0].getLineNumber() + 1;
+            Main.getInstance().getLogger().warning("§cLe joueur n'avait pas de donnée (" + this.getClass().getName() + ".java:" + currentLine + ")");
+            return;
         }
         val store = instance.getProfilStore();
         store.update(entity);

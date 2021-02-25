@@ -26,6 +26,10 @@ public class SQLCredentials {
         config.setMaximumPoolSize(poolSize);
         config.setPoolName("Commons pool");
 
+        config.addDataSourceProperty("autoReconnect", true);
+
+        config.setConnectionTimeout(30000);
+
         return config;
     }
 

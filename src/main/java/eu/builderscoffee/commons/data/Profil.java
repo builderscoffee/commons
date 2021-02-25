@@ -9,10 +9,10 @@ import lombok.ToString;
 import lombok.val;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.Date;
-import java.util.Set;
 
-/***
+/**
  * {@link Profil} est l'objet utilisé pour stocker le profil d'un joueur.
  */
 @Entity
@@ -41,26 +41,27 @@ public abstract class Profil {
     /**
      * La date de creation ne pouvant changer
      */
-    @Column(nullable = false, value = "CURRENT_TIMESTAMP")
+    @Column(name = "creation_date", nullable = false, value = "CURRENT_TIMESTAMP")
     @Getter @Setter
-    Timestamp creation_date;
+    Timestamp creationDate;
 
     /**
      * La date de creation ne pouvant changer
      */
-    @Column(nullable = false, value = "CURRENT_TIMESTAMP")
+    @Column(name = "update_date", nullable = false, value = "CURRENT_TIMESTAMP")
     @Getter @Setter
-    Timestamp update_date;
+    Timestamp updateDate;
 
     @OneToMany(mappedBy = "id_profil")
     @Getter
     MutableResult<NoteEntity> notes;
 
-    /**
-     * TODO Quand on update le profil, la 'update_date' se met a jour
-     */
+    @OneToMany(mappedBy = "id_profil")
+    @Getter
+    MutableResult<Cosmetique> cosmetiques;
+
     @PreUpdate
-    protected void onPreUpdate(){ setUpdate_date(new Timestamp(new Date().getTime())); }
+    protected void onPreUpdate(){ setUpdateDate(new Timestamp(new Date().getTime())); }
 
     /**
      * Créer une nouvelle entité pour cette table

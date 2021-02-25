@@ -12,27 +12,48 @@ import lombok.ToString;
 @Table(name = "notes")
 @ToString
 public class Note {
-    @Column(name = "id_buildbattle")
-    @ForeignKey(update = ReferentialAction.CASCADE, referencedColumn = "id")
-    @Key @ManyToOne @Getter
-    BuildbattleEntity buildbattle;
 
-    @Column(name = "id_saison")
     @ForeignKey(update = ReferentialAction.CASCADE, referencedColumn = "id")
-    @Key @ManyToOne @Getter
-    SaisonEntity saison;
+    @Key @ManyToOne
+    BuildbattleEntity id_buildbattle;
 
-    @Column(name = "id_profil")
+    public BuildbattleEntity getBuildbattle() { return id_buildbattle; }
+
     @ForeignKey(update = ReferentialAction.CASCADE, referencedColumn = "id")
-    @Key @ManyToOne @Getter
-    ProfilEntity profil;
+    @Key @ManyToOne
+    SaisonEntity id_saison;
 
-    @Column(name = "id_jury")
+    public SaisonEntity getSaison() { return id_saison; }
+
     @ForeignKey(update = ReferentialAction.CASCADE, referencedColumn = "id")
-    @Key @ManyToOne @Getter
-    ProfilEntity jury;
+    @Key @ManyToOne
+    ProfilEntity id_profil;
 
-    @Column(name = "note", nullable = false)
+    public ProfilEntity getProfil() { return id_profil; }
+
+    @ForeignKey(update = ReferentialAction.CASCADE, referencedColumn = "id")
+    @Key @ManyToOne
+    ProfilEntity id_jury;
+
+    public ProfilEntity getJury() { return id_jury; }
+
+    @Column(nullable = false)
     @Getter @Setter
-    int note;
+    int beaute;
+
+    @Column(nullable = false)
+    @Getter @Setter
+    int creativite;
+
+    @Column(nullable = false)
+    @Getter @Setter
+    int amenagement;
+
+    @Column(nullable = false)
+    @Getter @Setter
+    int folklore;
+
+    @Column(nullable = false)
+    @Getter @Setter
+    int fun;
 }

@@ -1,10 +1,7 @@
 package eu.builderscoffee.commons.listeners;
 
 import eu.builderscoffee.commons.Main;
-import eu.builderscoffee.commons.data.Profil;
-import eu.builderscoffee.commons.data.ProfilEntity;
 import eu.builderscoffee.commons.utils.LuckPermsUtils;
-import io.requery.reactivex.ReactiveEntityStore;
 import lombok.val;
 import net.luckperms.api.query.QueryOptions;
 import org.bukkit.Bukkit;
@@ -27,7 +24,7 @@ public class PlayerListener implements Listener {
         // Update Profil
         val profil = Main.getInstance().getProfilCache().get(player.getUniqueId().toString());
         if(profil == null) {
-            player.kickPlayer("§cErreur lors du chargement des données (Join event?)");
+            player.kickPlayer("§cUne erreur est survenue lors du chargement de données.\n§cVeuillez vous reconnecter");
             return;
         }
 

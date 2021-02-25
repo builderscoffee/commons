@@ -42,6 +42,8 @@ public final class MessageConfiguration {
     String closeItem = "&cQuitter le menu";
     // - Cosmetics Item
     String CosmeticsItem = "&aCosmétiques";
+    // - Retour Item
+    String retourItem = "§7Retour";
 
     // Event§
     String onJoinMessage = "&8[&2+&8] &7%prefix%%player%%suffix% ";
@@ -54,4 +56,21 @@ public final class MessageConfiguration {
 
     // BroadcastFormat
     String broadcastFormatMessage = "&8&m----------&8&m------\n\n&6&lBuilders Coffee &8>> &e%message%\n\n&8&m----------&8&m------";
+
+    //Profil
+    // - Skull Item
+    String profilSkullItem = "&b%player%";
+    @Getter
+    List<String> profilSkullLore = Arrays.asList("&9Grade: &f%grade%", "&9Participations: &f%participations%", "&9Victoires: &f%victoires%");
+    // - Resultat Item
+    String profilResultatItem = "Derniers résultat";
+    // - Not played any buildbattle
+    String notPlayedAnyBuildbattle = "&cVous n'avez pas encore joué une seule partie !";
+    // - Saisons Item
+    String profilSaisons = "Saisons";
+    // - Historique Item
+    String profilhistorique = "Historique";
+    // - Global Result Item
+    String profilGlobalResult = "Résultat Général";
+
 }

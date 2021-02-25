@@ -13,7 +13,6 @@ import lombok.ToString;
 @ToString
 public class BuildbattleTheme {
 
-    @Column(nullable = false, unique = true, length = 11)
     @Key @Generated @Getter
     int id;
 
