@@ -12,11 +12,10 @@ import lombok.ToString;
 @ToString
 public class Cosmetique {
 
+    @Column(name = "id_profil")
     @ForeignKey(update = ReferentialAction.CASCADE, referencedColumn = "id")
     @Key @ManyToOne
-    ProfilEntity id_profil;
-
-    public ProfilEntity getProfil(){ return id_profil; }
+    ProfilEntity profil;
 
     @Column(length = 32)
     @Key @Getter

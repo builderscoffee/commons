@@ -18,11 +18,10 @@ public class Buildbattle {
     @Key @Generated @Getter
     int id;
 
+    @Column(name = "id_saison")
     @ForeignKey(update = ReferentialAction.CASCADE, referencedColumn = "id")
     @ManyToOne @Key
-    protected SaisonEntity id_saison;
-
-    public SaisonEntity getSaison() { return id_saison; }
+    protected SaisonEntity saison;
 
     @Column(name = "id_type", nullable = false)
     @ForeignKey(update = ReferentialAction.CASCADE, referencedColumn = "id")

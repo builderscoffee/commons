@@ -113,9 +113,9 @@ public class NoteInventory implements InventoryProvider {
                         NamedExpression.ofInteger("id_profil"),
                         NamedExpression.ofInteger("fun + amenagement + beaute + creativite + folklore").sum().as("total"))
                 .from(NoteEntity.class)
-                .where(NoteEntity.ID_BUILDBATTLE.eq(buildbattleEntity))
-                .and(NoteEntity.ID_SAISON.eq(buildbattleEntity.getSaison()))
-                .groupBy(NoteEntity.ID_PROFIL)
+                .where(NoteEntity.BUILDBATTLE.eq(buildbattleEntity))
+                .and(NoteEntity.SAISON.eq(buildbattleEntity.getSaison()))
+                .groupBy(NoteEntity.PROFIL)
                 .orderBy(NamedExpression.ofInteger("total").desc())
                 .get();
 

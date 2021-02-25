@@ -13,29 +13,25 @@ import lombok.ToString;
 @ToString
 public class Note {
 
+    @Column(name = "id_buildbattle")
     @ForeignKey(update = ReferentialAction.CASCADE, referencedColumn = "id")
     @Key @ManyToOne
-    BuildbattleEntity id_buildbattle;
+    BuildbattleEntity buildbattle;
 
-    public BuildbattleEntity getBuildbattle() { return id_buildbattle; }
-
+    @Column(name = "id_saison")
     @ForeignKey(update = ReferentialAction.CASCADE, referencedColumn = "id")
     @Key @ManyToOne
-    SaisonEntity id_saison;
+    SaisonEntity saison;
 
-    public SaisonEntity getSaison() { return id_saison; }
-
+    @Column(name = "id_profil")
     @ForeignKey(update = ReferentialAction.CASCADE, referencedColumn = "id")
     @Key @ManyToOne
-    ProfilEntity id_profil;
+    ProfilEntity profil;
 
-    public ProfilEntity getProfil() { return id_profil; }
-
+    @Column(name = "id_jury")
     @ForeignKey(update = ReferentialAction.CASCADE, referencedColumn = "id")
     @Key @ManyToOne
-    ProfilEntity id_jury;
-
-    public ProfilEntity getJury() { return id_jury; }
+    ProfilEntity jury;
 
     @Column(nullable = false)
     @Getter @Setter

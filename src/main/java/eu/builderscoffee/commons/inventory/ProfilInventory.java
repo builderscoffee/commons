@@ -8,10 +8,7 @@ import eu.builderscoffee.api.gui.content.SlotPos;
 import eu.builderscoffee.api.utils.ItemBuilder;
 import eu.builderscoffee.commons.Main;
 import eu.builderscoffee.commons.configuration.MessageConfiguration;
-import eu.builderscoffee.commons.data.NoteEntity;
-import eu.builderscoffee.commons.data.Profil;
-import eu.builderscoffee.commons.data.ProfilEntity;
-import eu.builderscoffee.commons.data.SaisonEntity;
+import eu.builderscoffee.commons.data.*;
 import eu.builderscoffee.commons.utils.LuckPermsUtils;
 import eu.builderscoffee.commons.utils.SkullCreator;
 import io.requery.sql.EntityDataStore;
@@ -102,27 +99,24 @@ public class ProfilInventory implements InventoryProvider {
         // Saisons
         contents.set(3, 3, ClickableItem.of(new ItemBuilder(Material.PAINTING).setName(messages.getProfilResultatItem().replace("&", "§")).build(),
                 e -> {
-                    List<SaisonEntity> saisons = new ArrayList<>();
+                    List<BuildbattleEntity> buildbattles = new ArrayList<>();
 
                     // Store played saisons
-                    profilEntity.getNotes().forEach(note -> {
-                        if(!saisons.contains(note.getSaison()))
-                        {
-                            saisons.add(note.getSaison());
-                        }
-                    });
+                    profilEntity.getNotes().stream()
+                            .filter(distinctByKeys(NoteEntity::getSaison, NoteEntity::getBuildbattle))
+                            .forEach(note -> buildbattles.add(note.getBuildbattle()));
 
 
-                    if(!saisons.isEmpty()){
+                    if(!buildbattles.isEmpty()){
                         // Sort saisons per date
-                        Collections.sort(saisons, new Comparator<SaisonEntity>() {
-                            public int compare(SaisonEntity o1, SaisonEntity o2) {
-                                return o1.getBeginDate().compareTo(o2.getBeginDate());
+                        Collections.sort(buildbattles, new Comparator<BuildbattleEntity>() {
+                            public int compare(BuildbattleEntity o1, BuildbattleEntity o2) {
+                                return o1.getDate().compareTo(o2.getDate());
                             }
                         });
 
                         // Open invetory of the last saison played
-                        new SaisonInventory(profilEntity, saisons.get(0)).INVENTORY.open(player);
+                        new NoteInventory(profilEntity, buildbattles.get(0)).INVENTORY.open(player);
                     }
                     else{
                         player.sendMessage(messages.getNotPlayedAnyBuildbattle().replace("&", "§"));
