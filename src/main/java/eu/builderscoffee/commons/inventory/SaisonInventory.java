@@ -84,7 +84,7 @@ public class SaisonInventory implements InventoryProvider {
         short iTimeline = 0;
 
         for (BuildbattleEntity bb : saisonEntity.getBuildbattles()) {
-            final val date = new Date();
+            val date = new Date();
             if(bb.getDate().before(date)){
                 if(profilEntity.getNotes().stream().filter(note -> note.getBuildbattle().getId() == bb.getId()).count() > 0){
                     ItemStack skull = new ItemBuilder(bb.isStep()? limeConcrete : limeSkull)

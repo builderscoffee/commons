@@ -79,13 +79,13 @@ public class ProfilInventory implements InventoryProvider {
         contents.set(SlotPos.of(5, 6), greyGlasses);
 
         // Skull lore information
-        final val participations = profilEntity.getNotes().stream()
+        val participations = profilEntity.getNotes().stream()
                 .filter(distinctByKeys(NoteEntity::getSaison, NoteEntity::getBuildbattle))
                 .count();
-        final val primaryGroup = LuckPermsUtils.getPrimaryGroup(player).substring(0, 1).toUpperCase() + LuckPermsUtils.getPrimaryGroup(player).substring(1);
+        val primaryGroup = LuckPermsUtils.getPrimaryGroup(player).substring(0, 1).toUpperCase() + LuckPermsUtils.getPrimaryGroup(player).substring(1);
 
         // Profile skull builder
-        final val ibSkull = new ItemBuilder(SkullCreator.itemFromUuid(UUID.fromString(profilEntity.getUniqueId())))
+        val ibSkull = new ItemBuilder(SkullCreator.itemFromUuid(UUID.fromString(profilEntity.getUniqueId())))
                 .setName(messages.getProfilSkullItem()
                         .replace("%player%", profilEntity.getName())
                         .replace("&", "§"));
@@ -96,7 +96,7 @@ public class ProfilInventory implements InventoryProvider {
                 .replace("&", "§")));
 
         // Add skul to inventory
-        final val skull = ibSkull.build();
+        val skull = ibSkull.build();
         contents.set(SlotPos.of(1, 4), ClickableItem.empty(skull));
 
         // Saisons
