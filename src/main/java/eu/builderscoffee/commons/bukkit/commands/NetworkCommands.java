@@ -1,7 +1,7 @@
-package eu.builderscoffee.commons.spigot.commands;
+package eu.builderscoffee.commons.bukkit.commands;
 
-import eu.builderscoffee.commons.spigot.Main;
-import eu.builderscoffee.commons.spigot.inventory.NetworkInventory;
+import eu.builderscoffee.commons.bukkit.Main;
+import eu.builderscoffee.commons.bukkit.inventory.NetworkInventory;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

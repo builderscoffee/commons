@@ -1,15 +1,15 @@
-package eu.builderscoffee.commons.spigot.inventory;
+package eu.builderscoffee.commons.bukkit.inventory;
 
-import eu.builderscoffee.api.gui.ClickableItem;
-import eu.builderscoffee.api.gui.SmartInventory;
-import eu.builderscoffee.api.gui.content.InventoryContents;
-import eu.builderscoffee.api.gui.content.InventoryProvider;
-import eu.builderscoffee.api.gui.content.SlotIterator;
-import eu.builderscoffee.api.gui.content.SlotPos;
-import eu.builderscoffee.api.utils.ItemBuilder;
+import eu.builderscoffee.api.bukkit.gui.ClickableItem;
+import eu.builderscoffee.api.bukkit.gui.SmartInventory;
+import eu.builderscoffee.api.bukkit.gui.content.InventoryContents;
+import eu.builderscoffee.api.bukkit.gui.content.InventoryProvider;
+import eu.builderscoffee.api.bukkit.gui.content.SlotIterator;
+import eu.builderscoffee.api.bukkit.gui.content.SlotPos;
+import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
 import eu.builderscoffee.commons.common.data.*;
-import eu.builderscoffee.commons.spigot.Main;
-import eu.builderscoffee.commons.spigot.configuration.MessageConfiguration;
+import eu.builderscoffee.commons.bukkit.Main;
+import eu.builderscoffee.commons.bukkit.configuration.MessageConfiguration;
 import io.requery.sql.EntityDataStore;
 import lombok.val;
 import org.bukkit.ChatColor;
@@ -72,7 +72,7 @@ public class SaisonsInventory implements InventoryProvider {
         for (int i = 0; i < size; i++) {
             val saisonEntity = saison.toList().get(i);
             if(saisonEntity.getBeginDate().before(new Date())){
-                saisonsItems[i] = ClickableItem.of(new ItemBuilder(cyanConcrete).setName("Saison " + saisonEntity.getId()).build(),
+                saisonsItems[i] = ClickableItem.of(new ItemBuilder(new ItemStack(cyanConcrete)).setName("Saison " + saisonEntity.getId()).build(),
                         e -> {
                             new SaisonInventory(profilEntity, saisonEntity).INVENTORY.open(player);
                         });

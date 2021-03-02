@@ -1,9 +1,9 @@
-package eu.builderscoffee.commons.spigot.listeners;
+package eu.builderscoffee.commons.bukkit.listeners;
 
-import eu.builderscoffee.commons.spigot.Main;
+import eu.builderscoffee.commons.bukkit.Main;
 import eu.builderscoffee.commons.common.data.Profil;
 import eu.builderscoffee.commons.common.data.*;
-import eu.builderscoffee.commons.spigot.listeners.event.DataStatueEvent;
+import eu.builderscoffee.commons.bukkit.listeners.event.DataStatueEvent;
 import lombok.val;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;

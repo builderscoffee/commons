@@ -1,6 +1,6 @@
-package eu.builderscoffee.commons.spigot.utils;
+package eu.builderscoffee.commons.common.utils;
 
-import eu.builderscoffee.commons.spigot.Main;
+import eu.builderscoffee.commons.bukkit.Main;
 import lombok.val;
 import net.luckperms.api.query.QueryOptions;
 import org.bukkit.entity.Player;

@@ -1,33 +1,35 @@
-package eu.builderscoffee.commons.spigot;
+package eu.builderscoffee.commons.bukkit;
 
 import com.zaxxer.hikari.HikariDataSource;
-import eu.builderscoffee.api.gui.InventoryManager;
-import eu.builderscoffee.api.utils.Plugins;
+import eu.builderscoffee.api.bukkit.gui.InventoryManager;
+import eu.builderscoffee.api.bukkit.utils.Plugins;
 import eu.builderscoffee.commons.common.Models;
 import eu.builderscoffee.commons.common.data.*;
-import eu.builderscoffee.commons.spigot.commands.HubCommand;
-import eu.builderscoffee.commons.spigot.commands.NetworkCommands;
-import eu.builderscoffee.commons.spigot.commands.ProfileCommand;
-import eu.builderscoffee.commons.spigot.listeners.ConnexionListener;
-import eu.builderscoffee.commons.spigot.configuration.MessageConfiguration;
+import eu.builderscoffee.commons.bukkit.commands.HubCommand;
+import eu.builderscoffee.commons.bukkit.commands.NetworkCommands;
+import eu.builderscoffee.commons.bukkit.commands.ProfileCommand;
+import eu.builderscoffee.commons.bukkit.listeners.ConnexionListener;
+import eu.builderscoffee.commons.bukkit.configuration.MessageConfiguration;
 import eu.builderscoffee.commons.common.configuration.SQLCredentials;
-import eu.builderscoffee.commons.spigot.listeners.PlayerListener;
-import eu.builderscoffee.commons.spigot.utils.Cache;
+import eu.builderscoffee.commons.bukkit.listeners.PlayerListener;
+import eu.builderscoffee.commons.common.utils.Cache;
 import io.requery.sql.EntityDataStore;
 import io.requery.sql.SchemaModifier;
 import io.requery.sql.TableCreationMode;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import lombok.val;
 import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import static eu.builderscoffee.api.configuration.Configurations.readOrCreateConfiguration;
+import static eu.builderscoffee.api.bukkit.configuration.Configurations.readOrCreateConfiguration;
 
 public class Main extends JavaPlugin {
 
     @Getter
     private static Main instance;
+
     //Configuration
     @Getter
     private MessageConfiguration messages;
@@ -109,6 +111,7 @@ public class Main extends JavaPlugin {
         this.getCommand("profil").setExecutor(new ProfileCommand());
     }
 
+    @SneakyThrows
     @Override
     public void onDisable() {
         hikari.close();

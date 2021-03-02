@@ -1,15 +1,15 @@
-package eu.builderscoffee.commons.spigot.inventory;
+package eu.builderscoffee.commons.bukkit.inventory;
 
-import eu.builderscoffee.api.gui.ClickableItem;
-import eu.builderscoffee.api.gui.SmartInventory;
-import eu.builderscoffee.api.gui.content.InventoryContents;
-import eu.builderscoffee.api.gui.content.InventoryProvider;
-import eu.builderscoffee.api.gui.content.SlotIterator;
-import eu.builderscoffee.api.gui.content.SlotPos;
-import eu.builderscoffee.api.utils.ItemBuilder;
-import eu.builderscoffee.commons.spigot.Main;
-import eu.builderscoffee.commons.spigot.utils.SkullCreator;
-import eu.builderscoffee.commons.spigot.configuration.MessageConfiguration;
+import eu.builderscoffee.api.bukkit.gui.ClickableItem;
+import eu.builderscoffee.api.bukkit.gui.SmartInventory;
+import eu.builderscoffee.api.bukkit.gui.content.InventoryContents;
+import eu.builderscoffee.api.bukkit.gui.content.InventoryProvider;
+import eu.builderscoffee.api.bukkit.gui.content.SlotIterator;
+import eu.builderscoffee.api.bukkit.gui.content.SlotPos;
+import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
+import eu.builderscoffee.commons.bukkit.Main;
+import eu.builderscoffee.commons.bukkit.utils.SkullCreator;
+import eu.builderscoffee.commons.bukkit.configuration.MessageConfiguration;
 import eu.builderscoffee.commons.common.data.*;
 import io.requery.query.NamedExpression;
 import io.requery.query.Result;

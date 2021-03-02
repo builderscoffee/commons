@@ -1,4 +1,4 @@
-package eu.builderscoffee.commons.data;
+package eu.builderscoffee.commons.common.data;
 
 import io.requery.*;
 import lombok.Getter;

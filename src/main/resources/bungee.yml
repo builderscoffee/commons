@@ -3,3 +3,10 @@ version: 0.1
 description: Commons for Builders Coffe.
 author: Ketsu_sama
 main: eu.builderscoffee.commons.bungeecord.Main
+depends: [ "BuildersCoffeeAPI", "LuckPerms" ]
+commands:
+  staffchat:
+    aliases: [ sc ]
+    description: Envoi un message dans le chat du staff
+  pban:
+    description: Permanent ban

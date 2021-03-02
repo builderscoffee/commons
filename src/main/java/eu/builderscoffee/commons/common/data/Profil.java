@@ -1,6 +1,6 @@
-package eu.builderscoffee.commons.data;
+package eu.builderscoffee.commons.common.data;
 
-import eu.builderscoffee.commons.spigot.Main;
+import eu.builderscoffee.commons.bukkit.Main;
 import io.requery.*;
 import io.requery.query.MutableResult;
 import lombok.Getter;
@@ -58,6 +58,9 @@ public abstract class Profil {
     @OneToMany(mappedBy = "id_profil")
     @Getter
     MutableResult<Cosmetique> cosmetiques;
+
+    @OneToOne @Getter
+    BanEntity ban;
 
     @PreUpdate
     protected void onPreUpdate(){ setUpdateDate(new Timestamp(new Date().getTime())); }

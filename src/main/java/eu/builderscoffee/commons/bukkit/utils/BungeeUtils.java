@@ -1,4 +1,4 @@
-package eu.builderscoffee.commons.spigot.utils;
+package eu.builderscoffee.commons.bukkit.utils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

@@ -1,4 +1,4 @@
-package eu.builderscoffee.commons.data;
+package eu.builderscoffee.commons.common.data;
 
 import io.requery.*;
 import io.requery.query.MutableResult;
@@ -13,14 +13,12 @@ import lombok.ToString;
 @ToString
 public class BuildbattleTheme {
 
-    @Key @Generated @Getter
+    @Key @Generated
     int id;
 
     @Column(nullable = false, unique = true, length = 32)
-    @Getter
     String name;
 
     @OneToMany(mappedBy = "id_theme")
-    @Getter
     MutableResult<BuildbattleEntity> buildbattles;
 }

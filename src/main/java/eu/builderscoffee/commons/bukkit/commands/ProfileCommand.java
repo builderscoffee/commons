@@ -1,8 +1,8 @@
-package eu.builderscoffee.commons.spigot.commands;
+package eu.builderscoffee.commons.bukkit.commands;
 
-import eu.builderscoffee.commons.spigot.Main;
+import eu.builderscoffee.commons.bukkit.Main;
 import eu.builderscoffee.commons.common.data.*;
-import eu.builderscoffee.commons.spigot.inventory.ProfilInventory;
+import eu.builderscoffee.commons.bukkit.inventory.ProfilInventory;
 import lombok.val;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

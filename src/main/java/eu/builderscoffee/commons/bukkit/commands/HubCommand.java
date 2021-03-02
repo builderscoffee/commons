@@ -1,7 +1,7 @@
-package eu.builderscoffee.commons.spigot.commands;
+package eu.builderscoffee.commons.bukkit.commands;
 
-import eu.builderscoffee.commons.spigot.Main;
-import eu.builderscoffee.commons.spigot.utils.BungeeUtils;
+import eu.builderscoffee.commons.bukkit.Main;
+import eu.builderscoffee.commons.bukkit.utils.BungeeUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

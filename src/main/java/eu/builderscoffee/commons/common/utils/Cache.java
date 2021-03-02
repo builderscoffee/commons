@@ -1,4 +1,4 @@
-package eu.builderscoffee.commons.spigot.utils;
+package eu.builderscoffee.commons.common.utils;
 
 import lombok.val;
 

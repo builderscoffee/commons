@@ -1,6 +1,6 @@
-package eu.builderscoffee.commons.spigot.configuration;
+package eu.builderscoffee.commons.bukkit.configuration;
 
-import eu.builderscoffee.api.configuration.annotation.Configuration;
+import eu.builderscoffee.api.common.configuration.annotation.Configuration;
 import lombok.Data;
 import lombok.Getter;
 
@@ -56,6 +56,8 @@ public final class MessageConfiguration {
 
     // BroadcastFormat
     String broadcastFormatMessage = "&8&m----------&8&m------\n\n&6&lBuilders Coffee &8>> &e%message%\n\n&8&m----------&8&m------";
+
+    String serverCloseMessage = "§cLe serveur s'est fermé. Vous avez été déplacé dans le hub.";
 
     //Profil
     // - Skull Item

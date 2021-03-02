@@ -1,7 +1,7 @@
-package eu.builderscoffee.commons.spigot.listeners;
+package eu.builderscoffee.commons.bukkit.listeners;
 
-import eu.builderscoffee.commons.spigot.Main;
-import eu.builderscoffee.commons.spigot.utils.LuckPermsUtils;
+import eu.builderscoffee.commons.bukkit.Main;
+import eu.builderscoffee.commons.common.utils.LuckPermsUtils;
 import lombok.val;
 import net.luckperms.api.query.QueryOptions;
 import org.bukkit.Bukkit;
@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scoreboard.Scoreboard;
@@ -24,7 +25,7 @@ public class PlayerListener implements Listener {
         // Update Profil
         val profil = Main.getInstance().getProfilCache().get(player.getUniqueId().toString());
         if(profil == null) {
-            player.kickPlayer("§cUne erreur est survenue lors du chargement de données.\n§cVeuillez vous reconnecter");
+            player.kickPlayer("Server: §cUne erreur est survenue lors du chargement de données.\n§cVeuillez vous reconnecter");
             return;
         }
 

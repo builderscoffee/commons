@@ -1,15 +1,15 @@
-package eu.builderscoffee.commons.spigot.inventory;
+package eu.builderscoffee.commons.bukkit.inventory;
 
-import eu.builderscoffee.api.gui.ClickableItem;
-import eu.builderscoffee.api.gui.SmartInventory;
-import eu.builderscoffee.api.gui.content.InventoryContents;
-import eu.builderscoffee.api.gui.content.InventoryProvider;
-import eu.builderscoffee.api.gui.content.SlotPos;
-import eu.builderscoffee.api.utils.ItemBuilder;
-import eu.builderscoffee.commons.spigot.packets.BookUtil;
-import eu.builderscoffee.commons.spigot.Main;
-import eu.builderscoffee.commons.spigot.configuration.MessageConfiguration;
-import eu.builderscoffee.commons.spigot.utils.BungeeUtils;
+import eu.builderscoffee.api.bukkit.gui.ClickableItem;
+import eu.builderscoffee.api.bukkit.gui.SmartInventory;
+import eu.builderscoffee.api.bukkit.gui.content.InventoryContents;
+import eu.builderscoffee.api.bukkit.gui.content.InventoryProvider;
+import eu.builderscoffee.api.bukkit.gui.content.SlotPos;
+import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
+import eu.builderscoffee.commons.bukkit.packets.BookUtil;
+import eu.builderscoffee.commons.bukkit.Main;
+import eu.builderscoffee.commons.bukkit.configuration.MessageConfiguration;
+import eu.builderscoffee.commons.bukkit.utils.BungeeUtils;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.chat.ComponentSerializer;

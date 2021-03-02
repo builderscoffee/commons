@@ -1,4 +1,4 @@
-package eu.builderscoffee.commons.spigot.listeners.event;
+package eu.builderscoffee.commons.bukkit.listeners.event;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

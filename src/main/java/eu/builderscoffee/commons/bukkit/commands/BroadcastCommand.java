@@ -1,10 +1,12 @@
-package eu.builderscoffee.commons.spigot.commands;
+package eu.builderscoffee.commons.bukkit.commands;
 
-import eu.builderscoffee.commons.spigot.Main;
+import eu.builderscoffee.commons.bukkit.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 
 public class BroadcastCommand implements CommandExecutor {
 
@@ -12,7 +14,8 @@ public class BroadcastCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if(sender.hasPermission("builderscoffee.broadcast")){
+        if((sender instanceof Player && sender.hasPermission("builderscoffee.broadcast")
+                || sender instanceof ConsoleCommandSender)){
             String message = "";
             for (String arg : args) {
                 message += arg + " ";
