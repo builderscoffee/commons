@@ -22,6 +22,11 @@ public class PBanCommand extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        if(!sender.hasPermission(Main.getInstance().getMessages().getPbanPremission())){
+            sender.sendMessage(TextComponentUtil.decodeColor(Main.getInstance().getMessages().getNoPermission()));
+            return;
+        }
+
         if(args.length < 1){
             sender.sendMessage(TextComponentUtil.decodeColor("§c/pban <player> [time] [reason]"));
             return;

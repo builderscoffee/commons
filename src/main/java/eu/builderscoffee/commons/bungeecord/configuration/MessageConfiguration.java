@@ -14,6 +14,7 @@ public class MessageConfiguration {
     // Permissions
     String globalPermission = "builderscoffee.bungeecord.*";
     String pbanPremission = "builderscoffee.bungeecord.pban";
+    String ppardonPremission = "builderscoffee.bungeecord.ppardon";
     String staffChatPermission = "builderscoffee.bungeecord.staffchat";
     String serverDefaultPermission = "builderscoffee.bungeecord.server.default";
 

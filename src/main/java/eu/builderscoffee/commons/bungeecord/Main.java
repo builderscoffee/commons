@@ -2,6 +2,7 @@ package eu.builderscoffee.commons.bungeecord;
 
 import com.zaxxer.hikari.HikariDataSource;
 import eu.builderscoffee.commons.bungeecord.commands.PBanCommand;
+import eu.builderscoffee.commons.bungeecord.commands.PPardonCommand;
 import eu.builderscoffee.commons.bungeecord.commands.StaffChatCommand;
 import eu.builderscoffee.commons.bungeecord.configuration.MessageConfiguration;
 import eu.builderscoffee.commons.bungeecord.listeners.ConnexionListener;
@@ -94,6 +95,7 @@ public class Main extends Plugin {
 
         // Commands
         getProxy().getPluginManager().registerCommand(this, new PBanCommand());
+        getProxy().getPluginManager().registerCommand(this, new PPardonCommand());
         getProxy().getPluginManager().registerCommand(this, new StaffChatCommand());
 
         // Listeners
