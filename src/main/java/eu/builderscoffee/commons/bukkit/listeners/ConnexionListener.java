@@ -21,8 +21,7 @@ public class ConnexionListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onQuit(PlayerQuitEvent event) {
-        Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(),
-                () -> Bukkit.getServer().getPluginManager().callEvent(new DataStatueEvent.Save(event.getPlayer().getUniqueId().toString())));
+        Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> Bukkit.getServer().getPluginManager().callEvent(new DataStatueEvent.Save(event.getPlayer().getUniqueId().toString())));
     }
 
     @EventHandler

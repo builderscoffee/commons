@@ -12,13 +12,13 @@ public class BroadcastCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if((sender instanceof Player && sender.hasPermission("builderscoffee.broadcast")
-                || sender instanceof ConsoleCommandSender)){
+        if ((sender instanceof Player && sender.hasPermission("builderscoffee.broadcast"))
+                || sender instanceof ConsoleCommandSender) {
             String message = "";
             for (String arg : args) {
                 message += arg + " ";
             }
-            if(message.length() > 3){
+            if (message.length() > 3) {
                 Bukkit.broadcastMessage(Main.getInstance().getMessages().getBroadcastFormatMessage().replace("%message%", message)
                         .replace("&", "§")
                 );

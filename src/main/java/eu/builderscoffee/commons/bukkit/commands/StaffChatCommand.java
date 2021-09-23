@@ -24,10 +24,8 @@ public class StaffChatCommand implements CommandExecutor {
                 for (String arg : args) {
                     message += (message.isEmpty()? "" : " ") + arg;
                 }
-                val tempPrefix = (sender instanceof Player)? LuckPermsUtils.getPrefix(((Player)sender).getUniqueId()) : null;
-                val tempSuffix = (sender instanceof Player)? LuckPermsUtils.getSuffix(((Player)sender).getUniqueId()) : null;
-                val prefix = tempPrefix != null ? tempPrefix : "";
-                val suffix = tempSuffix != null ? tempSuffix : "";
+                val prefix = (sender instanceof Player)? LuckPermsUtils.getPrefixOrEmpty(((Player)sender).getUniqueId()) : "";
+                val suffix = (sender instanceof Player)? LuckPermsUtils.getSuffixOrEmpty(((Player)sender).getUniqueId()) : "";
                 val packet = new StaffChatPacket()
                         .setServerName(Main.getInstance().getRedissonConfig().getClientName())
                         .setPlayerName(sender.getName())

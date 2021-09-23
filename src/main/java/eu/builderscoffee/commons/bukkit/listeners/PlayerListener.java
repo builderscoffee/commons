@@ -21,48 +21,52 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         val player = event.getPlayer();
-        // Update Profil
+
+        // Check si le profil est bien crées
         val profil = Main.getInstance().getProfilCache().get(player.getUniqueId().toString());
         if (profil == null) {
             player.kickPlayer("§6§lBuilders Coffee Server \n§cUne erreur est survenue lors du chargement de données.\n§cVeuillez vous reconnecter");
             return;
         }
 
+        // Mettre à jour le pseudo si ce n'est pas correcte
         if (!player.getName().equalsIgnoreCase(profil.getName()))
             profil.setName(player.getName());
 
-        // Creating teams from LuckyPerms
+        // Suppression des équipes précédemment enregistrés
         Bukkit.getOnlinePlayers().forEach(loopPlayer -> {
             loopPlayer.getScoreboard().getTeams().forEach(team -> team.unregister());
         });
 
+        // Creation des équipes Minecraft pour ordonner dans le tab
         for (Player loopPlayer : Bukkit.getOnlinePlayers()) {
-            final String primaryGroup = LuckPermsUtils.getPrimaryGroup(loopPlayer.getUniqueId());
-            final int weight = Math.abs(1000 - LuckPermsUtils.getWeight(loopPlayer.getUniqueId()));
+            val primaryGroup = LuckPermsUtils.getPrimaryGroup(loopPlayer.getUniqueId());
+            val weight = Math.abs(1000 - LuckPermsUtils.getWeight(loopPlayer.getUniqueId()));
 
             String teamName = primaryGroup.length() > 13 ? weight + primaryGroup.substring(0, 13) : weight + primaryGroup;
             for (int i = 0; i < 3 - String.valueOf(weight).length(); i++) {
                 teamName = "0" + teamName;
             }
 
-            val prefix = (LuckPermsUtils.getPrefix(loopPlayer.getUniqueId()) != null? LuckPermsUtils.getPrefix(loopPlayer.getUniqueId()) : "");
-            val suffix = (LuckPermsUtils.getSuffix(loopPlayer.getUniqueId()) != null? LuckPermsUtils.getSuffix(loopPlayer.getUniqueId()) : "");
-            loopPlayer.setPlayerListName(prefix.replace("&", "§") + loopPlayer.getName() + suffix.replace("&", "§"));
+            val prefix = LuckPermsUtils.getPrefixOrEmpty(loopPlayer.getUniqueId());
+            val suffix = LuckPermsUtils.getSuffixOrEmpty(loopPlayer.getUniqueId());
+            loopPlayer.setPlayerListName((prefix + loopPlayer.getName() + suffix).replace("&", "§"));
 
             for (Player loopPlayer2 : Bukkit.getOnlinePlayers()) {
-                Scoreboard scoreboard = loopPlayer2.getScoreboard();
+                val scoreboard = loopPlayer2.getScoreboard();
                 val team = scoreboard.getTeam(teamName) == null ? scoreboard.registerNewTeam(teamName) : scoreboard.getTeam(teamName);
 
                 team.addPlayer(loopPlayer);
             }
         }
 
-        // Join message
+        // Message de join
         if (LuckPermsUtils.getWeight(player.getUniqueId()) > Main.getInstance().getMessages().getShowJoinMessageWeight()) {
-            event.setJoinMessage(Main.getInstance().getMessages().getOnJoinMessage().replace("%player%", player.getName())
-                    .replace("%prefix%", (LuckPermsUtils.getPrefix(player.getUniqueId()) != null? LuckPermsUtils.getPrefix(player.getUniqueId()) : ""))
-                    .replace("%suffix%", (LuckPermsUtils.getSuffix(player.getUniqueId()) != null? LuckPermsUtils.getSuffix(player.getUniqueId()) : ""))
-                    .replace("&", "§"));
+            event.setJoinMessage(Main.getInstance().getMessages().getOnJoinMessage()
+                .replace("%player%", player.getName())
+                .replace("%prefix%", LuckPermsUtils.getPrefixOrEmpty(player.getUniqueId()))
+                .replace("%suffix%", LuckPermsUtils.getSuffixOrEmpty(player.getUniqueId()))
+                .replace("&", "§"));
         } else {
             event.setJoinMessage(null);
         }
@@ -74,20 +78,21 @@ public class PlayerListener implements Listener {
     public void onPlayerQuit(PlayerQuitEvent event) {
         val player = event.getPlayer();
 
+        // Message de leave
         if (LuckPermsUtils.getWeight(player.getUniqueId()) > Main.getInstance().getMessages().getShowQuitMessageWeight()) {
-            event.setQuitMessage(Main.getInstance().getMessages().getOnQuitMessage().replace("&", "§")
-                    .replace("%player%", player.getName()));
+            event.setQuitMessage(Main.getInstance().getMessages().getOnQuitMessage()
+                .replace("&", "§")
+                .replace("%player%", player.getName()));
         } else {
             event.setQuitMessage(null);
         }
 
+        // Supression de l'équipe chez le joueur
         player.getScoreboard().getTeams().forEach(team -> {
             boolean online = false;
-            for (OfflinePlayer offlinePlayer : team.getPlayers()) {
-                if (offlinePlayer.isOnline()) {
+            for (OfflinePlayer offlinePlayer : team.getPlayers())
+                if (offlinePlayer.isOnline())
                     online = true;
-                }
-            }
             if (!online)
                 team.unregister();
         });
@@ -97,33 +102,31 @@ public class PlayerListener implements Listener {
     public void onChat(AsyncPlayerChatEvent event) {
         val player = event.getPlayer();
         val message = event.getMessage();
-        val tempPrefix = LuckPermsUtils.getPrefix(player.getUniqueId());
-        val tempSuffix = LuckPermsUtils.getSuffix(player.getUniqueId());
-        val prefix = tempPrefix != null ? tempPrefix : "";
-        val suffix = tempSuffix != null ? tempSuffix : "";
+        val prefix = LuckPermsUtils.getPrefixOrEmpty(player.getUniqueId());
+        val suffix = LuckPermsUtils.getSuffixOrEmpty(player.getUniqueId());
 
         // StaffChat
-        if(Main.getInstance().getStaffchatPlayers().contains(event.getPlayer().getUniqueId())){
+        if (Main.getInstance().getStaffchatPlayers().contains(event.getPlayer().getUniqueId())) {
             val packet = new StaffChatPacket()
-                    .setServerName(Main.getInstance().getRedissonConfig().getClientName())
-                    .setPlayerName(player.getName())
-                    .setMessage(Main.getInstance().getMessages().getStaffChatFormatMessage()
-                            .replace("%player%", player.getName())
-                            .replace("%prefix%", prefix)
-                            .replace("%suffix%", suffix)
-                            .replace("%message%", message)
-                            .replace("&", "§"));
+                .setServerName(Main.getInstance().getRedissonConfig().getClientName())
+                .setPlayerName(player.getName())
+                .setMessage(Main.getInstance().getMessages().getStaffChatFormatMessage()
+                    .replace("%player%", player.getName())
+                    .replace("%prefix%", prefix)
+                    .replace("%suffix%", suffix)
+                    .replace("%message%", message)
+                    .replace("&", "§"));
             Redis.getTopic(CommonTopics.STAFFCHAT).publish(packet.serialize());
             event.setCancelled(true);
         }
         // Normal chat
         else {
             event.setFormat(Main.getInstance().getMessages().getChatFormatMessage()
-                    .replace("%player%", player.getName())
-                    .replace("%prefix%", prefix)
-                    .replace("%suffix%", suffix)
-                    .replace("%message%", message)
-                    .replace("&", "§"));
+                .replace("%player%", player.getName())
+                .replace("%prefix%", prefix)
+                .replace("%suffix%", suffix)
+                .replace("%message%", message)
+                .replace("&", "§"));
         }
     }
 }
