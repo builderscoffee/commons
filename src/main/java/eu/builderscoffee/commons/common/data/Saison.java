@@ -1,9 +1,10 @@
 package eu.builderscoffee.commons.common.data;
 
+import eu.builderscoffee.commons.bungeecord.annotations.EntityRefference;
+import eu.builderscoffee.commons.bungeecord.annotations.Listable;
 import io.requery.*;
 import io.requery.query.MutableResult;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
 import java.sql.Timestamp;
@@ -14,18 +15,18 @@ import java.sql.Timestamp;
 @Entity
 @Table(name = "saisons")
 @ToString
+@EntityRefference(entityClass = SaisonEntity.class)
+@Listable(defaultVariableName = {"id"})
 public class Saison {
 
     @Column(nullable = false, unique = true, length = 11)
-    @Key @Generated @Getter
+    @Key @Generated
     int id;
 
     @Column(name = "begin_date", nullable = false, value = "CURRENT_TIMESTAMP")
-    @Getter @Setter
     Timestamp beginDate;
 
     @Column(name = "end_date", nullable = false, value = "CURRENT_TIMESTAMP")
-    @Getter @Setter
     Timestamp endDate;
 
     @OneToMany(mappedBy = "id_saison")

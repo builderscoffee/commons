@@ -11,13 +11,13 @@ import net.md_5.bungee.api.plugin.Command;
 public class StaffChatCommand extends Command {
 
     public StaffChatCommand() {
-        super("staffchat", Main.getInstance().getMessages().getStaffChatPermission(), "sc");
+        super("staffchat", Main.getInstance().getPermissions().getStaffChatPermission(), "sc");
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if(sender.hasPermission(Main.getInstance().getMessages().getStaffChatPermission())
-                || sender.hasPermission(Main.getInstance().getMessages().getGlobalPermission())){
+        if(sender.hasPermission(Main.getInstance().getPermissions().getStaffChatPermission())
+                || sender.hasPermission(Main.getInstance().getPermissions().getGlobalPermission())){
             if(args.length > 0){
                 // Get message to String
                 String message = "";
@@ -33,8 +33,8 @@ public class StaffChatCommand extends Command {
 
                 // Send message to staff & Console
                 ProxyServer.getInstance().getPlayers().stream()
-                        .filter(player -> player.hasPermission(Main.getInstance().getMessages().getStaffChatPermission())
-                                || player.hasPermission(Main.getInstance().getMessages().getGlobalPermission()))
+                        .filter(player -> player.hasPermission(Main.getInstance().getPermissions().getStaffChatPermission())
+                                || player.hasPermission(Main.getInstance().getPermissions().getGlobalPermission()))
                         .forEach(player -> {
                             player.sendMessage(TextComponentUtil.decodeColor(line));
                         });

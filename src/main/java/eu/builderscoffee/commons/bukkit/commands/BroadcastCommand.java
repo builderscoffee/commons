@@ -10,8 +10,6 @@ import org.bukkit.entity.Player;
 
 public class BroadcastCommand implements CommandExecutor {
 
-    private Main main = Main.getInstance();
-
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if((sender instanceof Player && sender.hasPermission("builderscoffee.broadcast")
@@ -21,7 +19,7 @@ public class BroadcastCommand implements CommandExecutor {
                 message += arg + " ";
             }
             if(message.length() > 3){
-                Bukkit.broadcastMessage(main.getMessages().getBroadcastFormatMessage().replace("%message%", message)
+                Bukkit.broadcastMessage(Main.getInstance().getMessages().getBroadcastFormatMessage().replace("%message%", message)
                         .replace("&", "§")
                 );
                 return false;

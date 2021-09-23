@@ -48,9 +48,9 @@ public class NoteInventory implements InventoryProvider {
     final String TOP_20 = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOGEzMTRiNjVkMzk1OWVmMTViOGEzNjQzNmZkYzlhZTgwNGYzODFiNDc4ZGViYzc3OGM0MGZmYmIwMmZiY2RkZiJ9fX0=";
     final String OTHER = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMmZhNzY0YjNjMWQ0NjJmODEyNDQ3OGZmNTQzYzc2MzNmYTE5YmFmOTkxM2VlMjI4NTEzZTgxYTM2MzNkIn19fQ==";
 
-    final ClickableItem blackGlasses = ClickableItem.empty(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 15));
-    final ClickableItem greyGlasses = ClickableItem.empty(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 7));
-    final ClickableItem lightgreyGlasses = ClickableItem.empty(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 8));
+    private static final ClickableItem blackGlasses = ClickableItem.empty(new ItemBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 15)).setName("§a").build());
+    private static final ClickableItem greyGlasses = ClickableItem.empty(new ItemBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 7)).setName("§a").build());
+    private static final ClickableItem lightgreyGlasses = ClickableItem.empty(new ItemBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 8)).setName("§a").build());
 
     final ItemStack limeSkull = SkullCreator.itemFromBase64(LIME);
     final ItemStack limeConcrete = new ItemStack(Material.CONCRETE, 1, (short) 5);
@@ -104,111 +104,110 @@ public class NoteInventory implements InventoryProvider {
         contents.set(SlotPos.of(0, 4), ClickableItem.empty(bbSkull));
 
         // Position
-        Result<Tuple> query = storeNotes
+        try(Result<Tuple> query = storeNotes
                 .select(
                         NamedExpression.ofInteger("id_profil"),
                         NamedExpression.ofInteger("fun + amenagement + beaute + creativite + folklore").sum().as("total"))
                 .from(NoteEntity.class)
                 .where(NoteEntity.BUILDBATTLE.eq(buildbattleEntity))
-                .and(NoteEntity.SAISON.eq(buildbattleEntity.getSaison()))
                 .groupBy(NoteEntity.PROFIL)
                 .orderBy(NamedExpression.ofInteger("total").desc())
-                .get();
+                .get()){
 
-        int position = 0;
-        for (Tuple tuple : query) {
-            position++;
-            final int id = tuple.get("id_profil");
-            if(profilEntity.getId() == id){
-                break;
+            int position = 0;
+            for (Tuple tuple : query) {
+                position++;
+                final int id = tuple.get("id_profil");
+                if(profilEntity.getId() == id){
+                    break;
+                }
             }
-        }
 
-        ItemStack itPosition;
-        if(position == 1){
-            itPosition = new ItemBuilder(SkullCreator.itemFromBase64(FIRST))
-                    .setName("1er").build();
-        }
-        else if(position == 2){
-            itPosition = new ItemBuilder(SkullCreator.itemFromBase64(SECOND))
-                    .setName("2ieme").build();
-        }
-        else if(position == 3){
-            itPosition = new ItemBuilder(SkullCreator.itemFromBase64(THIRD))
-                    .setName("3ieme").build();
-        }
-        else if(position <= 10){
-            itPosition = new ItemBuilder(SkullCreator.itemFromBase64(TOP_10))
-                    .setName("Top 10").build();
-        }
-        else if(position <= 20){
-            itPosition = new ItemBuilder(SkullCreator.itemFromBase64(TOP_20))
-                    .setName("Top 20").build();
-        }
-        else {
-            itPosition = new ItemBuilder(SkullCreator.itemFromBase64(OTHER))
-                    .setName("Non classé").build();
-        }
-        contents.set(SlotPos.of(1, 4), ClickableItem.empty(itPosition));
+            ItemStack itPosition;
+            if(position == 1){
+                itPosition = new ItemBuilder(SkullCreator.itemFromBase64(FIRST))
+                        .setName("1er").build();
+            }
+            else if(position == 2){
+                itPosition = new ItemBuilder(SkullCreator.itemFromBase64(SECOND))
+                        .setName("2ieme").build();
+            }
+            else if(position == 3){
+                itPosition = new ItemBuilder(SkullCreator.itemFromBase64(THIRD))
+                        .setName("3ieme").build();
+            }
+            else if(position <= 10){
+                itPosition = new ItemBuilder(SkullCreator.itemFromBase64(TOP_10))
+                        .setName("Top 10").build();
+            }
+            else if(position <= 20){
+                itPosition = new ItemBuilder(SkullCreator.itemFromBase64(TOP_20))
+                        .setName("Top 20").build();
+            }
+            else {
+                itPosition = new ItemBuilder(SkullCreator.itemFromBase64(OTHER))
+                        .setName("Non classé").build();
+            }
+            contents.set(SlotPos.of(1, 4), ClickableItem.empty(itPosition));
 
-        // Jury
-        List<NoteEntity> notes = new ArrayList<>();
+            // Jury
+            List<NoteEntity> notes = new ArrayList<>();
 
-        profilEntity.getNotes().stream()
-                .filter(note -> note.getBuildbattle().getId() == buildbattleEntity.getId())
-                .filter(note -> note.getSaison().getId() == buildbattleEntity.getSaison().getId())
-                .forEach(note -> notes.add(note));
+            profilEntity.getNotes().stream()
+                    .filter(note -> note.getBuildbattle().getId() == buildbattleEntity.getId())
+                    .forEach(note -> notes.add(note));
 
 
-        int beaute = 0,creativite = 0,amenagement = 0,folkore = 0,fun = 0;
-        ClickableItem[] juryItems = new ClickableItem[notes.size()];
-        for(int i = 0; i < juryItems.length; i++){
-            final NoteEntity note = (NoteEntity) notes.get(i);
-            final ProfilEntity jury = note.getJury();
-            beaute += note.getBeaute();
-            creativite += note.getCreativite();
-            amenagement += note.getAmenagement();
-            folkore += note.getFolklore();
-            fun += note.getFun();
-            final int total = note.getAmenagement() + note.getBeaute() + note.getCreativite() + note.getFolklore() + note.getFun();
-            juryItems[i] = ClickableItem.empty(new ItemBuilder(SkullCreator.itemFromUuid(UUID.fromString(jury.getUniqueId())))
-                    .setName("§6" + jury.getName())
-                    .addLoreLine("§aAménagement §8/ §aFinalité: §f" + note.getAmenagement())
-                    .addLoreLine("§aBeauté §8/ §aTechnicité: §f" + note.getBeaute())
-                    .addLoreLine("§aCreativité §8/ §aOriginalité: §f" + note.getCreativite())
-                    .addLoreLine("§aFolklore: §f" + note.getFolklore())
-                    .addLoreLine("§aFun (bonus): §f" + note.getFun())
+            int beaute = 0,creativite = 0,amenagement = 0,folkore = 0,fun = 0;
+            ClickableItem[] juryItems = new ClickableItem[notes.size()];
+            for(int i = 0; i < juryItems.length; i++){
+                final NoteEntity note = (NoteEntity) notes.get(i);
+                final ProfilEntity jury = note.getJury();
+                beaute += note.getBeaute();
+                creativite += note.getCreativite();
+                amenagement += note.getAmenagement();
+                folkore += note.getFolklore();
+                fun += note.getFun();
+                final int total = note.getAmenagement() + note.getBeaute() + note.getCreativite() + note.getFolklore() + note.getFun();
+                juryItems[i] = ClickableItem.empty(new ItemBuilder(SkullCreator.itemFromUuid(UUID.fromString(jury.getUniqueId())))
+                        .setName("§6" + jury.getName())
+                        .addLoreLine("§aAménagement §8/ §aFinalité: §f" + note.getAmenagement())
+                        .addLoreLine("§aBeauté §8/ §aTechnicité: §f" + note.getBeaute())
+                        .addLoreLine("§aCreativité §8/ §aOriginalité: §f" + note.getCreativite())
+                        .addLoreLine("§aFolklore: §f" + note.getFolklore())
+                        .addLoreLine("§aFun (bonus): §f" + note.getFun())
+                        .addLoreLine("§a")
+                        .addLoreLine("§6Total: §f" + total)
+                        .build());
+            }
+
+            page.setItems(juryItems);
+
+            page.setItemsPerPage(5);
+            page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, SlotPos.of(3, 2)));
+
+            int total = beaute + creativite + amenagement + folkore + fun;
+            // Résultat Général
+            val itGlobalScore = new ItemBuilder(SkullCreator.itemFromBase64(GLOBE))
+                    .setName("§6" + messages.getProfilGlobalResult().replace("&", "§"))
+                    .addLoreLine("§aAménagement §8/ §aFinalité: §f" + (Double.valueOf(amenagement) / (juryItems.length != 0? juryItems.length : 1)))
+                    .addLoreLine("§aBeauté §8/ §aTechnicité: §f" + (Double.valueOf(beaute) / (juryItems.length != 0? juryItems.length : 1)))
+                    .addLoreLine("§aCreativité §8/ §aOriginalité: §f" + (Double.valueOf(creativite) / (juryItems.length != 0? juryItems.length : 1)))
+                    .addLoreLine("§aFolklore: §f" + (Double.valueOf(folkore) / (juryItems.length != 0? juryItems.length : 1)))
+                    .addLoreLine("§aFun (bonus): §f" + (Double.valueOf(fun) / (juryItems.length != 0? juryItems.length : 1)))
                     .addLoreLine("§a")
-                    .addLoreLine("§6Total: §f" + total)
-                    .build());
+                    .addLoreLine("§6Total: §f" + (Double.valueOf(total) / (juryItems.length != 0? juryItems.length : 1)))
+                    .build();
+            contents.set(4, 4, ClickableItem.empty(itGlobalScore));
+
+            // Retour
+            contents.set(5, 0, ClickableItem.of(new ItemBuilder(Material.ARROW).setName(messages.getRetourItem().replace("&", "§")).build(),
+                    e -> new SaisonInventory(profilEntity, buildbattleEntity.getSaison()).INVENTORY.open(player)));
+
+            // Quitter
+            contents.set(5, 4, ClickableItem.of(new ItemBuilder(Material.BARRIER).setName(messages.getCloseItem().replace("&", "§")).build(),
+                    e -> contents.inventory().close(player)));
         }
-
-        page.setItems(juryItems);
-
-        page.setItemsPerPage(5);
-        page.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, SlotPos.of(3, 2)));
-
-        int total = beaute + creativite + amenagement + folkore + fun;
-        // Résultat Général
-        val itGlobalScore = new ItemBuilder(SkullCreator.itemFromBase64(GLOBE))
-                .setName("§6" + messages.getProfilGlobalResult().replace("&", "§"))
-                .addLoreLine("§aAménagement §8/ §aFinalité: §f" + amenagement)
-                .addLoreLine("§aBeauté §8/ §aTechnicité: §f" + beaute)
-                .addLoreLine("§aCreativité §8/ §aOriginalité: §f" + creativite)
-                .addLoreLine("§aFolklore: §f" + folkore)
-                .addLoreLine("§aFun (bonus): §f" + fun)
-                .addLoreLine("§a")
-                .addLoreLine("§6Total: §f" + total)
-                .build();
-        contents.set(4, 4, ClickableItem.empty(itGlobalScore));
-
-        // Retour
-        contents.set(5, 0, ClickableItem.of(new ItemBuilder(Material.ARROW).setName(messages.getRetourItem().replace("&", "§")).build(),
-                e -> new SaisonInventory(profilEntity, buildbattleEntity.getSaison()).INVENTORY.open(player)));
-
-        // Quitter
-        contents.set(5, 4, ClickableItem.of(new ItemBuilder(Material.BARRIER).setName(messages.getCloseItem().replace("&", "§")).build(),
-                e -> contents.inventory().close(player)));
     }
 
     @Override

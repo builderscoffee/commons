@@ -1,9 +1,10 @@
 package eu.builderscoffee.commons.common.data;
 
 import eu.builderscoffee.commons.bukkit.Main;
+import eu.builderscoffee.commons.bungeecord.annotations.EntityRefference;
+import eu.builderscoffee.commons.bungeecord.annotations.Listable;
 import io.requery.*;
 import io.requery.query.MutableResult;
-import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.val;
@@ -17,50 +18,50 @@ import java.util.Date;
 @Entity
 @Table(name = "profils")
 @ToString
+@EntityRefference(entityClass = ProfilEntity.class)
+@Listable(defaultVariableName = {"id", "name"})
 public abstract class Profil {
 
-    @Column(nullable = false, unique = true, length = 11)
-    @Key @Generated @Getter
+    @Key @Generated
     int id;
 
     /**
      * L'UUID du joueur permettant de la reconnaitre
      */
     @Column(name = "uuid", nullable = false, unique = true, length = 36)
-    @Getter
     String uniqueId;
 
     /**
      * Le pseudo du joueur pouvant changer
      */
-    @Column(nullable = false, length = 16)
-    @Getter @Setter
+    @Column(length = 16)
     String name = "";
 
     /**
      * La date de creation ne pouvant changer
      */
-    @Column(name = "creation_date", nullable = false, value = "CURRENT_TIMESTAMP")
-    @Getter @Setter
+    @Column(name = "creation_date", value = "CURRENT_TIMESTAMP")
+    @Setter
     Timestamp creationDate;
 
     /**
      * La date de creation ne pouvant changer
      */
-    @Column(name = "update_date", nullable = false, value = "CURRENT_TIMESTAMP")
-    @Getter @Setter
+    @Column(name = "update_date", value = "CURRENT_TIMESTAMP")
+    @Setter
     Timestamp updateDate;
 
     @OneToMany(mappedBy = "id_profil")
-    @Getter
     MutableResult<NoteEntity> notes;
 
     @OneToMany(mappedBy = "id_profil")
-    @Getter
     MutableResult<Cosmetique> cosmetiques;
 
-    @OneToOne @Getter
+    @OneToOne
     BanEntity ban;
+
+    @PreInsert
+    protected void onPreInsert(){ setCreationDate(new Timestamp(new Date().getTime())); }
 
     @PreUpdate
     protected void onPreUpdate(){ setUpdateDate(new Timestamp(new Date().getTime())); }
@@ -76,6 +77,8 @@ public abstract class Profil {
         if(cached == null) {
             val profil = new ProfilEntity();
             profil.setUniqueId(uniqueId);
+            profil.setUpdateDate(new Timestamp(new Date().getTime()));
+            profil.setCreationDate(new Timestamp(new Date().getTime()));
             return profil;
         }
         return cached;

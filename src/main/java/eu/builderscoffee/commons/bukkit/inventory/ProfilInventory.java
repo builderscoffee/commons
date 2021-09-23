@@ -17,6 +17,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -32,9 +33,9 @@ public class ProfilInventory implements InventoryProvider {
 
     private final ProfilEntity profilEntity;
 
-    private static final ClickableItem blackGlasses = ClickableItem.empty(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 15));
-    private static final ClickableItem greyGlasses = ClickableItem.empty(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 7));
-    private static final ClickableItem lightgreyGlasses = ClickableItem.empty(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 8));
+    private static final ClickableItem blackGlasses = ClickableItem.empty(new ItemBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 15)).setName("§a").build());
+    private static final ClickableItem greyGlasses = ClickableItem.empty(new ItemBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 7)).setName("§a").build());
+    private static final ClickableItem lightgreyGlasses = ClickableItem.empty(new ItemBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 8)).setName("§a").build());
 
     private static final String GLOBE = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzEwNzdlODcxZDkxYjdmZWEyNGIxZjY4MDhlMDg4ZDdiODQyZGE1MTZmNjM1NmNlOTE2MTM0OTQ0MzFhZThhMCJ9fX0=";
 
@@ -74,10 +75,23 @@ public class ProfilInventory implements InventoryProvider {
         contents.set(SlotPos.of(5, 6), greyGlasses);
 
         // Skull lore information
-        val participations = profilEntity.getNotes().stream()
-                .filter(distinctByKeys(NoteEntity::getSaison, NoteEntity::getBuildbattle))
-                .count();
-        val primaryGroup = LuckPermsUtils.getPrimaryGroup(player).substring(0, 1).toUpperCase() + LuckPermsUtils.getPrimaryGroup(player).substring(1);
+        //val participations = profilEntity.getNotes().stream().count();
+        val hs = new HashSet<Integer>();
+        profilEntity.getNotes().stream().forEach(note -> hs.add(note.getBuildbattle().getId()));
+        val participations = hs.size();
+        val lpu = LuckPermsUtils.getUser(UUID.fromString(profilEntity.getUniqueId()));
+        val primaryGroup = lpu != null? lpu.getPrimaryGroup().substring(0, 1).toUpperCase() + lpu.getPrimaryGroup().substring(1).toLowerCase()
+                : "Inconnue";
+/*
+SELECT sub.id_profil, `total`
+FROM (SELECT DISTINCT n.id_buildbattle, n.id_profil, SUM(n.fun + n.amenagement + n.beaute + n.creativite + n.folklore) as `total`
+    FROM notes n
+    GROUP BY n.id_buildbattle, n.id_profil
+    ORDER BY `total` DESC) sub
+GROUP BY sub.id_buildbattle
+ */
+        val victoires = 0;
+
 
         // Profile skull builder
         val ibSkull = new ItemBuilder(SkullCreator.itemFromUuid(UUID.fromString(profilEntity.getUniqueId())))
@@ -101,7 +115,6 @@ public class ProfilInventory implements InventoryProvider {
 
                     // Store played saisons
                     profilEntity.getNotes().stream()
-                            .filter(distinctByKeys(NoteEntity::getSaison, NoteEntity::getBuildbattle))
                             .forEach(note -> buildbattles.add(note.getBuildbattle()));
 
 
@@ -122,11 +135,24 @@ public class ProfilInventory implements InventoryProvider {
                 }));
 
         // Derniers Résultats
-        val saisons = new ItemBuilder(Material.SKULL_ITEM, 1, (short) 3).setName(messages.getProfilSaisons().replace("&", "§")).build();
-        SkullCreator.itemWithBase64(saisons, GLOBE);
-        contents.set(3, 5, ClickableItem.of(saisons,
+        val saisonsStore = main.getSaisonsStore();
+        contents.set(3, 5, ClickableItem.of(new ItemBuilder(SkullCreator.itemFromBase64(GLOBE)).setName(messages.getProfilSaison().replace("&", "§")).build(),
                 e -> {
-                    new SaisonsInventory(profilEntity).INVENTORY.open(player);
+                    // Get saisons
+                    try(val saisonsEntities = saisonsStore.select(SaisonEntity.class)
+                            .where(SaisonEntity.BEGIN_DATE.lessThan(new Timestamp(new Date().getTime())))
+                            .and(SaisonEntity.END_DATE.greaterThan(new Timestamp(new Date().getTime())))
+                            .orderBy(SaisonEntity.BEGIN_DATE.asc())
+                            .get()) {
+
+                        if(saisonsEntities.stream().count() > 0){
+                            // Open invetory of the last saison played
+                            new SaisonInventory(profilEntity, saisonsEntities.toList().get(0)).INVENTORY.open(player);
+                        }
+                        else{
+                            player.sendMessage(messages.getNoSeasonStarted().replace("&", "§"));
+                        }
+                    }
                 }));
 
         // Quitter

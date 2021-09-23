@@ -1,7 +1,8 @@
 package eu.builderscoffee.commons.common.data;
 
+import eu.builderscoffee.commons.bungeecord.annotations.EntityRefference;
+import eu.builderscoffee.commons.bungeecord.annotations.Listable;
 import io.requery.*;
-import lombok.Getter;
 import lombok.ToString;
 
 /***
@@ -10,6 +11,8 @@ import lombok.ToString;
 @Entity
 @Table(name = "cosmetiques")
 @ToString
+@EntityRefference(entityClass = CosmetiqueEntity.class)
+@Listable(defaultVariableName = {"id_profil", "name"})
 public class Cosmetique {
 
     @Column(name = "id_profil")
@@ -18,6 +21,6 @@ public class Cosmetique {
     ProfilEntity profil;
 
     @Column(length = 32)
-    @Key @Getter
+    @Key
     String name;
 }

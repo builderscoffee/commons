@@ -1,8 +1,8 @@
 package eu.builderscoffee.commons.common.data;
 
+import eu.builderscoffee.commons.bungeecord.annotations.EntityRefference;
+import eu.builderscoffee.commons.bungeecord.annotations.Listable;
 import io.requery.*;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
 import java.sql.Timestamp;
@@ -13,31 +13,34 @@ import java.sql.Timestamp;
 @Entity
 @Table(name = "buildbattles")
 @ToString
+@EntityRefference(entityClass = BuildbattleEntity.class)
+@Listable(defaultVariableName = {"id", "id_saison"})
 public class Buildbattle {
 
-    @Key @Generated @Getter
+    @Key @Generated
     int id;
+
+    @Column(nullable = false)
+    int num;
 
     @Column(name = "id_saison")
     @ForeignKey(update = ReferentialAction.CASCADE, referencedColumn = "id")
-    @ManyToOne @Key
+    @ManyToOne
     protected SaisonEntity saison;
 
     @Column(name = "id_type", nullable = false)
     @ForeignKey(update = ReferentialAction.CASCADE, referencedColumn = "id")
-    @ManyToOne @Getter
+    @ManyToOne
     BuildbattleTypeEntity type;
 
     @Column(name = "id_theme", nullable = false)
     @ForeignKey(update = ReferentialAction.CASCADE, referencedColumn = "id")
-    @ManyToOne @Getter
+    @ManyToOne
     BuildbattleThemeEntity theme;
 
     @Column(nullable = false)
-    @Getter @Setter
     Timestamp date;
 
     @Column(nullable = false)
-    @Getter @Setter
     boolean step;
 }
