@@ -3,16 +3,20 @@ package eu.builderscoffee.commons.bukkit;
 import com.zaxxer.hikari.HikariDataSource;
 import eu.builderscoffee.api.bukkit.gui.InventoryManager;
 import eu.builderscoffee.api.bukkit.utils.Plugins;
+import eu.builderscoffee.api.common.redisson.Redis;
+import eu.builderscoffee.api.common.redisson.RedisCredentials;
+import eu.builderscoffee.commons.bukkit.commands.*;
+import eu.builderscoffee.commons.bukkit.listeners.redisson.StaffChatListener;
 import eu.builderscoffee.commons.common.Models;
+import eu.builderscoffee.commons.common.configuration.RedisConfig;
 import eu.builderscoffee.commons.common.data.*;
-import eu.builderscoffee.commons.bukkit.commands.HubCommand;
-import eu.builderscoffee.commons.bukkit.commands.NetworkCommands;
-import eu.builderscoffee.commons.bukkit.commands.ProfileCommand;
 import eu.builderscoffee.commons.bukkit.listeners.ConnexionListener;
 import eu.builderscoffee.commons.bukkit.configuration.MessageConfiguration;
 import eu.builderscoffee.commons.common.configuration.SQLCredentials;
 import eu.builderscoffee.commons.bukkit.listeners.PlayerListener;
+import eu.builderscoffee.commons.common.redisson.topics.CommonTopics;
 import eu.builderscoffee.commons.common.utils.Cache;
+import eu.builderscoffee.commons.common.utils.LuckPermsUtils;
 import io.requery.sql.EntityDataStore;
 import io.requery.sql.SchemaModifier;
 import io.requery.sql.TableCreationMode;
@@ -23,7 +27,11 @@ import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
+import java.util.UUID;
+
 import static eu.builderscoffee.api.bukkit.configuration.Configurations.readOrCreateConfiguration;
+import static eu.builderscoffee.commons.bukkit.commands.HelpCommand.registerCommand;
 
 public class Main extends JavaPlugin {
 
@@ -38,7 +46,7 @@ public class Main extends JavaPlugin {
     private SQLCredentials sqlCredentials;
 
     @Getter
-    private LuckPerms luckyPerms;
+    private RedisConfig redissonConfig;
 
     @Getter
     private InventoryManager inventoryManager;
@@ -70,18 +78,36 @@ public class Main extends JavaPlugin {
     @Getter
     private Cache<String, ProfilEntity> profilCache = new Cache<>();
 
+    @Getter
+    private ArrayList<UUID> staffchatPlayers = new ArrayList<>();
+
+    @SneakyThrows
     @Override
     public void onEnable() {
         // Instance
         instance = this;
 
-        // Service Provider
+        // Service Provider LuckPerms
+        // TODO Test with only LuckPermsProvider.get()
         val provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
-        if (provider != null) luckyPerms = provider.getProvider();
+        if (provider != null) LuckPermsUtils.init(provider.getProvider());
 
         // Configuration
         messages = readOrCreateConfiguration(this, MessageConfiguration.class);
         sqlCredentials = readOrCreateConfiguration(this, SQLCredentials.class);
+        redissonConfig = readOrCreateConfiguration(this, RedisConfig.class);
+
+        // Initialize Redisson
+        val redisCredentials = new RedisCredentials()
+                .setClientName(redissonConfig.getClientName())
+                .setIp(redissonConfig.getIp())
+                .setPassword(redissonConfig.getPassword())
+                .setPort(redissonConfig.getPort());
+
+        Redis.Initialize(redisCredentials, 0, 0);
+
+        // Redisson Listeners
+        Redis.subscribe(CommonTopics.STAFFCHAT, new StaffChatListener());
 
         // Inventory Api
         inventoryManager = new InventoryManager(this);
@@ -109,11 +135,17 @@ public class Main extends JavaPlugin {
         this.getCommand("hub").setExecutor(new HubCommand());
         this.getCommand("lobby").setExecutor(new HubCommand());
         this.getCommand("profil").setExecutor(new ProfileCommand());
+        this.getCommand("help").setExecutor(new HelpCommand());
+        this.getCommand("broadcast").setExecutor(new BroadcastCommand());
+        this.getCommand("staffchat").setExecutor(new StaffChatCommand());
+
+        registerCommand(HelpCommand.class);
     }
 
     @SneakyThrows
     @Override
     public void onDisable() {
         hikari.close();
+        Redis.close();
     }
 }

@@ -1,30 +1,32 @@
 package eu.builderscoffee.commons.common.data;
 
 import io.requery.*;
+import io.requery.query.MutableResult;
 import lombok.ToString;
 
 import java.sql.Timestamp;
 
 /***
- * {@link Buildbattle} est l'objet utilisé pour stocker les saisons.
+ * {@link CupRound} est l'objet utilisé pour stocker des manches des cups.
  */
 @Entity
-@Table(name = "buildbattles")
+@Table(name = "cup_rounds")
 @ToString
-public abstract class Buildbattle {
+public abstract class CupRound {
 
     /* Columns */
 
-    @Key @Generated
+    @Key
+    @Generated
     int id;
 
-    @Column(nullable = false)
-    int num;
-
-    @Column(name = "id_saison")
+    @Column(name = "id_cup", nullable = false)
     @ForeignKey(update = ReferentialAction.CASCADE, referencedColumn = "id")
     @ManyToOne
-    protected SaisonEntity saison;
+    CupEntity cup;
+
+    @Column(nullable = false)
+    Timestamp date;
 
     @Column(name = "id_type", nullable = false)
     @ForeignKey(update = ReferentialAction.CASCADE, referencedColumn = "id")
@@ -36,9 +38,11 @@ public abstract class Buildbattle {
     @ManyToOne
     BuildbattleThemeEntity theme;
 
-    @Column(nullable = false)
-    Timestamp date;
+    @Column
+    int stage;
 
-    @Column(nullable = false)
-    boolean step;
+    /* Links to other entity */
+
+    @OneToMany(mappedBy = "id_round")
+    MutableResult<CupNoteEntity> notes;
 }

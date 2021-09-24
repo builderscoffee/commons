@@ -1,7 +1,6 @@
 package eu.builderscoffee.commons.common.data;
 
 import io.requery.*;
-import lombok.Getter;
 import lombok.ToString;
 
 /***
@@ -10,7 +9,9 @@ import lombok.ToString;
 @Entity
 @Table(name = "cosmetiques")
 @ToString
-public class Cosmetique {
+public abstract class Cosmetique {
+
+    /* Columns */
 
     @Column(name = "id_profil")
     @ForeignKey(update = ReferentialAction.CASCADE, referencedColumn = "id")
@@ -18,6 +19,6 @@ public class Cosmetique {
     ProfilEntity profil;
 
     @Column(length = 32)
-    @Key @Getter
+    @Key
     String name;
 }

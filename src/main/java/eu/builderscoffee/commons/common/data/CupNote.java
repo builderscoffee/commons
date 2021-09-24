@@ -1,36 +1,38 @@
 package eu.builderscoffee.commons.common.data;
 
 import io.requery.*;
+import io.requery.query.MutableResult;
 import lombok.ToString;
 
 /***
- * {@link Note} est l'objet utilisé pour stocker la note d'un joueur.
+ * {@link CupRound} est l'objet utilisé pour stocker des notes des manches de cups.
  */
 @Entity
-@Table(name = "notes")
+@Table(name = "cup_notes")
 @ToString
-public abstract class Note {
+public abstract class CupNote {
 
     /* Columns */
 
-    @Column(name = "id_buildbattle")
-    @ForeignKey(update = ReferentialAction.CASCADE, referencedColumn = "id")
     @Key
-    @ManyToOne
-    BuildbattleEntity buildbattle;
+    @Generated
+    int id;
 
-    @Column(name = "id_profil")
+    @Column(name = "id_round", nullable = false)
     @ForeignKey(update = ReferentialAction.CASCADE, referencedColumn = "id")
-    @Key
     @ManyToOne
-    ProfilEntity profil;
+    CupRoundEntity round;
 
-    @Column(name = "id_jury")
+    @Column(name = "id_jury", nullable = false)
     @ForeignKey(update = ReferentialAction.CASCADE, referencedColumn = "id")
-    @Key
     @ManyToOne
     ProfilEntity jury;
 
     @Column(nullable = false)
     int beaute, creativite, amenagement, folklore, fun;
+
+    /* Links to other entity */
+
+    @ManyToMany
+    MutableResult<CupTeam> teams;
 }

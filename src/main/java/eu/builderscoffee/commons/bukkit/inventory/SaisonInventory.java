@@ -39,9 +39,9 @@ public class SaisonInventory implements InventoryProvider {
     private static final String RED = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjE4NTZjN2IzNzhkMzUwMjYyMTQzODQzZDFmOWZiYjIxOTExYTcxOTgzYmE3YjM5YTRkNGJhNWI2NmJlZGM2In19fQ==";
     private static final String HISTORIQUE = "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTg4N2NjMzg4YzhkY2ZjZjFiYThhYTVjM2MxMDJkY2U5Y2Y3YjFiNjNlNzg2YjM0ZDRmMWMzNzk2ZDNlOWQ2MSJ9fX0=";
 
-    private static final ClickableItem blackGlasses = ClickableItem.empty(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 15));
-    private static final ClickableItem orangeGlasses = ClickableItem.empty(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 1));
-    private static final ClickableItem greyGlasses = ClickableItem.empty(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 7));
+    private static final ClickableItem blackGlasses = ClickableItem.empty(new ItemBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 15)).setName("§a").build());
+    private static final ClickableItem greyGlasses = ClickableItem.empty(new ItemBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 7)).setName("§a").build());
+    private static final ClickableItem orangeGlasses = ClickableItem.empty(new ItemBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 1)).setName("§a").build());
     private static final ItemStack limeConcrete = new ItemStack(Material.CONCRETE, 1, (short) 5);
     private static final ItemStack redConcrete = new ItemStack(Material.CONCRETE, 1, (short) 14);
     private static final ItemStack historiqueSkull = SkullCreator.itemFromBase64(HISTORIQUE);
@@ -83,8 +83,8 @@ public class SaisonInventory implements InventoryProvider {
             val date = new Date();
             if(bb.getDate().before(date)){
                 if(profilEntity.getNotes().stream().filter(note -> note.getBuildbattle().getId() == bb.getId()).count() > 0){
-                    ItemStack skull = new ItemBuilder(bb.isStep()? limeConcrete : limeSkull)
-                            .setName("§b" + bb.getId() + ". " + bb.getType().getName())
+                    ItemStack skull = new ItemBuilder(bb.isStep()? new ItemStack(limeConcrete) : new ItemStack(limeSkull))
+                            .setName("§b" + bb.getNum() + ". " + bb.getType().getName())
                             .addGLow()
                             .build();
                     contents.set(SlotPos.of(bb.isStep()? 1: 3, i), ClickableItem.of(skull, e -> {
@@ -92,7 +92,7 @@ public class SaisonInventory implements InventoryProvider {
                     }));
                 }
                 else{
-                    ItemStack skull = new ItemBuilder(bb.isStep()? redConcrete : redSkull).setName("§c" + bb.getId() + ". " + bb.getType().getName()).build();
+                    ItemStack skull = new ItemBuilder(bb.isStep()? new ItemStack(redConcrete) : new ItemStack(redSkull)).setName("§c" + bb.getNum() + ". " + bb.getType().getName()).build();
                     contents.set(SlotPos.of(bb.isStep()? 1: 3, i), ClickableItem.empty(skull));
                 }
                 i++;

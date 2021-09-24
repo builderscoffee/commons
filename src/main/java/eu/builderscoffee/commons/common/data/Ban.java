@@ -1,7 +1,6 @@
 package eu.builderscoffee.commons.common.data;
 
 import io.requery.*;
-import lombok.Getter;
 import lombok.ToString;
 
 import java.sql.Timestamp;
@@ -12,7 +11,9 @@ import java.sql.Timestamp;
 @Entity
 @Table(name = "bans")
 @ToString
-public class Ban {
+public abstract class Ban {
+
+    /* Columns */
 
     @Column(name = "id_profil", unique = true)
     @ForeignKey(update = ReferentialAction.CASCADE, referencedColumn = "id")

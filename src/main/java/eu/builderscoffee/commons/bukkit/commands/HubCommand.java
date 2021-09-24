@@ -9,15 +9,10 @@ import org.bukkit.entity.Player;
 
 public class HubCommand implements CommandExecutor {
 
-    private Main main = Main.getInstance();
-
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
-            Player player = (Player) sender;
-
-            BungeeUtils.sendPlayerToServer(main, player, "hub");
-
+            BungeeUtils.sendPlayerToServer(Main.getInstance(), (Player) sender, "hub");
             return true;
         }
 

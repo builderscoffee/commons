@@ -29,7 +29,7 @@ public class SaisonsInventory implements InventoryProvider {
 
     private final ProfilEntity profilEntity;
 
-    private static final ClickableItem blackGlasses = ClickableItem.empty(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 15));
+    private static final ClickableItem blackGlasses = ClickableItem.empty(new ItemBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 15)).setName("§a").build());
 
     private static final ItemStack cyanConcrete = new ItemStack(Material.CONCRETE, 1, (short) 9);
 
@@ -60,40 +60,41 @@ public class SaisonsInventory implements InventoryProvider {
         contents.fillRect(SlotPos.of(2, 0), SlotPos.of(2, 8), blackGlasses);
 
         // Get saisons
-        val saison = storeSaison.select(SaisonEntity.class)
+        try(val saison = storeSaison.select(SaisonEntity.class)
                 .orderBy(SaisonEntity.ID)
-                .get();
+                .get()){
 
-        final short size = (short) saison.stream().count();
-        ClickableItem[] saisonsItems = new ClickableItem[size];
+            final short size = (short) saison.stream().count();
+            ClickableItem[] saisonsItems = new ClickableItem[size];
 
 
-        // TODO Corriger problème de liste
-        for (int i = 0; i < size; i++) {
-            val saisonEntity = saison.toList().get(i);
-            if(saisonEntity.getBeginDate().before(new Date())){
-                saisonsItems[i] = ClickableItem.of(new ItemBuilder(new ItemStack(cyanConcrete)).setName("Saison " + saisonEntity.getId()).build(),
-                        e -> {
-                            new SaisonInventory(profilEntity, saisonEntity).INVENTORY.open(player);
-                        });
+            // TODO Corriger problème de liste
+            for (int i = 0; i < size; i++) {
+                val saisonEntity = saison.toList().get(i);
+                if(saisonEntity.getBeginDate().before(new Date())){
+                    saisonsItems[i] = ClickableItem.of(new ItemBuilder(new ItemStack(cyanConcrete)).setName("Saison " + saisonEntity.getId()).build(),
+                            e -> {
+                                new SaisonInventory(profilEntity, saisonEntity).INVENTORY.open(player);
+                            });
+                }
             }
+
+
+            // Retour
+            contents.set(5, 0, ClickableItem.of(new ItemBuilder(Material.ARROW).setName(messages.getRetourItem().replace("&", "§")).build(),
+                    e -> new ProfilInventory(profilEntity).INVENTORY.open(player)));
+
+
+            // Quitter
+            contents.set(5, 4, ClickableItem.of(new ItemBuilder(Material.BARRIER).setName(messages.getCloseItem().replace("&", "§")).build(),
+                    e -> contents.inventory().close(player)));
+
+            pagination.setItems(saisonsItems);
+            pagination.setItemsPerPage(36);
+
+            //Fill Plots Item
+            pagination.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, SlotPos.of(1, 0)));
         }
-
-
-        // Retour
-        contents.set(5, 0, ClickableItem.of(new ItemBuilder(Material.ARROW).setName(messages.getRetourItem().replace("&", "§")).build(),
-                e -> new ProfilInventory(profilEntity).INVENTORY.open(player)));
-
-
-        // Quitter
-        contents.set(5, 4, ClickableItem.of(new ItemBuilder(Material.BARRIER).setName(messages.getCloseItem().replace("&", "§")).build(),
-                e -> contents.inventory().close(player)));
-
-        pagination.setItems(saisonsItems);
-        pagination.setItemsPerPage(36);
-
-        //Fill Plots Item
-        pagination.addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, SlotPos.of(1, 0)));
     }
 
     @Override

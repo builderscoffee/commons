@@ -2,7 +2,6 @@ package eu.builderscoffee.commons.common.data;
 
 import io.requery.*;
 import io.requery.query.MutableResult;
-import lombok.Getter;
 import lombok.ToString;
 
 /***
@@ -11,7 +10,9 @@ import lombok.ToString;
 @Entity
 @Table(name = "buildbattles_themes")
 @ToString
-public class BuildbattleTheme {
+public abstract class BuildbattleTheme {
+
+    /* Columns */
 
     @Key @Generated
     int id;
@@ -19,6 +20,11 @@ public class BuildbattleTheme {
     @Column(nullable = false, unique = true, length = 32)
     String name;
 
+    /* Links to other entity */
+
     @OneToMany(mappedBy = "id_theme")
     MutableResult<BuildbattleEntity> buildbattles;
+
+    @OneToMany(mappedBy = "id_theme")
+    MutableResult<CupRoundEntity> cupRounds;
 }

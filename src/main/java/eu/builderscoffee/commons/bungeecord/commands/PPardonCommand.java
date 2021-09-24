@@ -11,12 +11,12 @@ import net.md_5.bungee.api.plugin.Command;
 public class PPardonCommand extends Command {
 
     public PPardonCommand() {
-        super("ppardon", Main.getInstance().getMessages().getPpardonPremission());
+        super("ppardon", Main.getInstance().getPermissions().getPpardonPermission());
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if(!sender.hasPermission(Main.getInstance().getMessages().getPbanPremission())){
+        if(!sender.hasPermission(Main.getInstance().getPermissions().getPpardonPermission())){
             sender.sendMessage(TextComponentUtil.decodeColor(Main.getInstance().getMessages().getNoPermission()));
             return;
         }

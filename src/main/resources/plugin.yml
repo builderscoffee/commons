@@ -15,6 +15,11 @@ commands:
     description: Se déplace dans le serveur hub
   lobby:
     description: Se déplace dans le serveur hub
+  help:
+    description: Help command
+  staffchat:
+    aliases: [ sc ]
+    description: Staffchat command
   broadcast:
     aliases: [bc]
     description: Envoi un message important
