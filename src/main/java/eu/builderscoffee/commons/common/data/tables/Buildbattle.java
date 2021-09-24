@@ -1,4 +1,4 @@
-package eu.builderscoffee.commons.common.data;
+package eu.builderscoffee.commons.common.data.tables;
 
 import io.requery.*;
 import lombok.ToString;

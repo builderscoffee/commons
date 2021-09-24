@@ -3,8 +3,9 @@ package eu.builderscoffee.commons.bungeecord.commands;
 import eu.builderscoffee.commons.bungeecord.Main;
 import eu.builderscoffee.commons.bungeecord.utils.DateUtil;
 import eu.builderscoffee.commons.bungeecord.utils.TextComponentUtil;
-import eu.builderscoffee.commons.common.data.BanEntity;
-import eu.builderscoffee.commons.common.data.ProfilEntity;
+import eu.builderscoffee.commons.common.data.DataManager;
+import eu.builderscoffee.commons.common.data.tables.BanEntity;
+import eu.builderscoffee.commons.common.data.tables.ProfilEntity;
 import eu.builderscoffee.commons.common.utils.LuckPermsUtils;
 import lombok.val;
 import net.md_5.bungee.api.CommandSender;
@@ -34,7 +35,7 @@ public class PBanCommand extends Command {
             return;
         }
 
-        val profileStore = Main.getInstance().getProfilStore();
+        val profileStore = DataManager.getProfilStore();
         ProfilEntity profil = profileStore.select(ProfilEntity.class)
                 .where(ProfilEntity.NAME.lower().eq(args[0].toLowerCase()))
                 .get().firstOrNull();
@@ -49,7 +50,7 @@ public class PBanCommand extends Command {
             return;
         }
 
-        val banStore = Main.getInstance().getBanStore();
+        val banStore = DataManager.getBansStore();
         val ban = banStore.select(BanEntity.class)
                 .where(BanEntity.PROFILE.eq(profil))
                 .get().firstOrNull();

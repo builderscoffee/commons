@@ -1,16 +1,16 @@
-package eu.builderscoffee.commons.common.data;
+package eu.builderscoffee.commons.common.data.tables;
 
 import io.requery.*;
 import io.requery.query.MutableResult;
 import lombok.ToString;
 
 /***
- * {@link BuildbattleType} est l'objet utilisé pour stocker types d'Expresso.
+ * {@link BuildbattleTheme} est l'objet utilisé pour stocker thèmes de Buildbattles.
  */
 @Entity
-@Table(name = "buildbattle_types")
+@Table(name = "buildbattles_themes")
 @ToString
-public abstract class BuildbattleType {
+public abstract class BuildbattleTheme {
 
     /* Columns */
 
@@ -22,9 +22,9 @@ public abstract class BuildbattleType {
 
     /* Links to other entity */
 
-    @OneToMany(mappedBy = "id_type")
+    @OneToMany(mappedBy = "id_theme")
     MutableResult<BuildbattleEntity> buildbattles;
 
-    @OneToMany(mappedBy = "id_type")
+    @OneToMany(mappedBy = "id_theme")
     MutableResult<CupRoundEntity> cupRounds;
 }

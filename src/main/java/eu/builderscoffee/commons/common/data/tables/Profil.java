@@ -1,4 +1,4 @@
-package eu.builderscoffee.commons.common.data;
+package eu.builderscoffee.commons.common.data.tables;
 
 import eu.builderscoffee.commons.bukkit.Main;
 import io.requery.*;

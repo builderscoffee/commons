@@ -10,7 +10,11 @@ import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
 import eu.builderscoffee.commons.common.data.*;
 import eu.builderscoffee.commons.bukkit.Main;
 import eu.builderscoffee.commons.bukkit.configuration.MessageConfiguration;
+import eu.builderscoffee.commons.common.data.tables.ProfilEntity;
+import eu.builderscoffee.commons.common.data.tables.Saison;
+import eu.builderscoffee.commons.common.data.tables.SaisonEntity;
 import io.requery.sql.EntityDataStore;
+import lombok.Data;
 import lombok.val;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -24,7 +28,7 @@ public class SaisonsInventory implements InventoryProvider {
     public final SmartInventory INVENTORY;
 
     private final Main main = Main.getInstance();
-    private final EntityDataStore<Saison> storeSaison = main.getSaisonsStore();
+    private final EntityDataStore<Saison> storeSaison = DataManager.getSaisonsStore();
     private final MessageConfiguration messages = main.getMessages();
 
     private final ProfilEntity profilEntity;

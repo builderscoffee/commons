@@ -1,4 +1,4 @@
-package eu.builderscoffee.commons.common.data;
+package eu.builderscoffee.commons.common.data.tables;
 
 import io.requery.Entity;
 import io.requery.ForeignKey;
@@ -10,9 +10,9 @@ import lombok.ToString;
  * {@link CupRound} est l'objet utilisé pour stocker des notes des manches de cups.
  */
 @Entity
-@Table(name = "cup_teams-profils")
+@Table(name = "cup_notes-teams")
 @ToString
-public abstract class CupTeam_Profil {
+public class CupNote_CupTeam {
 
     /* Columns */
 
@@ -20,7 +20,7 @@ public abstract class CupTeam_Profil {
     @Key
     Integer teamId;
 
-    @ForeignKey( references = Profil.class  )
+    @ForeignKey(references = CupNote.class)
     @Key
-    Integer profilId;
+    Integer noteId;
 }

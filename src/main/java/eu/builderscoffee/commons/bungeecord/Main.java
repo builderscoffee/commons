@@ -1,6 +1,5 @@
 package eu.builderscoffee.commons.bungeecord;
 
-import com.zaxxer.hikari.HikariDataSource;
 import eu.builderscoffee.api.common.redisson.Redis;
 import eu.builderscoffee.api.common.redisson.RedisCredentials;
 import eu.builderscoffee.commons.bungeecord.commands.PBanCommand;
@@ -10,14 +9,11 @@ import eu.builderscoffee.commons.bungeecord.configuration.PermissionConfiguratio
 import eu.builderscoffee.commons.bungeecord.listeners.ConnexionListener;
 import eu.builderscoffee.commons.bungeecord.listeners.PlayerListener;
 import eu.builderscoffee.commons.common.configuration.RedisConfig;
-import eu.builderscoffee.commons.common.utils.Cache;
-import eu.builderscoffee.commons.common.Models;
 import eu.builderscoffee.commons.common.configuration.SQLCredentials;
-import eu.builderscoffee.commons.common.data.*;
+import eu.builderscoffee.commons.common.data.DataManager;
+import eu.builderscoffee.commons.common.data.tables.ProfilEntity;
+import eu.builderscoffee.commons.common.utils.Cache;
 import eu.builderscoffee.commons.common.utils.LuckPermsUtils;
-import io.requery.sql.EntityDataStore;
-import io.requery.sql.SchemaModifier;
-import io.requery.sql.TableCreationMode;
 import lombok.Getter;
 import lombok.val;
 import net.luckperms.api.LuckPermsProvider;
@@ -40,17 +36,6 @@ public class Main extends Plugin {
 
     private SQLCredentials sqlCredentials;
     private RedisConfig redissonConfig;
-
-    // Database
-    private HikariDataSource hikari;
-    private EntityDataStore<Note> notesStore;
-    private EntityDataStore<Ban> banStore;
-    private EntityDataStore<BuildbattleTheme> buildbattleThemeStore;
-    private EntityDataStore<BuildbattleType> buildbattleTypeStore;
-    private EntityDataStore<Buildbattle> buildbattlesStore;
-    private EntityDataStore<Saison> saisonsStore;
-    private EntityDataStore<Profil> profilStore;
-    private EntityDataStore<Cosmetique> cosmetiquesStore;
 
     // Cache des profils
     private Cache<String, ProfilEntity> profilCache = new Cache<>();
@@ -81,20 +66,11 @@ public class Main extends Plugin {
 
         // Database
         getLogger().info("Connexion à la base de donnée...");
-        hikari = new HikariDataSource(sqlCredentials.toHikari());
-        saisonsStore = new EntityDataStore<>(hikari, Models.DEFAULT);
-        buildbattleThemeStore = new EntityDataStore<>(hikari, Models.DEFAULT);
-        buildbattleTypeStore = new EntityDataStore<>(hikari, Models.DEFAULT);
-        buildbattlesStore = new EntityDataStore<>(hikari, Models.DEFAULT);
-        profilStore = new EntityDataStore<>(hikari, Models.DEFAULT);
-        notesStore = new EntityDataStore<>(hikari, Models.DEFAULT);
-        cosmetiquesStore = new EntityDataStore<>(hikari, Models.DEFAULT);
-        banStore = new EntityDataStore<>(hikari, Models.DEFAULT);
-        new SchemaModifier(hikari, Models.DEFAULT).createTables(TableCreationMode.CREATE_NOT_EXISTS);
+        DataManager.init(sqlCredentials.toHikari());
 
         // Check redirection server exist
         val server = ProxyServer.getInstance().getServerInfo(messages.getServerRedirectName());
-        if(server == null){
+        if (server == null) {
             val newServer = (ServerInfo) getProxy().getServers().values().toArray()[0];
             Main.getInstance().getMessages().setServerRedirectName(newServer.getName());
             writeConfiguration(this, messages);
@@ -111,6 +87,6 @@ public class Main extends Plugin {
 
     @Override
     public void onDisable() {
-        hikari.close();
+        DataManager.getHikari().close();
     }
 }
