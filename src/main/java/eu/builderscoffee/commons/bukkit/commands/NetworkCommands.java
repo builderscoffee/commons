@@ -17,19 +17,17 @@ public class NetworkCommands implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
-            Player player = (Player) sender;
-
             boolean ret = false;
             switch (args.length) {
                 case 0:
-                    ret = argLength0(player);
+                    ret = argLength0((Player) sender);
                     break;
                 default:
                     break;
             }
 
             if (!ret) {
-                player.sendMessage(Main.getInstance().getMessages().getPrefix() + Main.getInstance().getMessages().getCommandBadSyntaxe());
+                sender.sendMessage(Main.getInstance().getMessages().getPrefix() + Main.getInstance().getMessages().getCommandBadSyntaxe());
             }
 
             return ret;

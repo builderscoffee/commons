@@ -1,69 +1,73 @@
 package eu.builderscoffee.commons.bukkit.listeners;
 
+import eu.builderscoffee.api.common.redisson.Redis;
 import eu.builderscoffee.commons.bukkit.Main;
+import eu.builderscoffee.commons.common.redisson.packets.StaffChatPacket;
+import eu.builderscoffee.commons.common.redisson.topics.CommonTopics;
 import eu.builderscoffee.commons.common.utils.LuckPermsUtils;
 import lombok.val;
-import net.luckperms.api.query.QueryOptions;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scoreboard.Scoreboard;
-
-import java.util.Objects;
 
 public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        final Player player = event.getPlayer();
-        // Update Profil
+        val player = event.getPlayer();
+
+        // Check si le profil est bien crées
         val profil = Main.getInstance().getProfilCache().get(player.getUniqueId().toString());
-        if(profil == null) {
-            player.kickPlayer("Server: §cUne erreur est survenue lors du chargement de données.\n§cVeuillez vous reconnecter");
+        if (profil == null) {
+            player.kickPlayer("§6§lBuilders Coffee Server \n§cUne erreur est survenue lors du chargement de données.\n§cVeuillez vous reconnecter");
             return;
         }
 
-        if(!player.getName().equalsIgnoreCase(profil.getName()))
+        // Mettre à jour le pseudo si ce n'est pas correcte
+        if (!player.getName().equalsIgnoreCase(profil.getName()))
             profil.setName(player.getName());
 
-        // Creating teams from LuckyPerms
+        // Suppression des équipes précédemment enregistrés
         Bukkit.getOnlinePlayers().forEach(loopPlayer -> {
             loopPlayer.getScoreboard().getTeams().forEach(team -> team.unregister());
         });
 
+        // Creation des équipes Minecraft pour ordonner dans le tab
         for (Player loopPlayer : Bukkit.getOnlinePlayers()) {
-            final String primaryGroup = LuckPermsUtils.getPrimaryGroup(loopPlayer);
-            final int weight = Math.abs(1000 - LuckPermsUtils.getWeight(loopPlayer));
+            val primaryGroup = LuckPermsUtils.getPrimaryGroup(loopPlayer.getUniqueId());
+            val weight = Math.abs(1000 - LuckPermsUtils.getWeight(loopPlayer.getUniqueId()));
 
             String teamName = primaryGroup.length() > 13 ? weight + primaryGroup.substring(0, 13) : weight + primaryGroup;
             for (int i = 0; i < 3 - String.valueOf(weight).length(); i++) {
                 teamName = "0" + teamName;
             }
 
-            loopPlayer.setPlayerListName(LuckPermsUtils.getPrefix(loopPlayer).replace("&", "§") + loopPlayer.getName() + LuckPermsUtils.getSuffix(loopPlayer).replace("&", "§"));
+            val prefix = LuckPermsUtils.getPrefixOrEmpty(loopPlayer.getUniqueId());
+            val suffix = LuckPermsUtils.getSuffixOrEmpty(loopPlayer.getUniqueId());
+            loopPlayer.setPlayerListName((prefix + loopPlayer.getName() + suffix).replace("&", "§"));
 
-            for(Player loopPlayer2: Bukkit.getOnlinePlayers()) {
-                Scoreboard scoreboard = loopPlayer2.getScoreboard();
+            for (Player loopPlayer2 : Bukkit.getOnlinePlayers()) {
+                val scoreboard = loopPlayer2.getScoreboard();
                 val team = scoreboard.getTeam(teamName) == null ? scoreboard.registerNewTeam(teamName) : scoreboard.getTeam(teamName);
 
                 team.addPlayer(loopPlayer);
             }
         }
 
-        // Join message
-        if(LuckPermsUtils.getWeight(player) > Main.getInstance().getMessages().getShowJoinMessageWeight()){
-            event.setJoinMessage(Main.getInstance().getMessages().getOnJoinMessage().replace("%player%", player.getName())
-                    .replace("%prefix%", LuckPermsUtils.getPrefix(player))
-                    .replace("%suffix%", LuckPermsUtils.getSuffix(player))
-                    .replace("&", "§"));
-        }
-        else{
+        // Message de join
+        if (LuckPermsUtils.getWeight(player.getUniqueId()) > Main.getInstance().getMessages().getShowJoinMessageWeight()) {
+            event.setJoinMessage(Main.getInstance().getMessages().getOnJoinMessage()
+                .replace("%player%", player.getName())
+                .replace("%prefix%", LuckPermsUtils.getPrefixOrEmpty(player.getUniqueId()))
+                .replace("%suffix%", LuckPermsUtils.getSuffixOrEmpty(player.getUniqueId()))
+                .replace("&", "§"));
+        } else {
             event.setJoinMessage(null);
         }
 
@@ -72,47 +76,57 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        final Player player = event.getPlayer();
+        val player = event.getPlayer();
 
-        if(LuckPermsUtils.getWeight(player) > Main.getInstance().getMessages().getShowQuitMessageWeight()){
-            event.setQuitMessage(Main.getInstance().getMessages().getOnQuitMessage().replace("&", "§")
-                    .replace("%player%", player.getName()));
-        }
-        else{
+        // Message de leave
+        if (LuckPermsUtils.getWeight(player.getUniqueId()) > Main.getInstance().getMessages().getShowQuitMessageWeight()) {
+            event.setQuitMessage(Main.getInstance().getMessages().getOnQuitMessage()
+                .replace("&", "§")
+                .replace("%player%", player.getName()));
+        } else {
             event.setQuitMessage(null);
         }
 
+        // Supression de l'équipe chez le joueur
         player.getScoreboard().getTeams().forEach(team -> {
             boolean online = false;
-            for (OfflinePlayer offlinePlayer : team.getPlayers()) {
-                if(offlinePlayer.isOnline()) {
+            for (OfflinePlayer offlinePlayer : team.getPlayers())
+                if (offlinePlayer.isOnline())
                     online = true;
-                }
-            }
-            if(!online)
+            if (!online)
                 team.unregister();
         });
     }
 
     @EventHandler
     public void onChat(AsyncPlayerChatEvent event) {
-        final Player player = event.getPlayer();
-        final String message = event.getMessage();
-        String prefix = "";
-        String suffix = "";
+        val player = event.getPlayer();
+        val message = event.getMessage();
+        val prefix = LuckPermsUtils.getPrefixOrEmpty(player.getUniqueId());
+        val suffix = LuckPermsUtils.getSuffixOrEmpty(player.getUniqueId());
 
-        if (Main.getInstance().getLuckyPerms() != null) {
-            QueryOptions queryOptions = Main.getInstance().getLuckyPerms().getContextManager().getQueryOptions(player);
-            val primaryGroup = Objects.requireNonNull(Main.getInstance().getLuckyPerms().getUserManager().getUser(player.getName())).getPrimaryGroup();
-            val cachedMetaData = Objects.requireNonNull(Main.getInstance().getLuckyPerms().getGroupManager().getGroup(primaryGroup)).getCachedData().getMetaData(queryOptions);
-            prefix = cachedMetaData.getPrefix() != null ? cachedMetaData.getPrefix() : "";
-            suffix = cachedMetaData.getSuffix() != null ? cachedMetaData.getSuffix() : "";
+        // StaffChat
+        if (Main.getInstance().getStaffchatPlayers().contains(event.getPlayer().getUniqueId())) {
+            val packet = new StaffChatPacket()
+                .setServerName(Main.getInstance().getRedissonConfig().getClientName())
+                .setPlayerName(player.getName())
+                .setMessage(Main.getInstance().getMessages().getStaffChatFormatMessage()
+                    .replace("%player%", player.getName())
+                    .replace("%prefix%", prefix)
+                    .replace("%suffix%", suffix)
+                    .replace("%message%", message)
+                    .replace("&", "§"));
+            Redis.getTopic(CommonTopics.STAFFCHAT).publish(packet.serialize());
+            event.setCancelled(true);
         }
-
-        event.setFormat(Main.getInstance().getMessages().getChatFormatMessage().replace("%player%", player.getName())
+        // Normal chat
+        else {
+            event.setFormat(Main.getInstance().getMessages().getChatFormatMessage()
+                .replace("%player%", player.getName())
                 .replace("%prefix%", prefix)
                 .replace("%suffix%", suffix)
                 .replace("%message%", message)
                 .replace("&", "§"));
+        }
     }
 }

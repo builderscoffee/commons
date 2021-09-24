@@ -5,6 +5,7 @@ import eu.builderscoffee.commons.bungeecord.utils.DateUtil;
 import eu.builderscoffee.commons.bungeecord.utils.TextComponentUtil;
 import eu.builderscoffee.commons.common.data.BanEntity;
 import eu.builderscoffee.commons.common.data.ProfilEntity;
+import eu.builderscoffee.commons.common.utils.LuckPermsUtils;
 import lombok.val;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -13,15 +14,21 @@ import net.md_5.bungee.api.plugin.Command;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.UUID;
 
 public class PBanCommand extends Command {
 
     public PBanCommand() {
-        super("pban", Main.getInstance().getMessages().getPbanPremission());
+        super("pban", Main.getInstance().getPermissions().getPbanPermission());
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        if(!sender.hasPermission(Main.getInstance().getPermissions().getPpardonPermission())){
+            sender.sendMessage(TextComponentUtil.decodeColor(Main.getInstance().getMessages().getNoPermission()));
+            return;
+        }
+
         if(args.length < 1){
             sender.sendMessage(TextComponentUtil.decodeColor("§c/pban <player> [time] [reason]"));
             return;
@@ -33,6 +40,12 @@ public class PBanCommand extends Command {
                 .get().firstOrNull();
         if(profil == null){
             sender.sendMessage(TextComponentUtil.decodeColor("§cCe joueur n'existe pas"));
+            return;
+        }
+
+        val user = LuckPermsUtils.getUser(UUID.fromString(profil.getUniqueId()));
+
+        if(user != null && LuckPermsUtils.hasPermission(UUID.fromString(profil.getUniqueId()), Main.getInstance().getPermissions().getPbanByPassPermission())){
             return;
         }
 

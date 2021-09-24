@@ -1,7 +1,10 @@
 package eu.builderscoffee.commons.common.data;
 
+import eu.builderscoffee.commons.bungeecord.annotations.Addable;
+import eu.builderscoffee.commons.bungeecord.annotations.EntityRefference;
+import eu.builderscoffee.commons.bungeecord.annotations.Listable;
+import eu.builderscoffee.commons.bungeecord.annotations.Updatable;
 import io.requery.*;
-import lombok.Getter;
 import lombok.ToString;
 
 import java.sql.Timestamp;
@@ -12,6 +15,10 @@ import java.sql.Timestamp;
 @Entity
 @Table(name = "bans")
 @ToString
+@EntityRefference(entityClass = BanEntity.class)
+@Listable(defaultVariableName = {"id_profil", "reason", "date_end"})
+@Addable(defaultVariableName = {"id_profil", "reason"})
+@Updatable(defaultVariableName = {"reason", "date_end"})
 public class Ban {
 
     @Column(name = "id_profil", unique = true)

@@ -54,6 +54,9 @@ public final class MessageConfiguration {
     // ChatFormat
     String chatFormatMessage = "&7%prefix%%player%%suffix% &8>> &f%message%";
 
+    // StaffChatFormat
+    String staffChatFormatMessage = "&b[SC] &7%prefix%%player%%suffix% &8>> &f%message%";
+
     // BroadcastFormat
     String broadcastFormatMessage = "&8&m----------&8&m------\n\n&6&lBuilders Coffee &8>> &e%message%\n\n&8&m----------&8&m------";
 
@@ -68,8 +71,10 @@ public final class MessageConfiguration {
     String profilResultatItem = "Derniers résultat";
     // - Not played any buildbattle
     String notPlayedAnyBuildbattle = "&cVous n'avez pas encore joué une seule partie !";
+    // - No Season started
+    String noSeasonStarted = "&cAucune saison est en cours !";
     // - Saisons Item
-    String profilSaisons = "Saisons";
+    String profilSaison = "Saison Actuelle";
     // - Historique Item
     String profilhistorique = "Historique";
     // - Global Result Item

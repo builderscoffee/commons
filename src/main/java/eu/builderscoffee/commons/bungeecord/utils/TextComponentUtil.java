@@ -1,9 +1,13 @@
 package eu.builderscoffee.commons.bungeecord.utils;
 
+import lombok.experimental.UtilityClass;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 
+@UtilityClass
 public class TextComponentUtil {
 
     public static BaseComponent decodeColor(String message){

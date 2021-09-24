@@ -1,21 +1,27 @@
 package eu.builderscoffee.commons.bungeecord;
 
 import com.zaxxer.hikari.HikariDataSource;
+import eu.builderscoffee.api.common.redisson.Redis;
+import eu.builderscoffee.api.common.redisson.RedisCredentials;
+import eu.builderscoffee.commons.bungeecord.commands.DatabaseCommand;
 import eu.builderscoffee.commons.bungeecord.commands.PBanCommand;
+import eu.builderscoffee.commons.bungeecord.commands.PPardonCommand;
 import eu.builderscoffee.commons.bungeecord.commands.StaffChatCommand;
 import eu.builderscoffee.commons.bungeecord.configuration.MessageConfiguration;
+import eu.builderscoffee.commons.bungeecord.configuration.PermissionConfiguration;
 import eu.builderscoffee.commons.bungeecord.listeners.ConnexionListener;
 import eu.builderscoffee.commons.bungeecord.listeners.PlayerListener;
+import eu.builderscoffee.commons.common.configuration.RedisConfig;
 import eu.builderscoffee.commons.common.utils.Cache;
 import eu.builderscoffee.commons.common.Models;
 import eu.builderscoffee.commons.common.configuration.SQLCredentials;
 import eu.builderscoffee.commons.common.data.*;
+import eu.builderscoffee.commons.common.utils.LuckPermsUtils;
 import io.requery.sql.EntityDataStore;
 import io.requery.sql.SchemaModifier;
 import io.requery.sql.TableCreationMode;
 import lombok.Getter;
 import lombok.val;
-import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -35,13 +41,13 @@ public class Main extends Plugin {
     //Configuration
     @Getter
     private MessageConfiguration messages;
+    @Getter
+    private PermissionConfiguration permissions;
 
     @Getter
     private SQLCredentials sqlCredentials;
-
-    // LuckPerms API
     @Getter
-    private LuckPerms luckyPerms;
+    private RedisConfig redissonConfig;
 
     // Database
     @Getter
@@ -53,7 +59,7 @@ public class Main extends Plugin {
     @Getter
     private EntityDataStore<BuildbattleTheme> buildbattleThemeStore;
     @Getter
-    private EntityDataStore<BuildbattleType> expressoTypseStore;
+    private EntityDataStore<BuildbattleType> buildbattleTypeStore;
     @Getter
     private EntityDataStore<Buildbattle> buildbattlesStore;
     @Getter
@@ -78,11 +84,45 @@ public class Main extends Plugin {
         instance = this;
 
         // Service Provider
-        luckyPerms = LuckPermsProvider.get();
+        LuckPermsUtils.init(LuckPermsProvider.get());
 
         // Configuration
         messages = readOrCreateConfiguration(this, MessageConfiguration.class);
+        permissions = readOrCreateConfiguration(this, PermissionConfiguration.class);
         sqlCredentials = readOrCreateConfiguration(this, SQLCredentials.class);
+        redissonConfig = readOrCreateConfiguration(this, RedisConfig.class);
+
+        // Initialize Redisson
+        val redisCredentials = new RedisCredentials()
+                .setClientName(redissonConfig.getClientName())
+                .setIp(redissonConfig.getIp())
+                .setPassword(redissonConfig.getPassword())
+                .setPort(redissonConfig.getPort());
+
+        Redis.Initialize(redisCredentials, 0, 0);
+
+        // Database
+        getLogger().info("Connexion à la base de donnée...");
+        hikari = new HikariDataSource(sqlCredentials.toHikari());
+        saisonsStore = new EntityDataStore<>(hikari, Models.DEFAULT);
+        buildbattleThemeStore = new EntityDataStore<>(hikari, Models.DEFAULT);
+        buildbattleTypeStore = new EntityDataStore<>(hikari, Models.DEFAULT);
+        buildbattlesStore = new EntityDataStore<>(hikari, Models.DEFAULT);
+        profilStore = new EntityDataStore<>(hikari, Models.DEFAULT);
+        notesStore = new EntityDataStore<>(hikari, Models.DEFAULT);
+        cosmetiquesStore = new EntityDataStore<>(hikari, Models.DEFAULT);
+        banStore = new EntityDataStore<>(hikari, Models.DEFAULT);
+        new SchemaModifier(hikari, Models.DEFAULT).createTables(TableCreationMode.CREATE_NOT_EXISTS);
+
+        // Manipulation des table via la commande /database
+        /*allowCommandManipulation(Saison.class);
+        allowCommandManipulation(Buildbattle.class);
+        allowCommandManipulation(BuildbattleTheme.class);
+        allowCommandManipulation(BuildbattleType.class);
+        allowCommandManipulation(Profil.class);
+        allowCommandManipulation(Note.class);
+        allowCommandManipulation(Cosmetique.class);
+        allowCommandManipulation(Ban.class);*/
 
         // Check redirection server exist
         val server = ProxyServer.getInstance().getServerInfo(messages.getServerRedirectName());
@@ -94,24 +134,13 @@ public class Main extends Plugin {
 
         // Commands
         getProxy().getPluginManager().registerCommand(this, new PBanCommand());
-        getProxy().getPluginManager().registerCommand(this, new StaffChatCommand());
+        getProxy().getPluginManager().registerCommand(this, new PPardonCommand());
+        //getProxy().getPluginManager().registerCommand(this, new StaffChatCommand());
+        getProxy().getPluginManager().registerCommand(this, new DatabaseCommand());
 
         // Listeners
         getProxy().getPluginManager().registerListener(this, new ConnexionListener());
         getProxy().getPluginManager().registerListener(this, new PlayerListener());
-
-        // Database
-        getLogger().info("Connexion à la base de donnée...");
-        hikari = new HikariDataSource(sqlCredentials.toHikari());
-        saisonsStore = new EntityDataStore<>(hikari, Models.DEFAULT);
-        buildbattleThemeStore = new EntityDataStore<>(hikari, Models.DEFAULT);
-        expressoTypseStore = new EntityDataStore<>(hikari, Models.DEFAULT);
-        buildbattlesStore = new EntityDataStore<>(hikari, Models.DEFAULT);
-        profilStore = new EntityDataStore<>(hikari, Models.DEFAULT);
-        notesStore = new EntityDataStore<>(hikari, Models.DEFAULT);
-        cosmetiquesStore = new EntityDataStore<>(hikari, Models.DEFAULT);
-        banStore = new EntityDataStore<>(hikari, Models.DEFAULT);
-        new SchemaModifier(hikari, Models.DEFAULT).createTables(TableCreationMode.CREATE_NOT_EXISTS);
     }
 
     @Override

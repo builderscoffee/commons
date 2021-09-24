@@ -1,56 +1,83 @@
 package eu.builderscoffee.commons.common.utils;
 
 import eu.builderscoffee.commons.bukkit.Main;
+import lombok.Getter;
+import lombok.SneakyThrows;
 import lombok.val;
+import net.luckperms.api.LuckPerms;
+import net.luckperms.api.cacheddata.CachedMetaData;
+import net.luckperms.api.model.user.User;
 import net.luckperms.api.query.QueryOptions;
 import org.bukkit.entity.Player;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class LuckPermsUtils {
 
-    public static QueryOptions getQueryOptions(Player player){
-        if (Main.getInstance().getLuckyPerms() != null) {
-            return Main.getInstance().getLuckyPerms().getContextManager().getQueryOptions(player);
-        }
-        return null;
+    @Getter
+    private static LuckPerms luckPerms;
+
+    public static void init(LuckPerms luckPermsInstance){
+        luckPerms = Objects.requireNonNull(luckPermsInstance);
     }
 
-    public static String getPrimaryGroup(Player player){
-        if (Main.getInstance().getLuckyPerms() != null) {
-            val queryOptions = Main.getInstance().getLuckyPerms().getContextManager().getQueryOptions(player);
-            return Objects.requireNonNull(Main.getInstance().getLuckyPerms().getUserManager().getUser(player.getName())).getPrimaryGroup();
-        }
-        return null;
+    @SneakyThrows
+    public static User getUser(UUID uuid){
+        return luckPerms.getUserManager().loadUser(uuid).get();
+        //return luckPerms.getUserManager().getUser(uuid);
     }
 
-    public static String getPrefix(Player player){
-        if (Main.getInstance().getLuckyPerms() != null) {
-            final String primaryGroup = getPrimaryGroup(player);
-            final QueryOptions queryOptions = getQueryOptions(player);
-            val cachedMetaData = Objects.requireNonNull(Main.getInstance().getLuckyPerms().getGroupManager().getGroup(primaryGroup)).getCachedData().getMetaData(queryOptions);
-            return cachedMetaData.getPrefix() != null ? cachedMetaData.getPrefix() : "";
-        }
-        return null;
+    public static QueryOptions getQueryOptions(UUID uuid){
+        if(luckPerms == null) throw new NullPointerException("LuckPermsUtils not initialized");
+
+        return (luckPerms.getContextManager().getQueryOptions(getUser(uuid)).isPresent()? luckPerms.getContextManager().getQueryOptions(getUser(uuid)).get() : null);
     }
 
-    public static String getSuffix(Player player){
-        if (Main.getInstance().getLuckyPerms() != null) {
-            final String primaryGroup = getPrimaryGroup(player);
-            final QueryOptions queryOptions = getQueryOptions(player);
-            val cachedMetaData = Objects.requireNonNull(Main.getInstance().getLuckyPerms().getGroupManager().getGroup(primaryGroup)).getCachedData().getMetaData(queryOptions);
-            return cachedMetaData.getSuffix() != null ? cachedMetaData.getSuffix() : "";
-        }
-        return null;
+    public static String getPrimaryGroup(UUID uuid){
+        if(luckPerms == null) throw new NullPointerException("LuckPermsUtils not initialized");
+
+        return getUser(uuid).getPrimaryGroup();
     }
 
-    public static int getWeight(Player player){
-        if (Main.getInstance().getLuckyPerms() != null) {
-            final String primaryGroup = getPrimaryGroup(player);
-            final QueryOptions queryOptions = getQueryOptions(player);
-            val cachedMetaData = Objects.requireNonNull(Main.getInstance().getLuckyPerms().getGroupManager().getGroup(primaryGroup)).getCachedData().getMetaData(queryOptions);
-            return Objects.requireNonNull(Main.getInstance().getLuckyPerms().getGroupManager().getGroup(primaryGroup)).getWeight().getAsInt();
-        }
-        return -1;
+    public static CachedMetaData getCachedMetaData(UUID uuid){
+        if(luckPerms == null) throw new NullPointerException("LuckPermsUtils not initialized");
+
+        final String primaryGroup = getPrimaryGroup(uuid);
+        final QueryOptions queryOptions = getQueryOptions(uuid);
+        return (queryOptions != null? luckPerms.getGroupManager().getGroup(primaryGroup).getCachedData().getMetaData(queryOptions) : null);
+    }
+
+    public static String getPrefix(UUID uuid){
+        if(luckPerms == null) throw new NullPointerException("LuckPermsUtils not initialized");
+
+        val cachedMetaData = getCachedMetaData(uuid);
+        return (cachedMetaData != null? cachedMetaData.getPrefix() : null);
+    }
+
+    public static String getPrefixOrEmpty(UUID uuid){
+        return getPrefix(uuid) != null? getPrefix(uuid) : "";
+    }
+
+    public static String getSuffix(UUID uuid){
+        if(luckPerms == null) throw new NullPointerException("LuckPermsUtils not initialized");
+
+        val cachedMetaData = getCachedMetaData(uuid);
+        return (cachedMetaData != null? cachedMetaData.getSuffix() : null);
+    }
+
+    public static String getSuffixOrEmpty(UUID uuid){
+        return getSuffix(uuid) != null? getSuffix(uuid) : "";
+    }
+
+    public static int getWeight(UUID uuid){
+        if(luckPerms == null) throw new NullPointerException("LuckPermsUtils not initialized");
+
+        final String primaryGroup = getPrimaryGroup(uuid);
+        return luckPerms.getGroupManager().getGroup(primaryGroup).getWeight().getAsInt();
+    }
+
+    public static boolean hasPermission(UUID uuid, String permission){
+        return getUser(uuid).getCachedData().getPermissionData().checkPermission(permission).asBoolean();
     }
 }

@@ -28,30 +28,31 @@ public class PlayerListener implements Listener {
         // Update Profil
         val profil = Main.getInstance().getProfilCache().get(player.getUniqueId().toString());
         if(profil == null) {
-            player.disconnect(TextComponentUtil.decodeColor("Proxy: §cUne erreur est survenue lors du chargement de données.\n§cVeuillez vous reconnecter"));
+            player.disconnect(TextComponentUtil.decodeColor("§6§lBuilders Coffee Proxy \n§cUne erreur est survenue lors du chargement de données.\n§cVeuillez vous reconnecter"));
             return;
         }
 
         val banStore = Main.getInstance().getBanStore();
-        val ban = banStore.select(BanEntity.class)
+        try(val query = banStore.select(BanEntity.class)
                 .where(BanEntity.PROFILE.eq(profil))
-                .get().firstOrNull();
+                .get()) {
 
-        if(ban != null){
-            if(new Date().after(ban.getDateEnd()))
-            {
-                banStore.delete(ban);
-            }
-            else{
-                String message = "";
-                for (String s : Main.getInstance().getMessages().getBanMessage()) {
-                    String line = s.replace("%reason%", ban.getReason())
-                            .replace("%time%", DateUtil.formatDateDiff(ban.getDateEnd().getTime()))
-                            .replace("&", "§");
-                    message += line + "\n";
+            val ban = query.firstOrNull();
+
+            if (ban != null) {
+                if (new Date().after(ban.getDateEnd())) {
+                    banStore.delete(ban);
+                } else {
+                    String message = "";
+                    for (String s : Main.getInstance().getMessages().getBanMessage()) {
+                        String line = s.replace("%reason%", ban.getReason())
+                                .replace("%time%", DateUtil.formatDateDiff(ban.getDateEnd().getTime()))
+                                .replace("&", "§");
+                        message += line + "\n";
+                    }
+                    player.disconnect(TextComponentUtil.decodeColor(message));
+                    return;
                 }
-                player.disconnect(TextComponentUtil.decodeColor(message));
-                return;
             }
         }
     }
@@ -77,8 +78,8 @@ public class PlayerListener implements Listener {
                     .replace("%message%", message)
                     .replace("&", "§");
             ProxyServer.getInstance().getPlayers().stream()
-                    .filter(playerLoop -> playerLoop.hasPermission(Main.getInstance().getMessages().getStaffChatPermission())
-                            || playerLoop.hasPermission(Main.getInstance().getMessages().getGlobalPermission()))
+                    .filter(playerLoop -> playerLoop.hasPermission(Main.getInstance().getPermissions().getStaffChatPermission())
+                            || playerLoop.hasPermission(Main.getInstance().getPermissions().getGlobalPermission()))
                     .forEach(playerLoop -> {
                         playerLoop.sendMessage(TextComponentUtil.decodeColor(line));
                     });
@@ -123,7 +124,7 @@ public class PlayerListener implements Listener {
             return;
         }
 
-        if(event.getPlayer().getServer().equals(server)){
+        if(event.getPlayer().getServer().getInfo().equals(server)){
             return;
         }
 
@@ -163,7 +164,7 @@ public class PlayerListener implements Listener {
                         }
                     }
                     else if(i == 2 && args[i].toLowerCase().equals("default")){
-                        if(player.hasPermission(Main.getInstance().getMessages().getServerDefaultPermission()))
+                        if(player.hasPermission(Main.getInstance().getPermissions().getServerDefaultPermission()))
                         {
                             event.setCancelled(true);
                             Main.getInstance().getMessages().setServerRedirectName(server.getName());
