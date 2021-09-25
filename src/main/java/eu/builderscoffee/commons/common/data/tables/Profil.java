@@ -59,10 +59,10 @@ public abstract class Profil {
     MutableResult<NoteEntity> notesRegistered;
 
     @OneToMany(mappedBy = "id_jury")
-    MutableResult<CupNoteEntity> cupNoteRegistered;
+    MutableResult<CupNoteEntity> cupNotesRegistered;
 
-    @ManyToMany
-    MutableResult<CupTeamEntity> items;
+    @ManyToMany(mappedBy = "id_team")
+    MutableResult<CupTeamEntity> cupTeams;
 
     @OneToMany(mappedBy = "id_profil")
     MutableResult<Cosmetique> cosmetiques;
