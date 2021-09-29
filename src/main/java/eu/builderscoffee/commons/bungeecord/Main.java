@@ -21,8 +21,8 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.plugin.Plugin;
 
-import static eu.builderscoffee.api.bungeecord.configuration.Configurations.readOrCreateConfiguration;
-import static eu.builderscoffee.api.bungeecord.configuration.Configurations.writeConfiguration;
+import static eu.builderscoffee.api.common.configuration.Configuration.readOrCreateConfiguration;
+import static eu.builderscoffee.api.common.configuration.Configuration.writeConfiguration;
 
 @Getter
 public class Main extends Plugin {
@@ -50,10 +50,10 @@ public class Main extends Plugin {
         LuckPermsUtils.init(LuckPermsProvider.get());
 
         // Configuration
-        messages = readOrCreateConfiguration(this, MessageConfiguration.class);
-        permissions = readOrCreateConfiguration(this, PermissionConfiguration.class);
-        sqlCredentials = readOrCreateConfiguration(this, SQLCredentials.class);
-        redissonConfig = readOrCreateConfiguration(this, RedisConfig.class);
+        messages = readOrCreateConfiguration(this.getDescription().getName(), MessageConfiguration.class);
+        permissions = readOrCreateConfiguration(this.getDescription().getName(), PermissionConfiguration.class);
+        sqlCredentials = readOrCreateConfiguration(this.getDescription().getName(), SQLCredentials.class);
+        redissonConfig = readOrCreateConfiguration(this.getDescription().getName(), RedisConfig.class);
 
         // Initialize Redisson
         val redisCredentials = new RedisCredentials()
@@ -73,7 +73,7 @@ public class Main extends Plugin {
         if (server == null) {
             val newServer = (ServerInfo) getProxy().getServers().values().toArray()[0];
             Main.getInstance().getMessages().setServerRedirectName(newServer.getName());
-            writeConfiguration(this, messages);
+            writeConfiguration(this.getDescription().getName(), messages);
         }
 
         // Commands

@@ -15,7 +15,7 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import net.md_5.bungee.event.EventPriority;
 
-import static eu.builderscoffee.api.bungeecord.configuration.Configurations.writeConfiguration;
+import static eu.builderscoffee.api.common.configuration.Configuration.writeConfiguration;
 
 public class PlayerListener implements Listener {
 
@@ -133,7 +133,7 @@ public class PlayerListener implements Listener {
                         if (player.hasPermission(Main.getInstance().getPermissions().getServerDefaultPermission())) {
                             event.setCancelled(true);
                             Main.getInstance().getMessages().setServerRedirectName(server.getName());
-                            writeConfiguration(Main.getInstance(), Main.getInstance().getMessages());
+                            writeConfiguration(Main.getInstance().getDescription().getName(), Main.getInstance().getMessages());
                             event.setCancelled(true);
                             player.sendMessage(TextComponentUtil.decodeColor("§aLe serveur " + server.getName() + " est désormais le serveur par default"));
                         } else {

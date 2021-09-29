@@ -116,7 +116,7 @@ public class PlayerListener implements Listener {
                     .replace("%suffix%", suffix)
                     .replace("%message%", message)
                     .replace("&", "§"));
-            Redis.getTopic(CommonTopics.STAFFCHAT).publish(packet.serialize());
+            Redis.publish(CommonTopics.STAFFCHAT, packet);
             event.setCancelled(true);
         }
         // Normal chat

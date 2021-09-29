@@ -35,7 +35,7 @@ public class StaffChatCommand implements CommandExecutor {
                                 .replace("%suffix%", suffix)
                                 .replace("%message%", message)
                                 .replace("&", "§"));
-                Redis.getTopic(CommonTopics.STAFFCHAT).publish(packet.serialize());
+                Redis.publish(CommonTopics.STAFFCHAT, packet);
             }
             else {
                 if(sender instanceof Player){

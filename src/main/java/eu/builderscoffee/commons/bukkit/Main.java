@@ -26,7 +26,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import static eu.builderscoffee.api.bukkit.configuration.Configurations.readOrCreateConfiguration;
+import static eu.builderscoffee.api.common.configuration.Configuration.readOrCreateConfiguration;
 import static eu.builderscoffee.commons.bukkit.commands.HelpCommand.registerCommand;
 
 @Getter
@@ -58,9 +58,9 @@ public class Main extends JavaPlugin {
         if (provider != null) LuckPermsUtils.init(provider.getProvider());
 
         // Configuration
-        messages = readOrCreateConfiguration(this, MessageConfiguration.class);
-        sqlCredentials = readOrCreateConfiguration(this, SQLCredentials.class);
-        redissonConfig = readOrCreateConfiguration(this, RedisConfig.class);
+        messages = readOrCreateConfiguration(this.getName(), MessageConfiguration.class);
+        sqlCredentials = readOrCreateConfiguration(this.getName(), SQLCredentials.class);
+        redissonConfig = readOrCreateConfiguration(this.getName(), RedisConfig.class);
 
         // Initialize Redisson
         val redisCredentials = new RedisCredentials()
