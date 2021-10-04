@@ -1,7 +1,5 @@
-package eu.builderscoffee.commons.common.data;
+package eu.builderscoffee.commons.common.data.tables;
 
-import eu.builderscoffee.commons.bungeecord.annotations.EntityRefference;
-import eu.builderscoffee.commons.bungeecord.annotations.Listable;
 import io.requery.*;
 import lombok.ToString;
 
@@ -11,9 +9,9 @@ import lombok.ToString;
 @Entity
 @Table(name = "cosmetiques")
 @ToString
-@EntityRefference(entityClass = CosmetiqueEntity.class)
-@Listable(defaultVariableName = {"id_profil", "name"})
-public class Cosmetique {
+public abstract class Cosmetique {
+
+    /* Columns */
 
     @Column(name = "id_profil")
     @ForeignKey(update = ReferentialAction.CASCADE, referencedColumn = "id")

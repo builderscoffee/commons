@@ -1,8 +1,6 @@
-package eu.builderscoffee.commons.common.data;
+package eu.builderscoffee.commons.common.data.tables;
 
 import eu.builderscoffee.commons.bukkit.Main;
-import eu.builderscoffee.commons.bungeecord.annotations.EntityRefference;
-import eu.builderscoffee.commons.bungeecord.annotations.Listable;
 import io.requery.*;
 import io.requery.query.MutableResult;
 import lombok.Setter;
@@ -18,11 +16,12 @@ import java.util.Date;
 @Entity
 @Table(name = "profils")
 @ToString
-@EntityRefference(entityClass = ProfilEntity.class)
-@Listable(defaultVariableName = {"id", "name"})
 public abstract class Profil {
 
-    @Key @Generated
+    /* Columns */
+
+    @Key
+    @Generated
     int id;
 
     /**
@@ -51,8 +50,19 @@ public abstract class Profil {
     @Setter
     Timestamp updateDate;
 
+    /* Links to other entity */
+
     @OneToMany(mappedBy = "id_profil")
     MutableResult<NoteEntity> notes;
+
+    @OneToMany(mappedBy = "id_jury")
+    MutableResult<NoteEntity> notesRegistered;
+
+    @OneToMany(mappedBy = "id_jury")
+    MutableResult<CupNoteEntity> cupNotesRegistered;
+
+    @ManyToMany(mappedBy = "id_team")
+    MutableResult<CupTeamEntity> cupTeams;
 
     @OneToMany(mappedBy = "id_profil")
     MutableResult<Cosmetique> cosmetiques;
@@ -60,21 +70,14 @@ public abstract class Profil {
     @OneToOne
     BanEntity ban;
 
-    @PreInsert
-    protected void onPreInsert(){ setCreationDate(new Timestamp(new Date().getTime())); }
-
-    @PreUpdate
-    protected void onPreUpdate(){ setUpdateDate(new Timestamp(new Date().getTime())); }
-
     /**
      * Créer une nouvelle entité pour cette table
-     *
      * @param uniqueId UUID du joueur
      * @return Entité
      */
     public static ProfilEntity getOrCreate(String uniqueId) {
         val cached = Main.getInstance().getProfilCache().get(uniqueId);
-        if(cached == null) {
+        if (cached == null) {
             val profil = new ProfilEntity();
             profil.setUniqueId(uniqueId);
             profil.setUpdateDate(new Timestamp(new Date().getTime()));
@@ -82,5 +85,15 @@ public abstract class Profil {
             return profil;
         }
         return cached;
+    }
+
+    @PreInsert
+    protected void onPreInsert() {
+        setCreationDate(new Timestamp(new Date().getTime()));
+    }
+
+    @PreUpdate
+    protected void onPreUpdate() {
+        setUpdateDate(new Timestamp(new Date().getTime()));
     }
 }

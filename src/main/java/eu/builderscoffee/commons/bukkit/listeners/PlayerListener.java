@@ -108,7 +108,6 @@ public class PlayerListener implements Listener {
         // StaffChat
         if (Main.getInstance().getStaffchatPlayers().contains(event.getPlayer().getUniqueId())) {
             val packet = new StaffChatPacket()
-                .setServerName(Main.getInstance().getRedissonConfig().getClientName())
                 .setPlayerName(player.getName())
                 .setMessage(Main.getInstance().getMessages().getStaffChatFormatMessage()
                     .replace("%player%", player.getName())
@@ -116,7 +115,7 @@ public class PlayerListener implements Listener {
                     .replace("%suffix%", suffix)
                     .replace("%message%", message)
                     .replace("&", "§"));
-            Redis.getTopic(CommonTopics.STAFFCHAT).publish(packet.serialize());
+            Redis.publish(CommonTopics.STAFFCHAT, packet);
             event.setCancelled(true);
         }
         // Normal chat

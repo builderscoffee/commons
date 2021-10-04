@@ -2,7 +2,8 @@ package eu.builderscoffee.commons.bukkit.commands;
 
 import eu.builderscoffee.commons.bukkit.Main;
 import eu.builderscoffee.commons.bukkit.inventory.ProfilInventory;
-import eu.builderscoffee.commons.common.data.ProfilEntity;
+import eu.builderscoffee.commons.common.data.DataManager;
+import eu.builderscoffee.commons.common.data.tables.ProfilEntity;
 import lombok.val;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -12,7 +13,7 @@ import org.bukkit.entity.Player;
 public class ProfileCommand implements CommandExecutor {
 
     private static boolean openProfile(Player player, String targetName) {
-        val profilEntity = Main.getInstance().getProfilStore()
+        val profilEntity = DataManager.getProfilStore()
                 .select(ProfilEntity.class)
                 .where(ProfilEntity.NAME.lower().like(targetName.toLowerCase() + "%"))
                 .get().firstOrNull();

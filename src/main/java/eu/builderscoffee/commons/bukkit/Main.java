@@ -1,25 +1,23 @@
 package eu.builderscoffee.commons.bukkit;
 
-import com.zaxxer.hikari.HikariDataSource;
 import eu.builderscoffee.api.bukkit.gui.InventoryManager;
 import eu.builderscoffee.api.bukkit.utils.Plugins;
 import eu.builderscoffee.api.common.redisson.Redis;
 import eu.builderscoffee.api.common.redisson.RedisCredentials;
+import eu.builderscoffee.api.common.redisson.RedisTopic;
 import eu.builderscoffee.commons.bukkit.commands.*;
-import eu.builderscoffee.commons.bukkit.listeners.redisson.StaffChatListener;
-import eu.builderscoffee.commons.common.Models;
-import eu.builderscoffee.commons.common.configuration.RedisConfig;
-import eu.builderscoffee.commons.common.data.*;
-import eu.builderscoffee.commons.bukkit.listeners.ConnexionListener;
 import eu.builderscoffee.commons.bukkit.configuration.MessageConfiguration;
-import eu.builderscoffee.commons.common.configuration.SQLCredentials;
+import eu.builderscoffee.commons.bukkit.listeners.ConnexionListener;
 import eu.builderscoffee.commons.bukkit.listeners.PlayerListener;
+import eu.builderscoffee.commons.bukkit.listeners.redisson.HearBeatListener;
+import eu.builderscoffee.commons.bukkit.listeners.redisson.StaffChatListener;
+import eu.builderscoffee.commons.common.configuration.RedisConfig;
+import eu.builderscoffee.commons.common.configuration.SQLCredentials;
+import eu.builderscoffee.commons.common.data.DataManager;
+import eu.builderscoffee.commons.common.data.tables.ProfilEntity;
 import eu.builderscoffee.commons.common.redisson.topics.CommonTopics;
 import eu.builderscoffee.commons.common.utils.Cache;
 import eu.builderscoffee.commons.common.utils.LuckPermsUtils;
-import io.requery.sql.EntityDataStore;
-import io.requery.sql.SchemaModifier;
-import io.requery.sql.TableCreationMode;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.val;
@@ -30,55 +28,24 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import static eu.builderscoffee.api.bukkit.configuration.Configurations.readOrCreateConfiguration;
+import static eu.builderscoffee.api.common.configuration.Configuration.readOrCreateConfiguration;
 import static eu.builderscoffee.commons.bukkit.commands.HelpCommand.registerCommand;
 
+@Getter
 public class Main extends JavaPlugin {
 
     @Getter
     private static Main instance;
 
     //Configuration
-    @Getter
     private MessageConfiguration messages;
-
-    @Getter
     private SQLCredentials sqlCredentials;
-
-    @Getter
     private RedisConfig redissonConfig;
 
-    @Getter
     private InventoryManager inventoryManager;
 
-    @Getter
-    private HikariDataSource hikari;
 
-    @Getter
-    private EntityDataStore<Note> notesStore;
-
-    @Getter
-    private EntityDataStore<BuildbattleTheme> buildbattleThemeStore;
-
-    @Getter
-    private EntityDataStore<BuildbattleType> expressoTypseStore;
-
-    @Getter
-    private EntityDataStore<Buildbattle> buildbattlesStore;
-
-    @Getter
-    private EntityDataStore<Saison> saisonsStore;
-
-    @Getter
-    private EntityDataStore<Profil> profilStore;
-
-    @Getter
-    private EntityDataStore<Cosmetique> cosmetiquesStore;
-
-    @Getter
     private Cache<String, ProfilEntity> profilCache = new Cache<>();
-
-    @Getter
     private ArrayList<UUID> staffchatPlayers = new ArrayList<>();
 
     @SneakyThrows
@@ -88,13 +55,14 @@ public class Main extends JavaPlugin {
         instance = this;
 
         // Service Provider LuckPerms
+        // TODO Test with only LuckPermsProvider.get()
         val provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
         if (provider != null) LuckPermsUtils.init(provider.getProvider());
 
         // Configuration
-        messages = readOrCreateConfiguration(this, MessageConfiguration.class);
-        sqlCredentials = readOrCreateConfiguration(this, SQLCredentials.class);
-        redissonConfig = readOrCreateConfiguration(this, RedisConfig.class);
+        messages = readOrCreateConfiguration(this.getName(), MessageConfiguration.class);
+        sqlCredentials = readOrCreateConfiguration(this.getName(), SQLCredentials.class);
+        redissonConfig = readOrCreateConfiguration(this.getName(), RedisConfig.class);
 
         // Initialize Redisson
         val redisCredentials = new RedisCredentials()
@@ -103,10 +71,11 @@ public class Main extends JavaPlugin {
                 .setPassword(redissonConfig.getPassword())
                 .setPort(redissonConfig.getPort());
 
-        Redis.Initialize(redisCredentials, 0, 0);
+        Redis.Initialize(Bukkit.getServerName(), redisCredentials, 0, 0);
 
         // Redisson Listeners
         Redis.subscribe(CommonTopics.STAFFCHAT, new StaffChatListener());
+        Redis.subscribe(RedisTopic.HEARTBEATS, new HearBeatListener());
 
         // Inventory Api
         inventoryManager = new InventoryManager(this);
@@ -114,15 +83,7 @@ public class Main extends JavaPlugin {
 
         // Database
         getLogger().info("Connexion à la base de donnée...");
-        hikari = new HikariDataSource(sqlCredentials.toHikari());
-        saisonsStore = new EntityDataStore<>(hikari, Models.DEFAULT);
-        buildbattleThemeStore = new EntityDataStore<>(hikari, Models.DEFAULT);
-        expressoTypseStore = new EntityDataStore<>(hikari, Models.DEFAULT);
-        buildbattlesStore = new EntityDataStore<>(hikari, Models.DEFAULT);
-        profilStore = new EntityDataStore<>(hikari, Models.DEFAULT);
-        notesStore = new EntityDataStore<>(hikari, Models.DEFAULT);
-        cosmetiquesStore = new EntityDataStore<>(hikari, Models.DEFAULT);
-        new SchemaModifier(hikari, Models.DEFAULT).createTables(TableCreationMode.CREATE_NOT_EXISTS);
+        DataManager.init(sqlCredentials.toHikari());
 
         // Listeners
         Plugins.registerListeners(this, new PlayerListener());
@@ -144,7 +105,7 @@ public class Main extends JavaPlugin {
     @SneakyThrows
     @Override
     public void onDisable() {
-        hikari.close();
+        DataManager.getHikari().close();
         Redis.close();
     }
 }

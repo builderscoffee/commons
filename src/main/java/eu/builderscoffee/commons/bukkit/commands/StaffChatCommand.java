@@ -27,7 +27,6 @@ public class StaffChatCommand implements CommandExecutor {
                 val prefix = (sender instanceof Player)? LuckPermsUtils.getPrefixOrEmpty(((Player)sender).getUniqueId()) : "";
                 val suffix = (sender instanceof Player)? LuckPermsUtils.getSuffixOrEmpty(((Player)sender).getUniqueId()) : "";
                 val packet = new StaffChatPacket()
-                        .setServerName(Main.getInstance().getRedissonConfig().getClientName())
                         .setPlayerName(sender.getName())
                         .setMessage(Main.getInstance().getMessages().getStaffChatFormatMessage()
                                 .replace("%player%", sender.getName())
@@ -35,7 +34,7 @@ public class StaffChatCommand implements CommandExecutor {
                                 .replace("%suffix%", suffix)
                                 .replace("%message%", message)
                                 .replace("&", "§"));
-                Redis.getTopic(CommonTopics.STAFFCHAT).publish(packet.serialize());
+                Redis.publish(CommonTopics.STAFFCHAT, packet);
             }
             else {
                 if(sender instanceof Player){

@@ -1,7 +1,5 @@
-package eu.builderscoffee.commons.common.data;
+package eu.builderscoffee.commons.common.data.tables;
 
-import eu.builderscoffee.commons.bungeecord.annotations.EntityRefference;
-import eu.builderscoffee.commons.bungeecord.annotations.Listable;
 import io.requery.*;
 import lombok.ToString;
 
@@ -13,9 +11,9 @@ import java.sql.Timestamp;
 @Entity
 @Table(name = "buildbattles")
 @ToString
-@EntityRefference(entityClass = BuildbattleEntity.class)
-@Listable(defaultVariableName = {"id", "id_saison"})
-public class Buildbattle {
+public abstract class Buildbattle {
+
+    /* Columns */
 
     @Key @Generated
     int id;

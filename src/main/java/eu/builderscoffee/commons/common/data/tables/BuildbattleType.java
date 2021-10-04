@@ -1,7 +1,5 @@
-package eu.builderscoffee.commons.common.data;
+package eu.builderscoffee.commons.common.data.tables;
 
-import eu.builderscoffee.commons.bungeecord.annotations.EntityRefference;
-import eu.builderscoffee.commons.bungeecord.annotations.Listable;
 import io.requery.*;
 import io.requery.query.MutableResult;
 import lombok.ToString;
@@ -12,9 +10,9 @@ import lombok.ToString;
 @Entity
 @Table(name = "buildbattle_types")
 @ToString
-@EntityRefference(entityClass = BuildbattleTypeEntity.class)
-@Listable(defaultVariableName = {"id", "name"})
-public class BuildbattleType {
+public abstract class BuildbattleType {
+
+    /* Columns */
 
     @Key @Generated
     int id;
@@ -22,6 +20,11 @@ public class BuildbattleType {
     @Column(nullable = false, unique = true, length = 32)
     String name;
 
+    /* Links to other entity */
+
     @OneToMany(mappedBy = "id_type")
     MutableResult<BuildbattleEntity> buildbattles;
+
+    @OneToMany(mappedBy = "id_type")
+    MutableResult<CupRoundEntity> cupRounds;
 }

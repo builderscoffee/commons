@@ -10,6 +10,9 @@ import eu.builderscoffee.commons.bukkit.utils.SkullCreator;
 import eu.builderscoffee.commons.bukkit.Main;
 import eu.builderscoffee.commons.bukkit.configuration.MessageConfiguration;
 import eu.builderscoffee.commons.common.data.*;
+import eu.builderscoffee.commons.common.data.tables.BuildbattleEntity;
+import eu.builderscoffee.commons.common.data.tables.ProfilEntity;
+import eu.builderscoffee.commons.common.data.tables.SaisonEntity;
 import eu.builderscoffee.commons.common.utils.LuckPermsUtils;
 import lombok.val;
 import org.bukkit.ChatColor;
@@ -135,7 +138,7 @@ GROUP BY sub.id_buildbattle
                 }));
 
         // Derniers Résultats
-        val saisonsStore = main.getSaisonsStore();
+        val saisonsStore = DataManager.getSaisonsStore();
         contents.set(3, 5, ClickableItem.of(new ItemBuilder(SkullCreator.itemFromBase64(GLOBE)).setName(messages.getProfilSaison().replace("&", "§")).build(),
                 e -> {
                     // Get saisons

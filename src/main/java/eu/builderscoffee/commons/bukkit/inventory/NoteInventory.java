@@ -11,6 +11,10 @@ import eu.builderscoffee.commons.bukkit.Main;
 import eu.builderscoffee.commons.bukkit.utils.SkullCreator;
 import eu.builderscoffee.commons.bukkit.configuration.MessageConfiguration;
 import eu.builderscoffee.commons.common.data.*;
+import eu.builderscoffee.commons.common.data.tables.BuildbattleEntity;
+import eu.builderscoffee.commons.common.data.tables.Note;
+import eu.builderscoffee.commons.common.data.tables.NoteEntity;
+import eu.builderscoffee.commons.common.data.tables.ProfilEntity;
 import io.requery.query.NamedExpression;
 import io.requery.query.Result;
 import io.requery.query.Tuple;
@@ -34,7 +38,7 @@ public class NoteInventory implements InventoryProvider {
     private final Main main = Main.getInstance();
     private final MessageConfiguration messages = main.getMessages();
 
-    private final EntityDataStore<Note> storeNotes = main.getNotesStore();
+    private final EntityDataStore<Note> storeNotes = DataManager.getNotesStore();
 
     private final ProfilEntity profilEntity;
     private final BuildbattleEntity buildbattleEntity;

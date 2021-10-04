@@ -2,8 +2,9 @@ package eu.builderscoffee.commons.bungeecord.listeners;
 
 import eu.builderscoffee.commons.bungeecord.Main;
 import eu.builderscoffee.commons.bungeecord.listeners.event.DataStatueEvent;
-import eu.builderscoffee.commons.common.data.Profil;
-import eu.builderscoffee.commons.common.data.ProfilEntity;
+import eu.builderscoffee.commons.common.data.DataManager;
+import eu.builderscoffee.commons.common.data.tables.Profil;
+import eu.builderscoffee.commons.common.data.tables.ProfilEntity;
 import lombok.val;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -29,7 +30,7 @@ public class ConnexionListener implements Listener {
     @EventHandler
     public void onLoad(DataStatueEvent.Load event) {
         val instance = Main.getInstance();
-        val store = instance.getProfilStore();
+        val store = DataManager.getProfilStore();
         val uniqueId = event.getUniqueId();
         // Récupère ou créer une nouvelle entité
         try(val query =  store.select(ProfilEntity.class).where(ProfilEntity.UNIQUE_ID.eq(uniqueId))
@@ -53,7 +54,7 @@ public class ConnexionListener implements Listener {
             Main.getInstance().getLogger().warning("§cLe joueur n'avait pas de donnée (" + this.getClass().getName() + ".java:" + currentLine + ")");
             return;
         }
-        val store = instance.getProfilStore();
+        val store = DataManager.getProfilStore();
         try{
             val query = store.update(entity);
         } catch (Exception e){
