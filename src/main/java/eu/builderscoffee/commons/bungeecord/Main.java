@@ -2,12 +2,15 @@ package eu.builderscoffee.commons.bungeecord;
 
 import eu.builderscoffee.api.common.redisson.Redis;
 import eu.builderscoffee.api.common.redisson.RedisCredentials;
+import eu.builderscoffee.api.common.redisson.RedisTopic;
 import eu.builderscoffee.commons.bungeecord.commands.PBanCommand;
 import eu.builderscoffee.commons.bungeecord.commands.PPardonCommand;
 import eu.builderscoffee.commons.bungeecord.configuration.MessageConfiguration;
 import eu.builderscoffee.commons.bungeecord.configuration.PermissionConfiguration;
 import eu.builderscoffee.commons.bungeecord.listeners.ConnexionListener;
 import eu.builderscoffee.commons.bungeecord.listeners.PlayerListener;
+import eu.builderscoffee.commons.bungeecord.listeners.redisson.ServersListListener;
+import eu.builderscoffee.commons.bungeecord.listeners.redisson.HearBeatListener;
 import eu.builderscoffee.commons.common.configuration.RedisConfig;
 import eu.builderscoffee.commons.common.configuration.SQLCredentials;
 import eu.builderscoffee.commons.common.data.DataManager;
@@ -62,7 +65,11 @@ public class Main extends Plugin {
                 .setPassword(redissonConfig.getPassword())
                 .setPort(redissonConfig.getPort());
 
-        Redis.Initialize(redisCredentials, 0, 0);
+        Redis.Initialize(ProxyServer.getInstance().getName(), redisCredentials, 0, 0);
+
+        // Redisson Listeners
+        Redis.subscribe(RedisTopic.HEARTBEATS, new HearBeatListener());
+        Redis.subscribe(RedisTopic.BUNGEECORD, new ServersListListener());
 
         // Database
         getLogger().info("Connexion à la base de donnée...");
@@ -88,5 +95,6 @@ public class Main extends Plugin {
     @Override
     public void onDisable() {
         DataManager.getHikari().close();
+        Redis.close();
     }
 }
