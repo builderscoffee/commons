@@ -108,7 +108,6 @@ public class PlayerListener implements Listener {
         // StaffChat
         if (Main.getInstance().getStaffchatPlayers().contains(event.getPlayer().getUniqueId())) {
             val packet = new StaffChatPacket()
-                .setServerName(Main.getInstance().getRedissonConfig().getClientName())
                 .setPlayerName(player.getName())
                 .setMessage(Main.getInstance().getMessages().getStaffChatFormatMessage()
                     .replace("%player%", player.getName())

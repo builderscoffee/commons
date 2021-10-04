@@ -62,7 +62,7 @@ public class Main extends Plugin {
                 .setPassword(redissonConfig.getPassword())
                 .setPort(redissonConfig.getPort());
 
-        Redis.Initialize(redisCredentials, 0, 0);
+        Redis.Initialize(ProxyServer.getInstance().getName(), redisCredentials, 0, 0);
 
         // Database
         getLogger().info("Connexion à la base de donnée...");

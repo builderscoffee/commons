@@ -4,10 +4,12 @@ import eu.builderscoffee.api.bukkit.gui.InventoryManager;
 import eu.builderscoffee.api.bukkit.utils.Plugins;
 import eu.builderscoffee.api.common.redisson.Redis;
 import eu.builderscoffee.api.common.redisson.RedisCredentials;
+import eu.builderscoffee.api.common.redisson.RedisTopic;
 import eu.builderscoffee.commons.bukkit.commands.*;
 import eu.builderscoffee.commons.bukkit.configuration.MessageConfiguration;
 import eu.builderscoffee.commons.bukkit.listeners.ConnexionListener;
 import eu.builderscoffee.commons.bukkit.listeners.PlayerListener;
+import eu.builderscoffee.commons.bukkit.listeners.redisson.HearBeatListener;
 import eu.builderscoffee.commons.bukkit.listeners.redisson.StaffChatListener;
 import eu.builderscoffee.commons.common.configuration.RedisConfig;
 import eu.builderscoffee.commons.common.configuration.SQLCredentials;
@@ -69,10 +71,11 @@ public class Main extends JavaPlugin {
                 .setPassword(redissonConfig.getPassword())
                 .setPort(redissonConfig.getPort());
 
-        Redis.Initialize(redisCredentials, 0, 0);
+        Redis.Initialize(Bukkit.getServerName(), redisCredentials, 0, 0);
 
         // Redisson Listeners
         Redis.subscribe(CommonTopics.STAFFCHAT, new StaffChatListener());
+        Redis.subscribe(RedisTopic.HEARTBEATS, new HearBeatListener());
 
         // Inventory Api
         inventoryManager = new InventoryManager(this);
