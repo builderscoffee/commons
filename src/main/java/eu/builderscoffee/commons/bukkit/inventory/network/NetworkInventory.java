@@ -1,4 +1,4 @@
-package eu.builderscoffee.commons.bukkit.inventory;
+package eu.builderscoffee.commons.bukkit.inventory.network;
 
 import eu.builderscoffee.api.bukkit.gui.ClickableItem;
 import eu.builderscoffee.api.bukkit.gui.SmartInventory;
@@ -102,6 +102,13 @@ public class NetworkInventory implements InventoryProvider {
                     player.spigot().sendMessage(message);
                     player.closeInventory();
                 }));
+
+        if(player.hasPermission(main.getPermissions().getServerManagerSee())){
+            // ServerManager
+            contents.set(5, 1, ClickableItem.of(new ItemBuilder(Material.PAPER).setName(messages.getServerManagerItem().replace("&", "§")).build(),
+                    e -> new ServersManagerInventory().INVENTORY.open(player)));
+        }
+
         // Quitter
         contents.set(5, 0, ClickableItem.of(new ItemBuilder(Material.BARRIER).setName(messages.getCloseItem().replace("&", "§")).build(),
                 e -> contents.inventory().close(player)));

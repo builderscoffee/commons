@@ -1,7 +1,7 @@
 package eu.builderscoffee.commons.bukkit.commands;
 
 import eu.builderscoffee.commons.bukkit.Main;
-import eu.builderscoffee.commons.bukkit.inventory.NetworkInventory;
+import eu.builderscoffee.commons.bukkit.inventory.network.NetworkInventory;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

@@ -22,6 +22,8 @@ public class HearBeatListener implements PubSubListener {
             serverInfo.setHostPort(Bukkit.getPort());
             serverInfo.setServerType(ServerInfo.ServerType.SPIGOT);
             serverInfo.setStartingMethod(ServerInfo.ServerStartingMethod.STATIC);
+            serverInfo.setPlayerCount(Bukkit.getOnlinePlayers().size());
+            serverInfo.setPlayerMaximum(Bukkit.getMaxPlayers());
 
             HearBeatEventHandler.sendHeartBeatResponse(serverInfo);
         }

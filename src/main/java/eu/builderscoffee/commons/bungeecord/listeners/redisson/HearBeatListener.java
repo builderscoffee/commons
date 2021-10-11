@@ -22,6 +22,8 @@ public class HearBeatListener implements PubSubListener {
             serverInfo.setHostPort(0);
             serverInfo.setServerType(ServerInfo.ServerType.BUNGEECORD);
             serverInfo.setStartingMethod(ServerInfo.ServerStartingMethod.STATIC);
+            serverInfo.setPlayerCount(ProxyServer.getInstance().getPlayers().size());
+            serverInfo.setPlayerMaximum(ProxyServer.getInstance().getConfig().getPlayerLimit());
 
             HearBeatEventHandler.sendHeartBeatResponse(serverInfo);
         }

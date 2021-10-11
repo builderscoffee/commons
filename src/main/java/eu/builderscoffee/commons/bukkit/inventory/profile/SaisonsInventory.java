@@ -1,4 +1,4 @@
-package eu.builderscoffee.commons.bukkit.inventory;
+package eu.builderscoffee.commons.bukkit.inventory.profile;
 
 import eu.builderscoffee.api.bukkit.gui.ClickableItem;
 import eu.builderscoffee.api.bukkit.gui.SmartInventory;
@@ -14,7 +14,6 @@ import eu.builderscoffee.commons.common.data.tables.ProfilEntity;
 import eu.builderscoffee.commons.common.data.tables.Saison;
 import eu.builderscoffee.commons.common.data.tables.SaisonEntity;
 import io.requery.sql.EntityDataStore;
-import lombok.Data;
 import lombok.val;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

@@ -7,6 +7,7 @@ import eu.builderscoffee.api.common.redisson.RedisCredentials;
 import eu.builderscoffee.api.common.redisson.RedisTopic;
 import eu.builderscoffee.commons.bukkit.commands.*;
 import eu.builderscoffee.commons.bukkit.configuration.MessageConfiguration;
+import eu.builderscoffee.commons.bukkit.configuration.PermissionsConfiguration;
 import eu.builderscoffee.commons.bukkit.listeners.ConnexionListener;
 import eu.builderscoffee.commons.bukkit.listeners.PlayerListener;
 import eu.builderscoffee.commons.bukkit.listeners.redisson.HearBeatListener;
@@ -39,6 +40,7 @@ public class Main extends JavaPlugin {
 
     //Configuration
     private MessageConfiguration messages;
+    private PermissionsConfiguration permissions;
     private SQLCredentials sqlCredentials;
     private RedisConfig redissonConfig;
 
@@ -61,6 +63,7 @@ public class Main extends JavaPlugin {
 
         // Configuration
         messages = readOrCreateConfiguration(this.getName(), MessageConfiguration.class);
+        permissions = readOrCreateConfiguration(this.getName(), PermissionsConfiguration.class);
         sqlCredentials = readOrCreateConfiguration(this.getName(), SQLCredentials.class);
         redissonConfig = readOrCreateConfiguration(this.getName(), RedisConfig.class);
 

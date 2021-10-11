@@ -23,8 +23,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <source>8</source>
+                    <target>8</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -128,11 +128,9 @@
         </dependency>
 
         <dependency>
-            <groupId>eu.builderscoffee.api</groupId>
-            <artifactId>BuildersCoffeApi</artifactId>
-            <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/libs/BuildersCoffeeAPI-1.0-SNAPSHOT.jar</systemPath>
+            <groupId>eu.builderscoffee</groupId>
+            <artifactId>BuildersCoffeeAPI</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <!-- http://jcp.org/en/jsr/detail?id=250 -->

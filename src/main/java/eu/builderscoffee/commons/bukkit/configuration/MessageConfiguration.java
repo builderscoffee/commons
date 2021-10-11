@@ -40,6 +40,8 @@ public final class MessageConfiguration {
     String expressoLink = "https://builderscoffee.eu/portfolio/les-expressos/";
     // - CloseMenu Item
     String closeItem = "&cQuitter le menu";
+    // - ServerManager item
+    String serverManagerItem = "&bGérer les serveurs";
     // - Cosmetics Item
     String CosmeticsItem = "&aCosmétiques";
     // - Retour Item

@@ -1,7 +1,7 @@
 package eu.builderscoffee.commons.bukkit.commands;
 
 import eu.builderscoffee.commons.bukkit.Main;
-import eu.builderscoffee.commons.bukkit.inventory.ProfilInventory;
+import eu.builderscoffee.commons.bukkit.inventory.profile.ProfilInventory;
 import eu.builderscoffee.commons.common.data.DataManager;
 import eu.builderscoffee.commons.common.data.tables.ProfilEntity;
 import lombok.val;
