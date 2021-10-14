@@ -9,6 +9,7 @@ import eu.builderscoffee.commons.bungeecord.configuration.MessageConfiguration;
 import eu.builderscoffee.commons.bungeecord.configuration.PermissionConfiguration;
 import eu.builderscoffee.commons.bungeecord.listeners.ConnexionListener;
 import eu.builderscoffee.commons.bungeecord.listeners.PlayerListener;
+import eu.builderscoffee.commons.bungeecord.listeners.redisson.HeartBeatListener;
 import eu.builderscoffee.commons.bungeecord.listeners.redisson.ServersListListener;
 import eu.builderscoffee.commons.common.configuration.RedisConfig;
 import eu.builderscoffee.commons.common.configuration.SQLCredentials;
@@ -67,7 +68,7 @@ public class Main extends Plugin {
         Redis.Initialize(ProxyServer.getInstance().getName(), redisCredentials, 0, 0);
 
         // Redisson Listeners
-        Redis.subscribe(RedisTopic.HEARTBEATS, new ServersListListener());
+        Redis.subscribe(RedisTopic.HEARTBEATS, new HeartBeatListener());
         Redis.subscribe(RedisTopic.BUNGEECORD, new ServersListListener());
 
         // Database
