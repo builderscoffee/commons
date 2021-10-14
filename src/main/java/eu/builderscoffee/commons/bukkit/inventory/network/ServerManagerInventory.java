@@ -37,7 +37,7 @@ public class ServerManagerInventory implements InventoryProvider {
     public ServerManagerInventory(Server server) {
         this.server = server;
         this.INVENTORY = SmartInventory.builder()
-                .id("server_manager")
+                .id("server_manager_" + server.getHostName())
                 .provider(this)
                 .size(6, 9)
                 .title(ChatColor.WHITE + server.getHostName())

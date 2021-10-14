@@ -10,7 +10,7 @@ import eu.builderscoffee.commons.bukkit.configuration.MessageConfiguration;
 import eu.builderscoffee.commons.bukkit.configuration.PermissionsConfiguration;
 import eu.builderscoffee.commons.bukkit.listeners.ConnexionListener;
 import eu.builderscoffee.commons.bukkit.listeners.PlayerListener;
-import eu.builderscoffee.commons.bukkit.listeners.redisson.HearBeatListener;
+import eu.builderscoffee.commons.bukkit.listeners.redisson.HeartBeatListener;
 import eu.builderscoffee.commons.bukkit.listeners.redisson.StaffChatListener;
 import eu.builderscoffee.commons.common.configuration.RedisConfig;
 import eu.builderscoffee.commons.common.configuration.SQLCredentials;
@@ -78,7 +78,7 @@ public class Main extends JavaPlugin {
 
         // Redisson Listeners
         Redis.subscribe(CommonTopics.STAFFCHAT, new StaffChatListener());
-        Redis.subscribe(RedisTopic.HEARTBEATS, new HearBeatListener());
+        Redis.subscribe(RedisTopic.HEARTBEATS, new HeartBeatListener());
 
         // Inventory Api
         inventoryManager = new InventoryManager(this);
