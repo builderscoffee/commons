@@ -1,54 +1,38 @@
 package eu.builderscoffee.commons.bukkit.inventory.network;
 
 import eu.builderscoffee.api.bukkit.gui.ClickableItem;
-import eu.builderscoffee.api.bukkit.gui.SmartInventory;
 import eu.builderscoffee.api.bukkit.gui.content.InventoryContents;
-import eu.builderscoffee.api.bukkit.gui.content.InventoryProvider;
 import eu.builderscoffee.api.bukkit.gui.content.SlotIterator;
 import eu.builderscoffee.api.bukkit.gui.content.SlotPos;
 import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
 import eu.builderscoffee.api.common.redisson.Redis;
-import eu.builderscoffee.api.common.redisson.serverinfos.Server;
-import eu.builderscoffee.commons.bukkit.Main;
-import eu.builderscoffee.commons.bukkit.configuration.MessageConfiguration;
+import eu.builderscoffee.api.common.redisson.infos.Server;
+import eu.builderscoffee.commons.bukkit.inventory.templates.DefaultAdminTemplateInventory;
 import lombok.val;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.redisson.api.RSortedSet;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class ServersManagerInventory implements InventoryProvider {
-
-    public final SmartInventory INVENTORY;
-    private static final ClickableItem blackGlasses = ClickableItem.empty(new ItemBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 15)).setName("§a").build());
-    private static final ClickableItem greyGlasses = ClickableItem.empty(new ItemBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 7)).setName("§a").build());
-
-    private final Main main = Main.getInstance();
-    private final MessageConfiguration messages = main.getMessages();
+public class ServersManagerInventory extends DefaultAdminTemplateInventory {
 
     public ServersManagerInventory() {
-        this.INVENTORY = SmartInventory.builder()
-                .id("server_manager")
-                .provider(this)
-                .size(6, 9)
-                .title(ChatColor.WHITE + "Server Manager")
-                .manager(Main.getInstance().getInventoryManager())
-                .build();
+        super("Server Manager", NetworkInventory.INVENTORY);
     }
 
     @Override
     public void init(Player player, InventoryContents contents) {
+        super.init(player, contents);
 
-        //Fill Black borders
-        contents.fillRect(SlotPos.of(0, 0), SlotPos.of(5, 0), blackGlasses);
-        contents.fillRect(SlotPos.of(0, 8), SlotPos.of(5, 8), blackGlasses);
-        //Fill Grey borders
-        contents.fillRect(SlotPos.of(0, 1), SlotPos.of(0, 7), greyGlasses);
-        contents.fillRect(SlotPos.of(5, 1), SlotPos.of(5, 7), greyGlasses);
+        // Creer un serveur
+        contents.set(5, 3, ClickableItem.of(new ItemBuilder(Material.NETHER_STAR).setName("Creer un serveur").build(),
+                e -> new CreateServerInventory().INVENTORY.open(player)));
+
+        // Tournois
+        contents.set(5, 5, ClickableItem.of(new ItemBuilder(Material.BANNER).setName("Gérer les tournois").build(),
+                e -> new TournamentInventory().INVENTORY.open(player)));
     }
 
     @Override
@@ -91,26 +75,22 @@ public class ServersManagerInventory implements InventoryProvider {
                                 } catch (Exception e) {
                                 }
                             });
-                    lore.add("");
-                    lore.add("§aClic gauche pour gérer");
 
                     // Créer l'item permettant de click
                     serverItems.add(ClickableItem.of(new ItemBuilder(Material.PAPER)
                             .setName(s.getHostName())
                             .addLoreLine(new ArrayList<>(lore))
+                            .addLoreLine("")
+                            .addLoreLine("§aClic gauche pour gérer")
                             .build(),
                             e -> new ServerManagerInventory(s).INVENTORY.open(player)));
                 });
         // Ajouter les items dans l'inventaire
         contents.pagination().setItems(serverItems.toArray(new ClickableItem[0]));
-        contents.pagination().setItemsPerPage(7);
+        contents.pagination().setItemsPerPage(28);
 
         // Définit comment l'inventaire doit afficher les items
-        contents.pagination().addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, SlotPos.of(1, 1)));
-
-        // Retour
-        contents.set(5, 0, ClickableItem.of(new ItemBuilder(Material.ARROW).setName(messages.getRetourItem().replace("&", "§")).build(),
-                e -> NetworkInventory.INVENTORY.open(player)));
+        contents.pagination().addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, SlotPos.of(1, 0)));
     }
 
     public static String camelToPhrase(String str)
