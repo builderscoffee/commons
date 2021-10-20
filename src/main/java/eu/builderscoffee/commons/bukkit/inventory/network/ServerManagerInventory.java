@@ -6,6 +6,7 @@ import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
 import eu.builderscoffee.api.common.redisson.Redis;
 import eu.builderscoffee.api.common.redisson.infos.Server;
 import eu.builderscoffee.commons.bukkit.inventory.templates.DefaultAdminTemplateInventory;
+import eu.builderscoffee.commons.common.configuration.SettingsConfig;
 import eu.builderscoffee.commons.common.redisson.packets.ServerManagerRequest;
 import eu.builderscoffee.commons.common.redisson.packets.ServerManagerResponse;
 import eu.builderscoffee.commons.common.redisson.topics.CommonTopics;
@@ -79,25 +80,22 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
         val configPacket = new ServerManagerRequest();
         configPacket.setTargetServerName(server.getHostName());
         configPacket.setAction("requestConfig");
-        configPacket.onResponse = responsePacket -> {
-            val response = (ServerManagerResponse) responsePacket;
-            response.getItems().forEach(item -> {
-                int i1 = item.getT1();
-                int i2 = item.getT2();
-                // Check si l'emplacement des items est choisis
-                if(i1 == -1 || i2 == -1){
-                    // TODO if correct => Choose any place where item can be put
-                }
-                contents.set(i1, i2, ClickableItem.of(item.getT3(), e -> {
-                    // Creer une action de la config custom
-                    val actionPacket = new ServerManagerRequest();
-                    actionPacket.setTargetServerName(server.getHostName());
-                    actionPacket.setAction(item.getT4());
-                    // Envoyer la réponse
-                    Redis.publish(CommonTopics.SERVER_MANAGER, actionPacket);
-                }));
-            });
-        };
+        configPacket.onResponse = response -> response.getItems().forEach(item -> {
+            int i1 = item.getT1();
+            int i2 = item.getT2();
+            // Check si l'emplacement des items est choisis
+            if(i1 == -1 || i2 == -1){
+                // TODO if correct => Choose any place where item can be put
+            }
+            contents.set(i1, i2, ClickableItem.of(item.getT3(), e -> {
+                // Creer une action de la config custom
+                val actionPacket = new ServerManagerRequest();
+                actionPacket.setTargetServerName(server.getHostName());
+                actionPacket.setAction(item.getT4());
+                // Envoyer la réponse
+                Redis.publish(CommonTopics.SERVER_MANAGER, actionPacket);
+            }));
+        });
 
         // Envoyer la demande de config
         Redis.publish(CommonTopics.SERVER_MANAGER, configPacket);

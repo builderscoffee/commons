@@ -45,46 +45,47 @@ public class ServersManagerInventory extends DefaultAdminTemplateInventory {
         if(servers == null) return;
 
         // Boucle de tous les serveurs
-        servers.stream()
-                .sorted()
-                .forEach(s -> {
-                    // Creer une description selon les données du serveur
-                    val lore = new TreeSet<String>();
-                    Arrays.stream(s.getClass().getMethods())
-                            .filter(m -> m.getName().startsWith("get") &&
-                                    m.getParameterTypes().length == 0 &&
-                                    !m.getName().equalsIgnoreCase("getHostAddress") &&
-                                    !m.getName().equalsIgnoreCase("getHostPort") &&
-                                    !m.getName().equalsIgnoreCase("getHostName") &&
-                                    !m.getName().equalsIgnoreCase("getClass"))
-                            .forEach(m -> {
-                                try {
-                                    Object result = m.invoke(s);
-                                    if(result instanceof Date)
-                                        result = new SimpleDateFormat("EEE dd MMM yyyy à hh:mm:ss", Locale.FRANCE).format((Date) result);
+        if(servers.stream().count() > 0)
+            servers.stream()
+                    .sorted()
+                    .forEach(s -> {
+                        // Creer une description selon les données du serveur
+                        val lore = new TreeSet<String>();
+                        Arrays.stream(s.getClass().getMethods())
+                                .filter(m -> m.getName().startsWith("get") &&
+                                        m.getParameterTypes().length == 0 &&
+                                        !m.getName().equalsIgnoreCase("getHostAddress") &&
+                                        !m.getName().equalsIgnoreCase("getHostPort") &&
+                                        !m.getName().equalsIgnoreCase("getHostName") &&
+                                        !m.getName().equalsIgnoreCase("getClass"))
+                                .forEach(m -> {
+                                    try {
+                                        Object result = m.invoke(s);
+                                        if(result instanceof Date)
+                                            result = new SimpleDateFormat("EEE dd MMM yyyy à hh:mm:ss", Locale.FRANCE).format((Date) result);
 
-                                    String name = camelToPhrase(m.getName().substring(3));
-                                    if(result instanceof Collection){
-                                        val collection = (Collection) result;
-                                        lore.add("§b" + name + ":");
-                                        collection.forEach(o1 -> o1.toString());
+                                        String name = camelToPhrase(m.getName().substring(3));
+                                        if(result instanceof Collection){
+                                            val collection = (Collection) result;
+                                            lore.add("§b" + name + ":");
+                                            collection.forEach(o1 -> o1.toString());
+                                        }
+                                        else {
+                                            lore.add("§b" + name + ": §a" + result);
+                                        }
+                                    } catch (Exception e) {
                                     }
-                                    else {
-                                        lore.add("§b" + name + ": §a" + result);
-                                    }
-                                } catch (Exception e) {
-                                }
-                            });
+                                });
 
-                    // Créer l'item permettant de click
-                    serverItems.add(ClickableItem.of(new ItemBuilder(Material.PAPER)
-                            .setName(s.getHostName())
-                            .addLoreLine(new ArrayList<>(lore))
-                            .addLoreLine("")
-                            .addLoreLine("§aClic gauche pour gérer")
-                            .build(),
-                            e -> new ServerManagerInventory(s).INVENTORY.open(player)));
-                });
+                        // Créer l'item permettant de click
+                        serverItems.add(ClickableItem.of(new ItemBuilder(Material.PAPER)
+                                .setName(s.getHostName())
+                                .addLoreLine(new ArrayList<>(lore))
+                                .addLoreLine("")
+                                .addLoreLine("§aClic gauche pour gérer")
+                                .build(),
+                                e -> new ServerManagerInventory(s).INVENTORY.open(player)));
+                    });
         // Ajouter les items dans l'inventaire
         contents.pagination().setItems(serverItems.toArray(new ClickableItem[0]));
         contents.pagination().setItemsPerPage(28);

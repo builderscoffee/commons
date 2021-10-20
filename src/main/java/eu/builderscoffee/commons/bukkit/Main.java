@@ -12,8 +12,8 @@ import eu.builderscoffee.commons.bukkit.listeners.ConnexionListener;
 import eu.builderscoffee.commons.bukkit.listeners.PlayerListener;
 import eu.builderscoffee.commons.bukkit.listeners.redisson.HeartBeatListener;
 import eu.builderscoffee.commons.bukkit.listeners.redisson.StaffChatListener;
-import eu.builderscoffee.commons.common.configuration.RedisConfig;
-import eu.builderscoffee.commons.common.configuration.SQLCredentials;
+import eu.builderscoffee.commons.common.configuration.settings.RedisConfig;
+import eu.builderscoffee.commons.common.configuration.SettingsConfig;
 import eu.builderscoffee.commons.common.data.DataManager;
 import eu.builderscoffee.commons.common.data.tables.ProfilEntity;
 import eu.builderscoffee.commons.common.redisson.topics.CommonTopics;
@@ -41,11 +41,9 @@ public class Main extends JavaPlugin {
     //Configuration
     private MessageConfiguration messages;
     private PermissionsConfiguration permissions;
-    private SQLCredentials sqlCredentials;
-    private RedisConfig redissonConfig;
+    private SettingsConfig settings;
 
     private InventoryManager inventoryManager;
-
 
     private Cache<String, ProfilEntity> profilCache = new Cache<>();
     private ArrayList<UUID> staffchatPlayers = new ArrayList<>();
@@ -64,15 +62,14 @@ public class Main extends JavaPlugin {
         // Configuration
         messages = readOrCreateConfiguration(this.getName(), MessageConfiguration.class);
         permissions = readOrCreateConfiguration(this.getName(), PermissionsConfiguration.class);
-        sqlCredentials = readOrCreateConfiguration(this.getName(), SQLCredentials.class);
-        redissonConfig = readOrCreateConfiguration(this.getName(), RedisConfig.class);
+        settings = readOrCreateConfiguration(this.getName(), SettingsConfig.class);
 
         // Initialize Redisson
         val redisCredentials = new RedisCredentials()
-                .setClientName(redissonConfig.getClientName())
-                .setIp(redissonConfig.getIp())
-                .setPassword(redissonConfig.getPassword())
-                .setPort(redissonConfig.getPort());
+                .setClientName(settings.getRedis().getClientName())
+                .setIp(settings.getRedis().getIp())
+                .setPassword(settings.getRedis().getPassword())
+                .setPort(settings.getRedis().getPort());
 
         Redis.Initialize(Bukkit.getServerName(), redisCredentials, 0, 0);
 
@@ -86,7 +83,7 @@ public class Main extends JavaPlugin {
 
         // Database
         getLogger().info("Connexion à la base de donnée...");
-        DataManager.init(sqlCredentials.toHikari());
+        DataManager.init(settings.getMySQL().toHikari());
 
         // Listeners
         Plugins.registerListeners(this, new PlayerListener());

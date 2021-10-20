@@ -11,8 +11,8 @@ import eu.builderscoffee.commons.bungeecord.listeners.ConnexionListener;
 import eu.builderscoffee.commons.bungeecord.listeners.PlayerListener;
 import eu.builderscoffee.commons.bungeecord.listeners.redisson.HeartBeatListener;
 import eu.builderscoffee.commons.bungeecord.listeners.redisson.ServersListListener;
-import eu.builderscoffee.commons.common.configuration.RedisConfig;
-import eu.builderscoffee.commons.common.configuration.SQLCredentials;
+import eu.builderscoffee.commons.common.configuration.settings.RedisConfig;
+import eu.builderscoffee.commons.common.configuration.SettingsConfig;
 import eu.builderscoffee.commons.common.data.DataManager;
 import eu.builderscoffee.commons.common.data.tables.ProfilEntity;
 import eu.builderscoffee.commons.common.utils.Cache;
@@ -37,8 +37,7 @@ public class Main extends Plugin {
     private MessageConfiguration messages;
     private PermissionConfiguration permissions;
 
-    private SQLCredentials sqlCredentials;
-    private RedisConfig redissonConfig;
+    private SettingsConfig settings;
 
     // Cache des profils
     private Cache<String, ProfilEntity> profilCache = new Cache<>();
@@ -55,15 +54,14 @@ public class Main extends Plugin {
         // Configuration
         messages = readOrCreateConfiguration(this.getDescription().getName(), MessageConfiguration.class);
         permissions = readOrCreateConfiguration(this.getDescription().getName(), PermissionConfiguration.class);
-        sqlCredentials = readOrCreateConfiguration(this.getDescription().getName(), SQLCredentials.class);
-        redissonConfig = readOrCreateConfiguration(this.getDescription().getName(), RedisConfig.class);
+        settings = readOrCreateConfiguration(this.getDescription().getName(), SettingsConfig.class);
 
         // Initialize Redisson
         val redisCredentials = new RedisCredentials()
-                .setClientName(redissonConfig.getClientName())
-                .setIp(redissonConfig.getIp())
-                .setPassword(redissonConfig.getPassword())
-                .setPort(redissonConfig.getPort());
+                .setClientName(settings.getRedis().getClientName())
+                .setIp(settings.getRedis().getIp())
+                .setPassword(settings.getRedis().getPassword())
+                .setPort(settings.getRedis().getPort());
 
         Redis.Initialize(ProxyServer.getInstance().getName(), redisCredentials, 0, 0);
 
@@ -73,7 +71,7 @@ public class Main extends Plugin {
 
         // Database
         getLogger().info("Connexion à la base de donnée...");
-        DataManager.init(sqlCredentials.toHikari());
+        DataManager.init(settings.getMySQL().toHikari());
 
         // Check redirection server exist
         val server = ProxyServer.getInstance().getServerInfo(messages.getServerRedirectName());

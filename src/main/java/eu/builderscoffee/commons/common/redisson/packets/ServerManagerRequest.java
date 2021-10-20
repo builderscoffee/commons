@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ServerManagerRequest extends RequestPacket {
+public class ServerManagerRequest extends RequestPacket<ServerManagerResponse> {
 
     protected String action;
 }
