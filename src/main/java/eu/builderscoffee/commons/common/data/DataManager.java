@@ -27,6 +27,7 @@ public class DataManager {
     @Getter private static EntityDataStore<CupNote> cupNotesStore;
     @Getter private static EntityDataStore<CupRound> cupRoundsStore;
     @Getter private static EntityDataStore<CupTeam> cupTeamsStore;
+    @Getter private static EntityDataStore<Schematics> schematicsStore;
 
     /***
      * Initialise les tables de la bdd
@@ -46,6 +47,7 @@ public class DataManager {
         cupNotesStore = new EntityDataStore<>(hikari, Models.DEFAULT);
         cupRoundsStore = new EntityDataStore<>(hikari, Models.DEFAULT);
         cupTeamsStore = new EntityDataStore<>(hikari, Models.DEFAULT);
+        schematicsStore = new EntityDataStore<>(hikari, Models.DEFAULT);
         new SchemaModifier(hikari, Models.DEFAULT).createTables(TableCreationMode.CREATE_NOT_EXISTS);
     }
 }
