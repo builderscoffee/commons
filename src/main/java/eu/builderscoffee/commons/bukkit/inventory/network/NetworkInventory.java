@@ -60,16 +60,16 @@ public class NetworkInventory implements InventoryProvider {
 
 
         // Serveur hub
-        contents.set(1, 3, ClickableItem.of(new ItemBuilder(Material.NETHER_STAR).setName(messages.getHubItem().replace("&", "§")).build(),
+        contents.set(1, 3, ClickableItem.of(new ItemBuilder(Material.NETHER_STAR).setName(messages.getNetwork().getHubItem().replace("&", "§")).build(),
                 e -> BungeeUtils.sendPlayerToServer(main, player, "hub")));
         // Serveur BuildBattle
-        contents.set(1, 5, ClickableItem.of(new ItemBuilder(Material.ENCHANTMENT_TABLE).setName(messages.getBuildBattleItem().replace("&", "§")).build(),
+        contents.set(1, 5, ClickableItem.of(new ItemBuilder(Material.ENCHANTMENT_TABLE).setName(messages.getNetwork().getBuildBattleItem().replace("&", "§")).build(),
                 e -> BungeeUtils.sendPlayerToServer(main, player, "plot")));
         // Régles du serveur
-        contents.set(3, 3, ClickableItem.of(new ItemBuilder(Material.BOOK_AND_QUILL).setName(messages.getRulesBookItem().replace("&", "§")).build(),
+        contents.set(3, 3, ClickableItem.of(new ItemBuilder(Material.BOOK_AND_QUILL).setName(messages.getNetwork().getRulesBookItem().replace("&", "§")).build(),
                 e -> {
                     List<String> pages = new ArrayList<>();
-                    messages.getPages().forEach(s -> {
+                    messages.getNetwork().getPages().forEach(s -> {
                         TextComponent page0 = new TextComponent(s.replace("&", "§"));
                         page0.addExtra("\n");
                         pages.add(ComponentSerializer.toString(page0));
@@ -83,37 +83,37 @@ public class NetworkInventory implements InventoryProvider {
                     BookUtil.openBook(book, player);
                 }));
         // Nous soutenir
-        ItemStack diamond = new ItemBuilder(Material.DIAMOND).setName(messages.getSupportUsItem().replace("&", "§")).build();
+        ItemStack diamond = new ItemBuilder(Material.DIAMOND).setName(messages.getNetwork().getSupportUsItem().replace("&", "§")).build();
         ItemMeta diamondMeta = diamond.getItemMeta();
         diamondMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         diamondMeta.addEnchant(Enchantment.LUCK, 1, false);
         diamond.setItemMeta(diamondMeta);
         contents.set(3, 4, ClickableItem.of(diamond, e -> {
-                    TextComponent message = new TextComponent(messages.getSupportChatMessage());
-                    message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, messages.getSupportLink()));
+                    TextComponent message = new TextComponent(messages.getNetwork().getSupportChatMessage());
+                    message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, messages.getNetwork().getSupportLink()));
                     player.spigot().sendMessage(message);
                     player.closeInventory();
                 }));
         // Expresso
-        contents.set(3, 5, ClickableItem.of(new ItemBuilder(Material.FLOWER_POT_ITEM).setName(messages.getExpressoItem().replace("&", "§")).build(),
+        contents.set(3, 5, ClickableItem.of(new ItemBuilder(Material.FLOWER_POT_ITEM).setName(messages.getNetwork().getExpressoItem().replace("&", "§")).build(),
                 e -> {
-                    TextComponent message = new TextComponent(messages.getExpressoChatMessage());
-                    message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, messages.getExpressoLink()));
+                    TextComponent message = new TextComponent(messages.getNetwork().getExpressoChatMessage());
+                    message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, messages.getNetwork().getExpressoLink()));
                     player.spigot().sendMessage(message);
                     player.closeInventory();
                 }));
 
         if(player.hasPermission(main.getPermissions().getServerManagerSee())){
             // ServerManager
-            contents.set(5, 1, ClickableItem.of(new ItemBuilder(Material.PAPER).setName(messages.getServerManagerItem().replace("&", "§")).build(),
+            contents.set(5, 1, ClickableItem.of(new ItemBuilder(Material.PAPER).setName(messages.getNetwork().getServerManagerItem().replace("&", "§")).build(),
                     e -> new ServersManagerInventory().INVENTORY.open(player)));
         }
 
         // Quitter
-        contents.set(5, 0, ClickableItem.of(new ItemBuilder(Material.BARRIER).setName(messages.getCloseItem().replace("&", "§")).build(),
+        contents.set(5, 0, ClickableItem.of(new ItemBuilder(Material.BARRIER).setName(messages.getNetwork().getCloseItem().replace("&", "§")).build(),
                 e -> contents.inventory().close(player)));
         // Cosmétiques
-        contents.set(5, 8, ClickableItem.of(new ItemBuilder(Material.CHEST).setName(messages.getCosmeticsItem().replace("&", "§")).build(),
+        contents.set(5, 8, ClickableItem.of(new ItemBuilder(Material.CHEST).setName(messages.getNetwork().getCosmeticsItem().replace("&", "§")).build(),
                 e -> player.sendMessage("§cIl n'y a pas de grains de café en stock")));
 
 

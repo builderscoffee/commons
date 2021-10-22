@@ -28,7 +28,7 @@ public class StaffChatCommand implements CommandExecutor {
                 val suffix = (sender instanceof Player)? LuckPermsUtils.getSuffixOrEmpty(((Player)sender).getUniqueId()) : "";
                 val packet = new StaffChatPacket()
                         .setPlayerName(sender.getName())
-                        .setMessage(Main.getInstance().getMessages().getStaffChatFormatMessage()
+                        .setMessage(Main.getInstance().getMessages().getChat().getStaffChatFormat()
                                 .replace("%player%", sender.getName())
                                 .replace("%prefix%", prefix)
                                 .replace("%suffix%", suffix)

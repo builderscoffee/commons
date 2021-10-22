@@ -34,7 +34,7 @@ public class ProfileCommand implements CommandExecutor {
             return true;
         }
 
-        sender.sendMessage(Main.getInstance().getMessages().getCommandMustBePlayer());
+        sender.sendMessage(Main.getInstance().getMessages().getCommand().getMustBePlayer());
         return true;
     }
 }

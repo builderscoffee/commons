@@ -11,7 +11,6 @@ import eu.builderscoffee.commons.bungeecord.listeners.ConnexionListener;
 import eu.builderscoffee.commons.bungeecord.listeners.PlayerListener;
 import eu.builderscoffee.commons.bungeecord.listeners.redisson.HeartBeatListener;
 import eu.builderscoffee.commons.bungeecord.listeners.redisson.ServersListListener;
-import eu.builderscoffee.commons.common.configuration.settings.RedisConfig;
 import eu.builderscoffee.commons.common.configuration.SettingsConfig;
 import eu.builderscoffee.commons.common.data.DataManager;
 import eu.builderscoffee.commons.common.data.tables.ProfilEntity;

@@ -4,7 +4,9 @@ import eu.builderscoffee.api.bukkit.gui.ClickableItem;
 import eu.builderscoffee.api.bukkit.gui.content.InventoryContents;
 import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
 import eu.builderscoffee.api.common.redisson.Redis;
+import eu.builderscoffee.api.common.redisson.RedisTopic;
 import eu.builderscoffee.api.common.redisson.infos.Server;
+import eu.builderscoffee.api.common.redisson.packets.types.playpen.actions.FreezeServerPacket;
 import eu.builderscoffee.commons.bukkit.inventory.templates.DefaultAdminTemplateInventory;
 import eu.builderscoffee.commons.common.configuration.SettingsConfig;
 import eu.builderscoffee.commons.common.redisson.packets.ServerManagerRequest;
@@ -41,12 +43,13 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
                 }));
 
         // Freeze
-        contents.set(0, 7, ClickableItem.of(new ItemBuilder(Material.PACKED_ICE).setName("Freeze").build(),
-                e -> player.sendMessage("§cnot yet implemented")));
+        if(server.getStartingMethod().equals(Server.ServerStartingMethod.DYNAMIC))
+            contents.set(0, 7, ClickableItem.of(new ItemBuilder(Material.PACKED_ICE).setName("Freeze").build(),
+                    e -> Redis.publish(RedisTopic.PLAYPEN, new FreezeServerPacket().setTargetServerName(server.getHostName()))));
 
-        // état
+        // État
         val lore = new TreeSet<String>();
-        Arrays.stream(server.getClass().getMethods())
+        /*Arrays.stream(server.getClass().getMethods())
             .filter(m -> m.getName().startsWith("get") &&
                     m.getParameterTypes().length == 0 &&
                     !m.getName().equalsIgnoreCase("getHostAddress") &&
@@ -70,8 +73,19 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
                     }
                 } catch (Exception e) {
                 }
-            });
-        contents.set(0, 4, ClickableItem.empty(new ItemBuilder(Material.PAPER)
+            });*/
+        lore.add("§bStarting method: §a" + server.getStartingMethod());
+        lore.add("§bServer status: §a" + server.getServerStatus());
+        lore.add("§bServerType: §a" + server.getServerType());
+        lore.add("§bLast heartbeat at §a" + server.getLastHeartbeat());
+        lore.add("§bPlayers: §a" + server.getPlayerCount());
+        lore.add("§bMaximum players: §a" + server.getPlayerMaximum());
+        server.getProperties().forEach((key, value)->{
+            if(value instanceof Date)
+                value = new SimpleDateFormat("EEE dd MMM yyyy à hh:mm:ss", Locale.FRANCE).format((Date) value);
+            lore.add("§b" + key + ": §a" + value);
+        });
+        contents.set(0, 4, ClickableItem.empty(new ItemBuilder(Material.OBSERVER)
                 .setName("État")
                 .addLoreLine(new ArrayList<>(lore))
                 .build()));

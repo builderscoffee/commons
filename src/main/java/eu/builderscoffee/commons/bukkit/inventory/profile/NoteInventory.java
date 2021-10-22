@@ -193,7 +193,7 @@ public class NoteInventory implements InventoryProvider {
             int total = beaute + creativite + amenagement + folkore + fun;
             // Résultat Général
             val itGlobalScore = new ItemBuilder(SkullCreator.itemFromBase64(GLOBE))
-                    .setName("§6" + messages.getProfilGlobalResult().replace("&", "§"))
+                    .setName("§6" + messages.getProfil().getGlobalResultItem().replace("&", "§"))
                     .addLoreLine("§aAménagement §8/ §aFinalité: §f" + (Double.valueOf(amenagement) / (juryItems.length != 0? juryItems.length : 1)))
                     .addLoreLine("§aBeauté §8/ §aTechnicité: §f" + (Double.valueOf(beaute) / (juryItems.length != 0? juryItems.length : 1)))
                     .addLoreLine("§aCreativité §8/ §aOriginalité: §f" + (Double.valueOf(creativite) / (juryItems.length != 0? juryItems.length : 1)))
@@ -209,7 +209,7 @@ public class NoteInventory implements InventoryProvider {
                     e -> new SaisonInventory(profilEntity, buildbattleEntity.getSaison()).INVENTORY.open(player)));
 
             // Quitter
-            contents.set(5, 4, ClickableItem.of(new ItemBuilder(Material.BARRIER).setName(messages.getCloseItem().replace("&", "§")).build(),
+            contents.set(5, 4, ClickableItem.of(new ItemBuilder(Material.BARRIER).setName(messages.getNetwork().getCloseItem().replace("&", "§")).build(),
                     e -> contents.inventory().close(player)));
         }
     }

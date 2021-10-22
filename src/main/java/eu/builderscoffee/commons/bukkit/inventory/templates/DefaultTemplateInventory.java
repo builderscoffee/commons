@@ -21,7 +21,7 @@ public class DefaultTemplateInventory implements InventoryProvider {
     protected static final ClickableItem blackGlasses = ClickableItem.empty(new ItemBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 15)).setName("§a").build());
 
     protected final MessageConfiguration messages = Main.getInstance().getMessages();
-    private final SmartInventory previousInventory;
+    protected final SmartInventory previousInventory;
 
     public DefaultTemplateInventory(String title, SmartInventory previousInventory) {
         this.INVENTORY = SmartInventory.builder()

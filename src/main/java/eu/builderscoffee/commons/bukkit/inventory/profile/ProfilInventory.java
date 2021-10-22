@@ -98,12 +98,12 @@ GROUP BY sub.id_buildbattle
 
         // Profile skull builder
         val ibSkull = new ItemBuilder(SkullCreator.itemFromUuid(UUID.fromString(profilEntity.getUniqueId())))
-                .setName(messages.getProfilSkullItem()
+                .setName(messages.getProfil().getSkullItem()
                         .replace("%player%", profilEntity.getName())
                         .replace("&", "§"));
 
         // Add replaced lore to skull
-        messages.getProfilSkullLore().forEach(s -> ibSkull.addLoreLine(s.replace("%participations%", participations + "")
+        messages.getProfil().getSkullLore().forEach(s -> ibSkull.addLoreLine(s.replace("%participations%", participations + "")
                 .replace("%grade%", primaryGroup)
                 .replace("&", "§")));
 
@@ -112,7 +112,7 @@ GROUP BY sub.id_buildbattle
         contents.set(SlotPos.of(1, 4), ClickableItem.empty(skull));
 
         // Saisons
-        contents.set(3, 3, ClickableItem.of(new ItemBuilder(Material.PAINTING).setName(messages.getProfilResultatItem().replace("&", "§")).build(),
+        contents.set(3, 3, ClickableItem.of(new ItemBuilder(Material.PAINTING).setName(messages.getProfil().getResultItem().replace("&", "§")).build(),
                 e -> {
                     List<BuildbattleEntity> buildbattles = new ArrayList<>();
 
@@ -133,13 +133,13 @@ GROUP BY sub.id_buildbattle
                         new NoteInventory(profilEntity, buildbattles.get(0)).INVENTORY.open(player);
                     }
                     else{
-                        player.sendMessage(messages.getNotPlayedAnyBuildbattle().replace("&", "§"));
+                        player.sendMessage(messages.getProfil().getNotPlayedAnyBuildbattle().replace("&", "§"));
                     }
                 }));
 
         // Derniers Résultats
         val saisonsStore = DataManager.getSaisonsStore();
-        contents.set(3, 5, ClickableItem.of(new ItemBuilder(SkullCreator.itemFromBase64(GLOBE)).setName(messages.getProfilSaison().replace("&", "§")).build(),
+        contents.set(3, 5, ClickableItem.of(new ItemBuilder(SkullCreator.itemFromBase64(GLOBE)).setName(messages.getProfil().getSeasonItem().replace("&", "§")).build(),
                 e -> {
                     // Get saisons
                     try(val saisonsEntities = saisonsStore.select(SaisonEntity.class)
@@ -153,13 +153,13 @@ GROUP BY sub.id_buildbattle
                             new SaisonInventory(profilEntity, saisonsEntities.toList().get(0)).INVENTORY.open(player);
                         }
                         else{
-                            player.sendMessage(messages.getNoSeasonStarted().replace("&", "§"));
+                            player.sendMessage(messages.getProfil().getNoSeasonStarted().replace("&", "§"));
                         }
                     }
                 }));
 
         // Quitter
-        contents.set(5, 4, ClickableItem.of(new ItemBuilder(Material.BARRIER).setName(messages.getCloseItem().replace("&", "§")).build(),
+        contents.set(5, 4, ClickableItem.of(new ItemBuilder(Material.BARRIER).setName(messages.getNetwork().getCloseItem().replace("&", "§")).build(),
                 e -> contents.inventory().close(player)));
 
 

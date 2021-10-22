@@ -130,7 +130,7 @@ public class SaisonInventory implements InventoryProvider {
         contents.fillRect(SlotPos.of(2, 0), SlotPos.of(2, iTimeline - 1), orangeGlasses);
 
         // Historique
-        contents.set(5, 8, ClickableItem.of(new ItemBuilder(historiqueSkull).setName(messages.getProfilhistorique().replace("&", "§")).build(),
+        contents.set(5, 8, ClickableItem.of(new ItemBuilder(historiqueSkull).setName(messages.getProfil().getHistoryItem().replace("&", "§")).build(),
                 e -> {
                     new SaisonsInventory(profilEntity).INVENTORY.open(player);
                 }));
@@ -140,7 +140,7 @@ public class SaisonInventory implements InventoryProvider {
                 e -> new SaisonsInventory(profilEntity).INVENTORY.open(player)));
 
         // Quitter
-        contents.set(5, 4, ClickableItem.of(new ItemBuilder(Material.BARRIER).setName(messages.getCloseItem().replace("&", "§")).build(),
+        contents.set(5, 4, ClickableItem.of(new ItemBuilder(Material.BARRIER).setName(messages.getNetwork().getCloseItem().replace("&", "§")).build(),
                 e -> contents.inventory().close(player)));
     }
 

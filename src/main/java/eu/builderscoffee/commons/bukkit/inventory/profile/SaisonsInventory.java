@@ -89,7 +89,7 @@ public class SaisonsInventory implements InventoryProvider {
 
 
             // Quitter
-            contents.set(5, 4, ClickableItem.of(new ItemBuilder(Material.BARRIER).setName(messages.getCloseItem().replace("&", "§")).build(),
+            contents.set(5, 4, ClickableItem.of(new ItemBuilder(Material.BARRIER).setName(messages.getNetwork().getCloseItem().replace("&", "§")).build(),
                     e -> contents.inventory().close(player)));
 
             pagination.setItems(saisonsItems);

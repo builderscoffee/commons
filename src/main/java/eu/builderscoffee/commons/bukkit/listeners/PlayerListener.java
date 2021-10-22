@@ -61,8 +61,8 @@ public class PlayerListener implements Listener {
         }
 
         // Message de join
-        if (LuckPermsUtils.getWeight(player.getUniqueId()) > Main.getInstance().getMessages().getShowJoinMessageWeight()) {
-            event.setJoinMessage(Main.getInstance().getMessages().getOnJoinMessage()
+        if (LuckPermsUtils.getWeight(player.getUniqueId()) > Main.getInstance().getMessages().getJoin().getWeight()) {
+            event.setJoinMessage(Main.getInstance().getMessages().getJoin().getMessage()
                 .replace("%player%", player.getName())
                 .replace("%prefix%", LuckPermsUtils.getPrefixOrEmpty(player.getUniqueId()))
                 .replace("%suffix%", LuckPermsUtils.getSuffixOrEmpty(player.getUniqueId()))
@@ -79,8 +79,8 @@ public class PlayerListener implements Listener {
         val player = event.getPlayer();
 
         // Message de leave
-        if (LuckPermsUtils.getWeight(player.getUniqueId()) > Main.getInstance().getMessages().getShowQuitMessageWeight()) {
-            event.setQuitMessage(Main.getInstance().getMessages().getOnQuitMessage()
+        if (LuckPermsUtils.getWeight(player.getUniqueId()) > Main.getInstance().getMessages().getQuit().getWeight()) {
+            event.setQuitMessage(Main.getInstance().getMessages().getQuit().getMessage()
                 .replace("&", "§")
                 .replace("%player%", player.getName()));
         } else {
@@ -109,7 +109,7 @@ public class PlayerListener implements Listener {
         if (Main.getInstance().getStaffchatPlayers().contains(event.getPlayer().getUniqueId())) {
             val packet = new StaffChatPacket()
                 .setPlayerName(player.getName())
-                .setMessage(Main.getInstance().getMessages().getStaffChatFormatMessage()
+                .setMessage(Main.getInstance().getMessages().getChat().getStaffChatFormat()
                     .replace("%player%", player.getName())
                     .replace("%prefix%", prefix)
                     .replace("%suffix%", suffix)
@@ -120,7 +120,7 @@ public class PlayerListener implements Listener {
         }
         // Normal chat
         else {
-            event.setFormat(Main.getInstance().getMessages().getChatFormatMessage()
+            event.setFormat(Main.getInstance().getMessages().getChat().getFormat()
                 .replace("%player%", player.getName())
                 .replace("%prefix%", prefix)
                 .replace("%suffix%", suffix)

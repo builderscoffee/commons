@@ -12,7 +12,6 @@ import eu.builderscoffee.commons.bukkit.listeners.ConnexionListener;
 import eu.builderscoffee.commons.bukkit.listeners.PlayerListener;
 import eu.builderscoffee.commons.bukkit.listeners.redisson.HeartBeatListener;
 import eu.builderscoffee.commons.bukkit.listeners.redisson.StaffChatListener;
-import eu.builderscoffee.commons.common.configuration.settings.RedisConfig;
 import eu.builderscoffee.commons.common.configuration.SettingsConfig;
 import eu.builderscoffee.commons.common.data.DataManager;
 import eu.builderscoffee.commons.common.data.tables.ProfilEntity;

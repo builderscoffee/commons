@@ -27,13 +27,13 @@ public class NetworkCommands implements CommandExecutor {
             }
 
             if (!ret) {
-                sender.sendMessage(Main.getInstance().getMessages().getPrefix() + Main.getInstance().getMessages().getCommandBadSyntaxe());
+                sender.sendMessage(Main.getInstance().getMessages().getPrefix() + Main.getInstance().getMessages().getCommand().getBadSyntaxe());
             }
 
             return ret;
         }
 
-        sender.sendMessage(Main.getInstance().getMessages().getCommandMustBePlayer());
+        sender.sendMessage(Main.getInstance().getMessages().getCommand().getMustBePlayer());
         return true;
     }
 }

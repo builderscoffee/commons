@@ -19,7 +19,7 @@ public class BroadcastCommand implements CommandExecutor {
                 message += arg + " ";
             }
             if (message.length() > 3) {
-                Bukkit.broadcastMessage(Main.getInstance().getMessages().getBroadcastFormatMessage().replace("%message%", message)
+                Bukkit.broadcastMessage(Main.getInstance().getMessages().getChat().getBroadcastFormat().replace("%message%", message)
                         .replace("&", "§")
                 );
                 return false;

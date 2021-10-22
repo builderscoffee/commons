@@ -78,7 +78,7 @@ public class ServersManagerInventory extends DefaultAdminTemplateInventory {
                                 });
 
                         // Créer l'item permettant de click
-                        serverItems.add(ClickableItem.of(new ItemBuilder(Material.PAPER)
+                        serverItems.add(ClickableItem.of(new ItemBuilder(Material.OBSERVER)
                                 .setName(s.getHostName())
                                 .addLoreLine(new ArrayList<>(lore))
                                 .addLoreLine("")
