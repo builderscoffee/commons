@@ -3,6 +3,7 @@ package eu.builderscoffee.commons.bungeecord;
 import eu.builderscoffee.api.common.redisson.Redis;
 import eu.builderscoffee.api.common.redisson.RedisCredentials;
 import eu.builderscoffee.api.common.redisson.RedisTopic;
+import eu.builderscoffee.api.common.redisson.infos.Server;
 import eu.builderscoffee.commons.bungeecord.commands.PBanCommand;
 import eu.builderscoffee.commons.bungeecord.commands.PPardonCommand;
 import eu.builderscoffee.commons.bungeecord.configuration.MessageConfiguration;
@@ -22,6 +23,10 @@ import net.luckperms.api.LuckPermsProvider;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.plugin.Plugin;
+import org.redisson.api.RSortedSet;
+
+import java.net.InetSocketAddress;
+import java.util.Objects;
 
 import static eu.builderscoffee.api.common.configuration.Configuration.readOrCreateConfiguration;
 import static eu.builderscoffee.api.common.configuration.Configuration.writeConfiguration;
@@ -79,6 +84,15 @@ public class Main extends Plugin {
             Main.getInstance().getMessages().setServerRedirectName(newServer.getName());
             writeConfiguration(this.getDescription().getName(), messages);
         }
+
+        // Add started servers
+        final RSortedSet<Server> servers = Redis.getRedissonClient().getSortedSet("servers");
+        servers.stream()
+                .filter(s -> Objects.isNull(ProxyServer.getInstance().getServerInfo(s.getHostName())))
+                .forEach(s -> {
+                    val si = ProxyServer.getInstance().constructServerInfo(s.getHostName(), new InetSocketAddress(s.getHostAddress(), s.getHostPort()), "", false);
+                    ProxyServer.getInstance().getServers().put(si.getName(), si);
+                });
 
         // Commands
         getProxy().getPluginManager().registerCommand(this, new PBanCommand());

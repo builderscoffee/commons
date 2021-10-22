@@ -51,7 +51,7 @@ public class ServersManagerInventory extends DefaultAdminTemplateInventory {
                     .forEach(s -> {
                         // Creer une description selon les données du serveur
                         val lore = new TreeSet<String>();
-                        Arrays.stream(s.getClass().getMethods())
+                        /*Arrays.stream(s.getClass().getMethods())
                                 .filter(m -> m.getName().startsWith("get") &&
                                         m.getParameterTypes().length == 0 &&
                                         !m.getName().equalsIgnoreCase("getHostAddress") &&
@@ -75,7 +75,18 @@ public class ServersManagerInventory extends DefaultAdminTemplateInventory {
                                         }
                                     } catch (Exception e) {
                                     }
-                                });
+                                });*/
+                        lore.add("§bStarting method: §a" + s.getStartingMethod());
+                        lore.add("§bServer status: §a" + s.getServerStatus());
+                        lore.add("§bServerType: §a" + s.getServerType());
+                        lore.add("§bLast heartbeat at §a" + s.getLastHeartbeat());
+                        lore.add("§bPlayers: §a" + s.getPlayerCount());
+                        lore.add("§bMaximum players: §a" + s.getPlayerMaximum());
+                        s.getProperties().forEach((key, value)->{
+                            if(value instanceof Date)
+                                value = new SimpleDateFormat("EEE dd MMM yyyy à hh:mm:ss", Locale.FRANCE).format((Date) value);
+                            lore.add("§b" + key + ": §a" + value);
+                        });
 
                         // Créer l'item permettant de click
                         serverItems.add(ClickableItem.of(new ItemBuilder(Material.OBSERVER)
