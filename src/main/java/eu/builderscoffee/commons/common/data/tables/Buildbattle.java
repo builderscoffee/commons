@@ -1,6 +1,7 @@
 package eu.builderscoffee.commons.common.data.tables;
 
 import io.requery.*;
+import io.requery.query.MutableResult;
 import lombok.ToString;
 
 import java.sql.Timestamp;
@@ -41,4 +42,9 @@ public abstract class Buildbattle {
 
     @Column(nullable = false)
     boolean step;
+
+    /* Links to other entity */
+
+    @OneToMany(mappedBy = "token")
+    MutableResult<Schematics> schematics;
 }

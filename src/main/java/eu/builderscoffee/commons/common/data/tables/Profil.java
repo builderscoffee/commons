@@ -70,6 +70,9 @@ public abstract class Profil {
     @OneToOne
     BanEntity ban;
 
+    @ManyToMany
+    MutableResult<Schematics> schematics;
+
     /**
      * Créer une nouvelle entité pour cette table
      * @param uniqueId UUID du joueur

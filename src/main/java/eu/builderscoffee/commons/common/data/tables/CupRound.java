@@ -45,4 +45,7 @@ public abstract class CupRound {
 
     @OneToMany(mappedBy = "id_round")
     MutableResult<CupNoteEntity> notes;
+
+    @OneToMany(mappedBy = "token")
+    MutableResult<Schematics> schematics;
 }

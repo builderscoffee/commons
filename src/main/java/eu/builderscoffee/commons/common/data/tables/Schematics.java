@@ -1,6 +1,7 @@
 package eu.builderscoffee.commons.common.data.tables;
 
 import io.requery.*;
+import io.requery.query.MutableResult;
 import lombok.ToString;
 
 import java.util.UUID;
@@ -18,6 +19,19 @@ public abstract class Schematics {
     @Column
     UUID token;
 
-    @Column(name = "player_uuid")
-    UUID playerUuid;
+    @Column(name = "id_cup_round", nullable = false)
+    @ForeignKey(update = ReferentialAction.CASCADE, referencedColumn = "id")
+    @ManyToOne
+    CupRound cupRound;
+
+    @Column(name = "id_buildbattle", nullable = false)
+    @ForeignKey(update = ReferentialAction.CASCADE, referencedColumn = "id")
+    @ManyToOne
+    Buildbattle buildbattle;
+
+    /* Links to other entity */
+
+    @JunctionTable(type = Profil.class)
+    @ManyToMany
+    MutableResult<Profil> profils;
 }
