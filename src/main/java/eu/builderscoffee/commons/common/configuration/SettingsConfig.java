@@ -11,6 +11,7 @@ import lombok.Data;
 public class SettingsConfig {
 
     private PluginMode pluginMode = PluginMode.DEVELOPMENT;
+    private LoadMode loadMode = LoadMode.NORMAL;
     private MySQLConfig mySQL = new MySQLConfig();
     private RedisConfig redis = new RedisConfig();
 
@@ -18,5 +19,11 @@ public class SettingsConfig {
         @JsonEnumDefaultValue
         DEVELOPMENT,
         PRODUCTION
+    }
+
+    public enum LoadMode{
+        @JsonEnumDefaultValue
+        NORMAL,
+        LAZY
     }
 }

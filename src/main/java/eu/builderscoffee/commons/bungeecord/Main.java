@@ -52,9 +52,6 @@ public class Main extends Plugin {
         // Instance
         instance = this;
 
-        // Service Provider
-        LuckPermsUtils.init(LuckPermsProvider.get());
-
         // Configuration
         messages = readOrCreateConfiguration(this.getDescription().getName(), MessageConfiguration.class);
         permissions = readOrCreateConfiguration(this.getDescription().getName(), PermissionConfiguration.class);
@@ -77,30 +74,35 @@ public class Main extends Plugin {
         getLogger().info("Connexion à la base de donnée...");
         DataManager.init(settings.getMySQL().toHikari());
 
-        // Check redirection server exist
-        val server = ProxyServer.getInstance().getServerInfo(messages.getServerRedirectName());
-        if (server == null) {
-            val newServer = (ServerInfo) getProxy().getServers().values().toArray()[0];
-            Main.getInstance().getMessages().setServerRedirectName(newServer.getName());
-            writeConfiguration(this.getDescription().getName(), messages);
+        if(!settings.getLoadMode().equals(SettingsConfig.LoadMode.LAZY)){
+            // Service Provider
+            LuckPermsUtils.init(LuckPermsProvider.get());
+
+            // Check redirection server exist
+            val server = ProxyServer.getInstance().getServerInfo(messages.getServerRedirectName());
+            if (server == null) {
+                val newServer = (ServerInfo) getProxy().getServers().values().toArray()[0];
+                Main.getInstance().getMessages().setServerRedirectName(newServer.getName());
+                writeConfiguration(this.getDescription().getName(), messages);
+            }
+
+            // Add started servers
+            final RSortedSet<Server> servers = Redis.getRedissonClient().getSortedSet("servers");
+            servers.stream()
+                    .filter(s -> Objects.isNull(ProxyServer.getInstance().getServerInfo(s.getHostName())))
+                    .forEach(s -> {
+                        val si = ProxyServer.getInstance().constructServerInfo(s.getHostName(), new InetSocketAddress(s.getHostAddress(), s.getHostPort()), "", false);
+                        ProxyServer.getInstance().getServers().put(si.getName(), si);
+                    });
+
+            // Commands
+            getProxy().getPluginManager().registerCommand(this, new PBanCommand());
+            getProxy().getPluginManager().registerCommand(this, new PPardonCommand());
+
+            // Listeners
+            getProxy().getPluginManager().registerListener(this, new ConnexionListener());
+            getProxy().getPluginManager().registerListener(this, new PlayerListener());
         }
-
-        // Add started servers
-        final RSortedSet<Server> servers = Redis.getRedissonClient().getSortedSet("servers");
-        servers.stream()
-                .filter(s -> Objects.isNull(ProxyServer.getInstance().getServerInfo(s.getHostName())))
-                .forEach(s -> {
-                    val si = ProxyServer.getInstance().constructServerInfo(s.getHostName(), new InetSocketAddress(s.getHostAddress(), s.getHostPort()), "", false);
-                    ProxyServer.getInstance().getServers().put(si.getName(), si);
-                });
-
-        // Commands
-        getProxy().getPluginManager().registerCommand(this, new PBanCommand());
-        getProxy().getPluginManager().registerCommand(this, new PPardonCommand());
-
-        // Listeners
-        getProxy().getPluginManager().registerListener(this, new ConnexionListener());
-        getProxy().getPluginManager().registerListener(this, new PlayerListener());
     }
 
     @Override

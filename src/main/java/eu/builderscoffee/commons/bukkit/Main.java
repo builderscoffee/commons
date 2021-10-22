@@ -53,11 +53,6 @@ public class Main extends JavaPlugin {
         // Instance
         instance = this;
 
-        // Service Provider LuckPerms
-        // TODO Test with only LuckPermsProvider.get()
-        val provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
-        if (provider != null) LuckPermsUtils.init(provider.getProvider());
-
         // Configuration
         messages = readOrCreateConfiguration(this.getName(), MessageConfiguration.class);
         permissions = readOrCreateConfiguration(this.getName(), PermissionsConfiguration.class);
@@ -76,29 +71,36 @@ public class Main extends JavaPlugin {
         Redis.subscribe(CommonTopics.STAFFCHAT, new StaffChatListener());
         Redis.subscribe(RedisTopic.HEARTBEATS, new HeartBeatListener());
 
-        // Inventory Api
-        inventoryManager = new InventoryManager(this);
-        inventoryManager.init();
-
         // Database
         getLogger().info("Connexion à la base de donnée...");
         DataManager.init(settings.getMySQL().toHikari());
 
-        // Listeners
-        Plugins.registerListeners(this, new PlayerListener());
-        Plugins.registerListeners(this, new ConnexionListener());
+        if(!settings.getLoadMode().equals(SettingsConfig.LoadMode.LAZY)){
+            // Inventory Api
+            inventoryManager = new InventoryManager(this);
+            inventoryManager.init();
 
-        // Commands
-        this.getCommand("network").setExecutor(new NetworkCommands());
-        this.getCommand("menu").setExecutor(new NetworkCommands());
-        this.getCommand("hub").setExecutor(new HubCommand());
-        this.getCommand("lobby").setExecutor(new HubCommand());
-        this.getCommand("profil").setExecutor(new ProfileCommand());
-        this.getCommand("help").setExecutor(new HelpCommand());
-        this.getCommand("broadcast").setExecutor(new BroadcastCommand());
-        this.getCommand("staffchat").setExecutor(new StaffChatCommand());
+            // Service Provider LuckPerms
+            // TODO Test with only LuckPermsProvider.get()
+            val provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
+            if (provider != null) LuckPermsUtils.init(provider.getProvider());
 
-        registerCommand(HelpCommand.class);
+            // Commands
+            this.getCommand("network").setExecutor(new NetworkCommands());
+            this.getCommand("menu").setExecutor(new NetworkCommands());
+            this.getCommand("hub").setExecutor(new HubCommand());
+            this.getCommand("lobby").setExecutor(new HubCommand());
+            this.getCommand("profil").setExecutor(new ProfileCommand());
+            this.getCommand("help").setExecutor(new HelpCommand());
+            this.getCommand("broadcast").setExecutor(new BroadcastCommand());
+            this.getCommand("staffchat").setExecutor(new StaffChatCommand());
+
+            // Listeners
+            Plugins.registerListeners(this, new PlayerListener());
+            Plugins.registerListeners(this, new ConnexionListener());
+
+            registerCommand(HelpCommand.class);
+        }
     }
 
     @SneakyThrows
