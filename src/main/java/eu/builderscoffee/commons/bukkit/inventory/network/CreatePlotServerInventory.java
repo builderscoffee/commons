@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 public class CreatePlotServerInventory extends DefaultAdminTemplateInventory {
 
     public CreatePlotServerInventory() {
-        super("Create Plot", new CreateServerInventory().INVENTORY);
+        super("Create Plot", new CreateServerInventory().INVENTORY, 5, 9);
     }
 
     @Override

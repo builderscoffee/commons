@@ -24,7 +24,7 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
     private final Server server;
 
     public ServerManagerInventory(Server server) {
-        super(server.getHostName(), new ServersManagerInventory().INVENTORY);
+        super(server.getHostName(), new ServersManagerInventory().INVENTORY, 5, 9);
         this.server = server;
     }
 
@@ -99,15 +99,5 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
     @Override
     public void update(Player player, InventoryContents contents) {
 
-    }
-
-    public static String camelToPhrase(String str)
-    {
-        StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < str.chars().count(); i++){
-            val ch = str.charAt(i);
-            sb.append(Character.isUpperCase(ch) && i != 0? " " + Character.toLowerCase(ch): ch);
-        }
-        return sb.toString();
     }
 }

@@ -10,6 +10,7 @@ import eu.builderscoffee.commons.bukkit.Main;
 import eu.builderscoffee.commons.bukkit.configuration.MessageConfiguration;
 import eu.builderscoffee.commons.bukkit.inventory.network.NetworkInventory;
 import eu.builderscoffee.commons.bukkit.inventory.network.ServersManagerInventory;
+import lombok.NonNull;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -19,15 +20,25 @@ public class DefaultTemplateInventory implements InventoryProvider {
 
     public final SmartInventory INVENTORY;
     protected static final ClickableItem blackGlasses = ClickableItem.empty(new ItemBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 15)).setName("§a").build());
+    protected static final ClickableItem greyGlasses = ClickableItem.empty(new ItemBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 7)).setName("§a").build());
 
     protected final MessageConfiguration messages = Main.getInstance().getMessages();
     protected final SmartInventory previousInventory;
 
-    public DefaultTemplateInventory(String title, SmartInventory previousInventory) {
+    protected int rows;
+    protected int columns;
+
+    public DefaultTemplateInventory(@NonNull String title, SmartInventory previousInventory) {
+        this(title, previousInventory, 6, 9);
+    }
+
+    public DefaultTemplateInventory(@NonNull String title, SmartInventory previousInventory, int rows, int columns) {
+        this.rows = rows;
+        this.columns = columns;
         this.INVENTORY = SmartInventory.builder()
                 .id(this.getClass().getName())
                 .provider(this)
-                .size(6, 9)
+                .size(rows, columns)
                 .title(ChatColor.WHITE + title)
                 .manager(Main.getInstance().getInventoryManager())
                 .build();
@@ -37,13 +48,15 @@ public class DefaultTemplateInventory implements InventoryProvider {
     @Override
     public void init(Player player, InventoryContents contents) {
         //Fill Grey borders
-        contents.fillRect(SlotPos.of(0, 0), SlotPos.of(0, 8), blackGlasses);
-        contents.fillRect(SlotPos.of(5, 0), SlotPos.of(5, 8), blackGlasses);
+        if(rows > 2){
+            contents.fillRect(SlotPos.of(0, 0), SlotPos.of(0, columns - 1), blackGlasses);
+            contents.fillRect(SlotPos.of(rows - 1, 0), SlotPos.of(rows - 1, columns - 1), blackGlasses);
 
-        if(previousInventory != null){
-            // Retour
-            contents.set(5, 0, ClickableItem.of(new ItemBuilder(Material.ARROW).setName(messages.getRetourItem().replace("&", "§")).build(),
-                    e -> previousInventory.open(player)));
+            if(previousInventory != null){
+                // Retour
+                contents.set(rows - 1, 0, ClickableItem.of(new ItemBuilder(Material.ARROW).setName(messages.getRetourItem().replace("&", "§")).build(),
+                        e -> previousInventory.open(player)));
+            }
         }
     }
 

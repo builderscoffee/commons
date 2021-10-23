@@ -14,7 +14,7 @@ public class CreateTournamentInventory extends DefaultAdminTemplateInventory {
     private short plotsSize = 32;
 
     public CreateTournamentInventory() {
-        super("Create Tournament", new TournamentInventory().INVENTORY);
+        super("Create Tournament", new TournamentInventory().INVENTORY, 5, 9);
     }
 
     @Override
@@ -30,7 +30,7 @@ public class CreateTournamentInventory extends DefaultAdminTemplateInventory {
                 e -> player.sendMessage("§cnot yet implemented")));
 
         // Confirmer
-        contents.set(5, 3, ClickableItem.of(new ItemBuilder(Material.CONCRETE, 1, (short) 13).setName("Confirmer").build(),
+        contents.set(rows - 1, 3, ClickableItem.of(new ItemBuilder(Material.CONCRETE, 1, (short) 13).setName("Confirmer").build(),
                 e -> player.sendMessage("§cnot yet implemented")));
     }
 

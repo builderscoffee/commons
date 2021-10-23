@@ -9,6 +9,7 @@ import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
 import eu.builderscoffee.commons.bukkit.Main;
 import eu.builderscoffee.commons.bukkit.configuration.MessageConfiguration;
 import eu.builderscoffee.commons.bukkit.inventory.network.NetworkInventory;
+import lombok.NonNull;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -16,14 +17,19 @@ import org.bukkit.inventory.ItemStack;
 
 public class DefaultAdminTemplateInventory extends DefaultTemplateInventory {
 
-    public DefaultAdminTemplateInventory(String title, SmartInventory previousInventory) {
+    public DefaultAdminTemplateInventory(@NonNull String title, SmartInventory previousInventory) {
         super(title, previousInventory);
+    }
+
+    public DefaultAdminTemplateInventory(@NonNull String title, SmartInventory previousInventory, int rows, int columns) {
+        super(title, previousInventory, rows, columns);
     }
 
     @Override
     public void init(Player player, InventoryContents contents) {
         super.init(player, contents);
         // Version
-        contents.set(5, 8, ClickableItem.empty(new ItemBuilder(Material.HOPPER).setName("Version").addLoreLine(Main.getInstance().getSettings().getPluginMode().toString()).build()));
+        if(rows > 2)
+            contents.set(rows - 1, columns - 1, ClickableItem.empty(new ItemBuilder(Material.HOPPER).setName("Version").addLoreLine(Main.getInstance().getSettings().getPluginMode().toString()).build()));
     }
 }

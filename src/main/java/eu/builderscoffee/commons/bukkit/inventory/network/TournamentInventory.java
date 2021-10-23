@@ -10,14 +10,14 @@ import org.bukkit.entity.Player;
 public class TournamentInventory extends DefaultAdminTemplateInventory {
 
     public TournamentInventory() {
-        super("Tournament Manager", new ServersManagerInventory().INVENTORY);
+        super("Tournament Manager", new ServersManagerInventory().INVENTORY, 5, 9);
     }
 
     @Override
     public void init(Player player, InventoryContents contents) {
         super.init(player, contents);
         // Creer un tournoi
-        contents.set(5, 3, ClickableItem.of(new ItemBuilder(Material.NETHER_STAR).setName("Creer un tournoi").build(),
+        contents.set(rows - 1, 3, ClickableItem.of(new ItemBuilder(Material.NETHER_STAR).setName("Creer un tournoi").build(),
                 e -> new CreateTournamentInventory().INVENTORY.open(player)));
     }
 

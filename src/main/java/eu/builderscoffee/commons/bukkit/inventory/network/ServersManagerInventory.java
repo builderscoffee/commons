@@ -19,7 +19,7 @@ import java.util.*;
 public class ServersManagerInventory extends DefaultAdminTemplateInventory {
 
     public ServersManagerInventory() {
-        super("Server Manager", NetworkInventory.INVENTORY);
+        super("Server Manager", NetworkInventory.INVENTORY, 5, 9);
     }
 
     @Override
@@ -27,11 +27,11 @@ public class ServersManagerInventory extends DefaultAdminTemplateInventory {
         super.init(player, contents);
 
         // Creer un serveur
-        contents.set(5, 3, ClickableItem.of(new ItemBuilder(Material.NETHER_STAR).setName("Creer un serveur").build(),
+        contents.set(rows - 1, 3, ClickableItem.of(new ItemBuilder(Material.NETHER_STAR).setName("Creer un serveur").build(),
                 e -> new CreateServerInventory().INVENTORY.open(player)));
 
         // Tournois
-        contents.set(5, 5, ClickableItem.of(new ItemBuilder(Material.BANNER).setName("Gérer les tournois").build(),
+        contents.set(rows - 1, 5, ClickableItem.of(new ItemBuilder(Material.BANNER).setName("Gérer les tournois").build(),
                 e -> new TournamentInventory().INVENTORY.open(player)));
     }
 
@@ -74,19 +74,9 @@ public class ServersManagerInventory extends DefaultAdminTemplateInventory {
                     });
         // Ajouter les items dans l'inventaire
         contents.pagination().setItems(serverItems.toArray(new ClickableItem[0]));
-        contents.pagination().setItemsPerPage(28);
+        contents.pagination().setItemsPerPage(27);
 
         // Définit comment l'inventaire doit afficher les items
         contents.pagination().addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, SlotPos.of(1, 0)));
-    }
-
-    public static String camelToPhrase(String str)
-    {
-        StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < str.chars().count(); i++){
-            val ch = str.charAt(i);
-            sb.append(Character.isUpperCase(ch) && i != 0? " " + Character.toLowerCase(ch): ch);
-        }
-        return sb.toString();
     }
 }
