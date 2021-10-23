@@ -45,7 +45,7 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
         // Freeze
         if(server.getStartingMethod().equals(Server.ServerStartingMethod.DYNAMIC))
             contents.set(0, 7, ClickableItem.of(new ItemBuilder(Material.PACKED_ICE).setName("Freeze").build(),
-                    e -> Redis.publish(RedisTopic.PLAYPEN, new FreezeServerPacket().setTargetServerName(server.getHostName()))));
+                    e -> server.freeze()));
 
         // État
         val lore = new TreeSet<String>();
@@ -77,7 +77,7 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
         lore.add("§bStarting method: §a" + server.getStartingMethod());
         lore.add("§bServer status: §a" + server.getServerStatus());
         lore.add("§bServerType: §a" + server.getServerType());
-        lore.add("§bLast heartbeat at §a" + server.getLastHeartbeat());
+        lore.add("§bLast heartbeat at §a" + new SimpleDateFormat("EEE dd MMM yyyy à hh:mm:ss", Locale.FRANCE).format(server.getLastHeartbeat()));
         lore.add("§bPlayers: §a" + server.getPlayerCount());
         lore.add("§bMaximum players: §a" + server.getPlayerMaximum());
         server.getProperties().forEach((key, value)->{

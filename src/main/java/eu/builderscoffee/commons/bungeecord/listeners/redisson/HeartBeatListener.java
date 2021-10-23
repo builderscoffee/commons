@@ -7,6 +7,7 @@ import eu.builderscoffee.api.common.redisson.infos.Server;
 import eu.builderscoffee.api.common.redisson.listeners.PacketListener;
 import eu.builderscoffee.api.common.redisson.listeners.ProcessPacket;
 import eu.builderscoffee.api.common.redisson.packets.types.common.HeartBeatPacket;
+import eu.builderscoffee.commons.bungeecord.Main;
 import lombok.val;
 import net.md_5.bungee.api.ProxyServer;
 import org.redisson.api.RSortedSet;
@@ -21,7 +22,7 @@ public class HeartBeatListener implements PacketListener {
         serverInfo.setHostAddress("");
         serverInfo.setHostPort(0);
         serverInfo.setServerType(Server.ServerType.BUNGEECORD);
-        serverInfo.setStartingMethod(Server.ServerStartingMethod.STATIC);
+        serverInfo.setStartingMethod(Main.getInstance().getSettings().getStartingMethod());
         serverInfo.setPlayerCount(ProxyServer.getInstance().getPlayers().size());
         serverInfo.setPlayerMaximum(ProxyServer.getInstance().getConfig().getPlayerLimit());
 

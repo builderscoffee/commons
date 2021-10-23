@@ -7,6 +7,7 @@ import eu.builderscoffee.api.common.redisson.infos.Server;
 import eu.builderscoffee.api.common.redisson.listeners.PacketListener;
 import eu.builderscoffee.api.common.redisson.listeners.ProcessPacket;
 import eu.builderscoffee.api.common.redisson.packets.types.common.HeartBeatPacket;
+import eu.builderscoffee.commons.bukkit.Main;
 import lombok.val;
 import org.bukkit.Bukkit;
 import org.redisson.api.RSortedSet;
@@ -20,7 +21,7 @@ public class HeartBeatListener implements PacketListener {
         serverInfo.setHostAddress(Bukkit.getIp());
         serverInfo.setHostPort(Bukkit.getPort());
         serverInfo.setServerType(Server.ServerType.SPIGOT);
-        serverInfo.setStartingMethod(Server.ServerStartingMethod.STATIC);
+        serverInfo.setStartingMethod(Main.getInstance().getSettings().getStartingMethod());
         serverInfo.setPlayerCount(Bukkit.getOnlinePlayers().size());
         serverInfo.setPlayerMaximum(Bukkit.getMaxPlayers());
 
