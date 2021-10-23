@@ -16,23 +16,23 @@ public class HeartBeatListener implements PacketListener {
 
     @ProcessPacket
     public void onHeartBeat(HeartBeatPacket packet){
-        val serverInfo = new Server();
-        serverInfo.setHostName(Bukkit.getServerName());
-        serverInfo.setHostAddress(Bukkit.getIp());
-        serverInfo.setHostPort(Bukkit.getPort());
-        serverInfo.setServerType(Server.ServerType.SPIGOT);
-        serverInfo.setStartingMethod(Main.getInstance().getSettings().getStartingMethod());
-        serverInfo.setPlayerCount(Bukkit.getOnlinePlayers().size());
-        serverInfo.setPlayerMaximum(Bukkit.getMaxPlayers());
+        val server = new Server();
+        server.setHostName(Bukkit.getServerName());
+        server.setHostAddress(Bukkit.getIp());
+        server.setHostPort(Bukkit.getPort());
+        server.setServerType(Server.ServerType.SPIGOT);
+        server.setStartingMethod(Main.getInstance().getSettings().getStartingMethod());
+        server.setPlayerCount(Bukkit.getOnlinePlayers().size());
+        server.setPlayerMaximum(Bukkit.getMaxPlayers());
 
-        val event = new HeartBeatEvent(serverInfo);
+        val event = new HeartBeatEvent(server);
         EventHandler.getInstance().callEvent(event);
 
         if (event.isCanceled()) return;
 
         final RSortedSet<Server> servers = Redis.getRedissonClient().getSortedSet("servers");
-        if(servers != null) {
-            servers.add(event.getServer());
-        }
+        if(servers == null) return;
+        if(servers.contains(event.getServer())) servers.remove(event.getServer());
+        servers.add(event.getServer());
     }
 }

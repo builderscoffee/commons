@@ -24,6 +24,6 @@ public class DefaultAdminTemplateInventory extends DefaultTemplateInventory {
     public void init(Player player, InventoryContents contents) {
         super.init(player, contents);
         // Version
-        contents.set(5, 8, ClickableItem.empty(new ItemBuilder(Material.HOPPER).setName("Version").addLoreLine("DEV").build()));
+        contents.set(5, 8, ClickableItem.empty(new ItemBuilder(Material.HOPPER).setName("Version").addLoreLine(Main.getInstance().getSettings().getPluginMode().toString()).build()));
     }
 }

@@ -36,22 +36,8 @@ public class CreateServerInventory extends DefaultAdminTemplateInventory {
                         init(player, contents);
                     }
                     else{
-                        final RSortedSet<Server> servers = Redis.getRedissonClient().getSortedSet("servers");
-                        val name = "proxy" + (newServerMode.equals(SettingsConfig.PluginMode.DEVELOPMENT)? "-dev" : "") + "-";
-                        var exist = true;
-                        for(var i = 1; exist; i++){
-                            int finalI = i;
-                            exist = servers.stream().anyMatch(server -> server.getHostName().equalsIgnoreCase(name + finalI));
-                            if(!exist){
-                                val packet = new ProvisionServerPacket();
-                                packet.setNewServerName(name + i);
-                                packet.setNewServerPacketId(newServerMode.equals(SettingsConfig.PluginMode.DEVELOPMENT)? "proxy-dev" : "proxy-prod");
-                                packet.setNewServerVersion("promoted");
-
-                                Redis.publish(RedisTopic.PLAYPEN, packet);
-                                new ServersManagerInventory().INVENTORY.open(player);
-                            }
-                        }
+                        createServer("proxy");
+                        new ServersManagerInventory().INVENTORY.open(player);
                     }
                 }));
 
@@ -63,22 +49,8 @@ public class CreateServerInventory extends DefaultAdminTemplateInventory {
                         init(player, contents);
                     }
                     else{
-                        final RSortedSet<Server> servers = Redis.getRedissonClient().getSortedSet("servers");
-                        val name = "hub" + (newServerMode.equals(SettingsConfig.PluginMode.DEVELOPMENT)? "-dev" : "") + "-";
-                        var exist = true;
-                        for(var i = 1; exist; i++){
-                            int finalI = i;
-                            exist = servers.stream().anyMatch(server -> server.getHostName().equalsIgnoreCase(name + finalI));
-                            if(!exist){
-                                val packet = new ProvisionServerPacket();
-                                packet.setNewServerName(name + i);
-                                packet.setNewServerPacketId(newServerMode.equals(SettingsConfig.PluginMode.DEVELOPMENT)? "hub-dev" : "hub-prod");
-                                packet.setNewServerVersion("promoted");
-
-                                Redis.publish(RedisTopic.PLAYPEN, packet);
-                                new ServersManagerInventory().INVENTORY.open(player);
-                            }
-                        }
+                        createServer("hub");
+                        new ServersManagerInventory().INVENTORY.open(player);
                     }
                 }));
 
@@ -90,5 +62,23 @@ public class CreateServerInventory extends DefaultAdminTemplateInventory {
     @Override
     public void update(Player player, InventoryContents contents) {
         super.update(player, contents);
+    }
+
+    private void createServer(String type){
+        final RSortedSet<Server> servers = Redis.getRedissonClient().getSortedSet("servers");
+        val name = type + (newServerMode.equals(SettingsConfig.PluginMode.DEVELOPMENT)? "-dev" : "") + "-";
+        var exist = true;
+        for(var i = 1; exist; i++){
+            int finalI = i;
+            exist = servers.stream().anyMatch(server -> server.getHostName().equalsIgnoreCase(name + finalI));
+            if(!exist){
+                val packet = new ProvisionServerPacket();
+                packet.setNewServerName(name + i);
+                packet.setNewServerPacketId(type);
+                packet.setNewServerVersion(newServerMode.toString());
+
+                Redis.publish(RedisTopic.PLAYPEN, packet);
+            }
+        }
     }
 }

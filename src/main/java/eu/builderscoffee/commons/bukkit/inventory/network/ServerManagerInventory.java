@@ -39,41 +39,22 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
         contents.set(0, 8, ClickableItem.of(stopItem.build(),
                 e -> {
                     if(server.getStartingMethod().equals(Server.ServerStartingMethod.DYNAMIC))
+                    {
                         server.stop();
+                        new ServersManagerInventory().INVENTORY.open(player);
+                    }
                 }));
 
         // Freeze
         if(server.getStartingMethod().equals(Server.ServerStartingMethod.DYNAMIC))
             contents.set(0, 7, ClickableItem.of(new ItemBuilder(Material.PACKED_ICE).setName("Freeze").build(),
-                    e -> server.freeze()));
+                    e -> {
+                        server.freeze();
+                        new ServersManagerInventory().INVENTORY.open(player);
+                    }));
 
         // État
         val lore = new TreeSet<String>();
-        /*Arrays.stream(server.getClass().getMethods())
-            .filter(m -> m.getName().startsWith("get") &&
-                    m.getParameterTypes().length == 0 &&
-                    !m.getName().equalsIgnoreCase("getHostAddress") &&
-                    !m.getName().equalsIgnoreCase("getHostPort") &&
-                    !m.getName().equalsIgnoreCase("getHostName") &&
-                    !m.getName().equalsIgnoreCase("getClass"))
-            .forEach(m -> {
-                try {
-                    Object result = m.invoke(server);
-                    if(result instanceof Date)
-                        result = new SimpleDateFormat("EEE dd MMM yyyy à hh:mm:ss", Locale.FRANCE).format((Date) result);
-
-                    String name = camelToPhrase(m.getName().substring(3));
-                    if(result instanceof Collection){
-                        val collection = (Collection) result;
-                        lore.add("§b" + name + ":");
-                        collection.forEach(o1 -> o1.toString());
-                    }
-                    else {
-                        lore.add("§b" + name + ": §a" + result);
-                    }
-                } catch (Exception e) {
-                }
-            });*/
         lore.add("§bStarting method: §a" + server.getStartingMethod());
         lore.add("§bServer status: §a" + server.getServerStatus());
         lore.add("§bServerType: §a" + server.getServerType());
