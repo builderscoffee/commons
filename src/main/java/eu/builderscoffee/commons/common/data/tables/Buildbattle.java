@@ -25,7 +25,7 @@ public abstract class Buildbattle {
     @Column(name = "id_saison")
     @ForeignKey(update = ReferentialAction.CASCADE, referencedColumn = "id")
     @ManyToOne
-    protected SaisonEntity saison;
+    SaisonEntity saison;
 
     @Column(name = "id_type", nullable = false)
     @ForeignKey(update = ReferentialAction.CASCADE, referencedColumn = "id")
@@ -45,6 +45,6 @@ public abstract class Buildbattle {
 
     /* Links to other entity */
 
-    @OneToMany(mappedBy = "token")
+    @OneToMany(mappedBy = "id_buildbattle")
     MutableResult<Schematics> schematics;
 }

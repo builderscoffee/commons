@@ -71,7 +71,7 @@ public abstract class Profil {
     BanEntity ban;
 
     @ManyToMany
-    MutableResult<Schematics> schematics;
+    MutableResult<SchematicsEntity> schematics;
 
     /**
      * Créer une nouvelle entité pour cette table

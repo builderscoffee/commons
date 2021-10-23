@@ -31,6 +31,5 @@ public abstract class Saison {
     /* Links to other entity */
 
     @OneToMany(mappedBy = "id_saison")
-    @Getter
     MutableResult<BuildbattleEntity> buildbattles;
 }

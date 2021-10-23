@@ -19,19 +19,19 @@ public abstract class Schematics {
     @Column
     UUID token;
 
-    @Column(name = "id_cup_round", nullable = false)
+    @Column(name = "id_cup_round")
     @ForeignKey(update = ReferentialAction.CASCADE, referencedColumn = "id")
     @ManyToOne
-    CupRound cupRound;
+    CupRoundEntity cupRound;
 
-    @Column(name = "id_buildbattle", nullable = false)
+    @Column(name = "id_buildbattle")
     @ForeignKey(update = ReferentialAction.CASCADE, referencedColumn = "id")
     @ManyToOne
-    Buildbattle buildbattle;
+    BuildbattleEntity buildbattle;
 
     /* Links to other entity */
 
-    @JunctionTable(type = Profil.class)
+    @JunctionTable(type = Schematics_Profils.class)
     @ManyToMany
-    MutableResult<Profil> profils;
+    MutableResult<ProfilEntity> profils;
 }

@@ -23,11 +23,11 @@ public abstract class CupTeam {
 
     /* Links to other entity */
 
-    @JunctionTable(type = Profil.class)
+    @JunctionTable(type = CupTeam_Profil.class)
     @ManyToMany(mappedBy = "id_team")
     MutableResult<Profil> members;
 
-    @JunctionTable(type = Profil.class)
+    @JunctionTable(type = CupNote_CupTeam.class)
     @ManyToMany(mappedBy = "id_note")
     MutableResult<CupNoteEntity> notes;
 }
