@@ -1,4 +1,4 @@
-package eu.builderscoffee.commons.bungeecord.utils;
+package eu.builderscoffee.commons.common.utils;
 
 import lombok.Data;
 
