@@ -83,11 +83,7 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
                 lore.add("§bLast heartbeat at §a" + new SimpleDateFormat("EEE dd MMM yyyy à hh:mm:ss", Locale.FRANCE).format(s.getLastHeartbeat()));
                 lore.add("§bPlayers: §a" + s.getPlayerCount());
                 lore.add("§bMaximum players: §a" + s.getPlayerMaximum());
-                s.getProperties().forEach((key, value) -> {
-                    if (value instanceof Date)
-                        value = new SimpleDateFormat("EEE dd MMM yyyy à hh:mm:ss", Locale.FRANCE).format((Date) value);
-                    lore.add("§b" + key + ": §a" + value);
-                });
+                s.getProperties().forEach((key, value) -> lore.add("§b" + key + ": §a" + value));
                 contents.set(0, 4, ClickableItem.empty(new ItemBuilder(Material.OBSERVER)
                         .setName("État")
                         .addLoreLine(new ArrayList<>(lore))
@@ -110,21 +106,22 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
             val configItems = new ArrayList<ClickableItem>();
 
             // loop all items
-            response.getItems().forEach(itemInfo -> {
-                val i1 = itemInfo.getFirst();
-                val i2 = itemInfo.getSecond();
-                System.out.println(itemInfo.getThird());
-                val item = ClickableItem.of(SingleItemSerialization.getItem(itemInfo.getThird()), e -> {
-                    sendConfigRequest(itemInfo.getFourth(), contents);
-                });
+            if (!response.isFinished())
+                response.getItems().forEach(itemInfo -> {
+                    val i1 = itemInfo.getFirst();
+                    val i2 = itemInfo.getSecond();
+                    System.out.println(itemInfo.getThird());
+                    val item = ClickableItem.of(SingleItemSerialization.getItem(itemInfo.getThird()), e -> {
+                        sendConfigRequest(itemInfo.getFourth(), contents);
+                    });
 
-                // slot hasn't been chosen
-                if (i1 == -1 || i2 == -1)
-                    configItems.add(item);
-                    // slot has been chosen
-                else
-                    contents.set(i1, i2, item);
-            });
+                    // slot hasn't been chosen
+                    if (i1 == -1 || i2 == -1)
+                        configItems.add(item);
+                        // slot has been chosen
+                    else
+                        contents.set(i1, i2, item);
+                });
 
             // Set items in pagination system
             contents.pagination().setItems(configItems.toArray(new ClickableItem[0]));

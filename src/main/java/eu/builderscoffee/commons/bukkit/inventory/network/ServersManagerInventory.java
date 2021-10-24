@@ -60,11 +60,7 @@ public class ServersManagerInventory extends DefaultAdminTemplateInventory {
                         lore.add("§bLast heartbeat at §a" + new SimpleDateFormat("EEE dd MMM yyyy à hh:mm:ss", Locale.FRANCE).format(s.getLastHeartbeat()));
                         lore.add("§bPlayers: §a" + s.getPlayerCount());
                         lore.add("§bMaximum players: §a" + s.getPlayerMaximum());
-                        s.getProperties().forEach((key, value)->{
-                            if(value instanceof Date)
-                                value = new SimpleDateFormat("EEE dd MMM yyyy à hh:mm:ss", Locale.FRANCE).format((Date) value);
-                            lore.add("§b" + key + ": §a" + value);
-                        });
+                        s.getProperties().forEach((key, value)->lore.add("§b" + key + ": §a" + value));
 
                         // Créer l'item permettant de click
                         serverItems.add(ClickableItem.of(new ItemBuilder(Material.OBSERVER)
