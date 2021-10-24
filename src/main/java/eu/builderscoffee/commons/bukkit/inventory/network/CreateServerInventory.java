@@ -18,6 +18,9 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.redisson.api.RSortedSet;
 
+/**
+ * This inventory allows players to create a server
+ */
 public class CreateServerInventory extends DefaultAdminTemplateInventory {
 
     public CreateServerInventory() {

@@ -16,6 +16,9 @@ import org.redisson.api.RSortedSet;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+/**
+ * This inventory allows players to manage multiple servers
+ */
 public class ServersManagerInventory extends DefaultAdminTemplateInventory {
 
     public ServersManagerInventory() {

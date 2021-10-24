@@ -2,23 +2,27 @@ package eu.builderscoffee.commons.bukkit.inventory.network;
 
 import eu.builderscoffee.api.bukkit.gui.ClickableItem;
 import eu.builderscoffee.api.bukkit.gui.content.InventoryContents;
+import eu.builderscoffee.api.bukkit.gui.content.SlotIterator;
+import eu.builderscoffee.api.bukkit.gui.content.SlotPos;
 import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
 import eu.builderscoffee.api.common.redisson.Redis;
-import eu.builderscoffee.api.common.redisson.RedisTopic;
 import eu.builderscoffee.api.common.redisson.infos.Server;
-import eu.builderscoffee.api.common.redisson.packets.types.playpen.actions.FreezeServerPacket;
 import eu.builderscoffee.commons.bukkit.inventory.templates.DefaultAdminTemplateInventory;
-import eu.builderscoffee.commons.common.configuration.SettingsConfig;
 import eu.builderscoffee.commons.common.redisson.packets.ServerManagerRequest;
-import eu.builderscoffee.commons.common.redisson.packets.ServerManagerResponse;
 import eu.builderscoffee.commons.common.redisson.topics.CommonTopics;
 import lombok.val;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TreeSet;
 
+/**
+ * This inventory allows players to manager a specific server
+ */
 public class ServerManagerInventory extends DefaultAdminTemplateInventory {
 
     private final Server server;
@@ -72,32 +76,52 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
                 .build()));
 
         // Demander au serveur si une configuration est possible ou néscessaire
-        val configPacket = new ServerManagerRequest();
-        configPacket.setTargetServerName(server.getHostName());
-        configPacket.setAction("requestConfig");
-        configPacket.onResponse = response -> response.getItems().forEach(item -> {
-            int i1 = item.getT1();
-            int i2 = item.getT2();
-            // Check si l'emplacement des items est choisis
-            if(i1 == -1 || i2 == -1){
-                // TODO if correct => Choose any place where item can be put
-            }
-            contents.set(i1, i2, ClickableItem.of(item.getT3(), e -> {
-                // Creer une action de la config custom
-                val actionPacket = new ServerManagerRequest();
-                actionPacket.setTargetServerName(server.getHostName());
-                actionPacket.setAction(item.getT4());
-                // Envoyer la réponse
-                Redis.publish(CommonTopics.SERVER_MANAGER, actionPacket);
-            }));
-        });
-
-        // Envoyer la demande de config
-        Redis.publish(CommonTopics.SERVER_MANAGER, configPacket);
+        sendConfigRequest("requestConfig", contents);
     }
 
     @Override
     public void update(Player player, InventoryContents contents) {
 
+    }
+
+    private void sendConfigRequest(String action, InventoryContents contents){
+        // Create request
+        val configPacket = new ServerManagerRequest();
+
+        // Define target server & action
+        configPacket.setTargetServerName(server.getHostName());
+        configPacket.setAction("");
+
+        // Show items on response
+        configPacket.onResponse = response -> {
+            // create list to temporary store items
+            val configItems = new ArrayList<ClickableItem>();
+
+            // loop all items
+            response.getItems().forEach(itemInfo -> {
+                val i1 = itemInfo.getFirst();
+                val i2 = itemInfo.getSecond();
+                val item = ClickableItem.of(itemInfo.getThird(), e -> {
+                    sendConfigRequest(itemInfo.getFourth(), contents);
+                });
+
+                // slot hasn't been chosen
+                if(i1 == -1 || i2 == -1)
+                    configItems.add(item);
+                // slot has been chosen
+                else
+                    contents.set(i1, i2, item);
+            });
+
+            // Set items in pagination system
+            contents.pagination().setItems(configItems.toArray(new ClickableItem[0]));
+            contents.pagination().setItemsPerPage(27);
+
+            // Define how items are placed in inv
+            contents.pagination().addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, SlotPos.of(1, 0)));
+        };
+
+        // Send request
+        Redis.publish(CommonTopics.SERVER_MANAGER, configPacket);
     }
 }

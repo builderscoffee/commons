@@ -7,6 +7,9 @@ import eu.builderscoffee.commons.bukkit.inventory.templates.DefaultAdminTemplate
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+/**
+ * This inventory allows players to create a plot server
+ */
 public class CreatePlotServerInventory extends DefaultAdminTemplateInventory {
 
     public CreatePlotServerInventory() {

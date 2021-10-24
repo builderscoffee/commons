@@ -3,6 +3,7 @@ package eu.builderscoffee.commons.common.redisson.packets;
 import eu.builderscoffee.api.common.redisson.packets.types.RequestPacket;
 import eu.builderscoffee.api.common.redisson.packets.types.ResponsePacket;
 import eu.builderscoffee.commons.common.utils.Quadlet;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.inventory.ItemStack;
@@ -10,6 +11,9 @@ import reactor.util.function.Tuple4;
 
 import java.util.ArrayList;
 
+/**
+ * This class is used to send the available configuration as response to a {@link ServerManagerRequest}
+ */
 @Getter
 @Setter
 public class ServerManagerResponse extends ResponsePacket {

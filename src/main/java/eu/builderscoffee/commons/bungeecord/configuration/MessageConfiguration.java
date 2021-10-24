@@ -7,6 +7,9 @@ import lombok.Getter;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * This class stores messages configuration
+ */
 @Data
 @Configuration("messages")
 public class MessageConfiguration {

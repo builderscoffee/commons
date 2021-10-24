@@ -8,6 +8,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
+/**
+ * This command allows to broadcast a message on the server
+ */
 public class BroadcastCommand implements CommandExecutor {
 
     @Override

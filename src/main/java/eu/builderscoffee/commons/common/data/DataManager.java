@@ -9,8 +9,10 @@ import io.requery.sql.TableCreationMode;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 
+/**
+ * This class is user to initialise the database tables and getting the {@link EntityDataStore} of each table
+ */
 @UtilityClass
-
 public class DataManager {
 
     @Getter private static HikariDataSource hikari;

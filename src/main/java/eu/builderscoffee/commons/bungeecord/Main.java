@@ -31,6 +31,9 @@ import java.util.Objects;
 import static eu.builderscoffee.api.common.configuration.Configuration.readOrCreateConfiguration;
 import static eu.builderscoffee.api.common.configuration.Configuration.writeConfiguration;
 
+/**
+ * This class is the main class of the Commons Proxy plugin
+ */
 @Getter
 public class Main extends Plugin {
 

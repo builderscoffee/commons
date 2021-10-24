@@ -1,4 +1,4 @@
-package eu.builderscoffee.commons.bukkit.packets;
+package eu.builderscoffee.commons.bukkit.utils;
 
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -9,7 +9,7 @@ import org.bukkit.inventory.meta.BookMeta;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import static eu.builderscoffee.commons.bukkit.packets.ReflectionUtils.*;
+import static eu.builderscoffee.commons.bukkit.utils.ReflectionUtils.*;
 
 /**
  * Créer une livre virtuel ne requièrent pas un livre dans la main du joueur !

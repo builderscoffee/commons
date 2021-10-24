@@ -10,6 +10,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+/**
+ * This command allows to see the profile of a specific player
+ */
 public class ProfileCommand implements CommandExecutor {
 
     private static boolean openProfile(Player player, String targetName) {

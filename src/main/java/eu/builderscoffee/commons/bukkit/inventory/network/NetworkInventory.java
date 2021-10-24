@@ -6,7 +6,7 @@ import eu.builderscoffee.api.bukkit.gui.content.InventoryContents;
 import eu.builderscoffee.api.bukkit.gui.content.InventoryProvider;
 import eu.builderscoffee.api.bukkit.gui.content.SlotPos;
 import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
-import eu.builderscoffee.commons.bukkit.packets.BookUtil;
+import eu.builderscoffee.commons.bukkit.utils.BookUtil;
 import eu.builderscoffee.commons.bukkit.Main;
 import eu.builderscoffee.commons.bukkit.configuration.MessageConfiguration;
 import eu.builderscoffee.commons.bukkit.utils.BungeeUtils;
@@ -25,6 +25,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This inventory allows players to navigate through servers
+ */
 public class NetworkInventory implements InventoryProvider {
 
     public static final SmartInventory INVENTORY = SmartInventory.builder()

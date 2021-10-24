@@ -31,6 +31,9 @@ import java.util.UUID;
 import static eu.builderscoffee.api.common.configuration.Configuration.readOrCreateConfiguration;
 import static eu.builderscoffee.commons.bukkit.commands.HelpCommand.registerCommand;
 
+/**
+ * This class is the main class of the Commons Bukkit plugin
+ */
 @Getter
 public class Main extends JavaPlugin {
 

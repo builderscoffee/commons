@@ -16,6 +16,9 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+/**
+ * This class is a template inventory
+ */
 public class DefaultTemplateInventory implements InventoryProvider {
 
     public final SmartInventory INVENTORY;
@@ -28,10 +31,20 @@ public class DefaultTemplateInventory implements InventoryProvider {
     protected int rows;
     protected int columns;
 
+    /***
+     * @param title Title of inventory
+     * @param previousInventory If not null, will show the back arrow at the bottom
+     */
     public DefaultTemplateInventory(@NonNull String title, SmartInventory previousInventory) {
         this(title, previousInventory, 6, 9);
     }
 
+    /***
+     * @param title Title of inventory
+     * @param previousInventory If not null, will show the back arrow at the bottom
+     * @param rows Define amounts of rows
+     * @param columns Define the amounts of columns
+     */
     public DefaultTemplateInventory(@NonNull String title, SmartInventory previousInventory, int rows, int columns) {
         this.rows = rows;
         this.columns = columns;

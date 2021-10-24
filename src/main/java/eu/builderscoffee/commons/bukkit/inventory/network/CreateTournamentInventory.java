@@ -8,6 +8,9 @@ import lombok.val;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+/**
+ * This inventory allows players to create a tournament
+ */
 public class CreateTournamentInventory extends DefaultAdminTemplateInventory {
 
     private short teams = 10;

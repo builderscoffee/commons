@@ -4,6 +4,9 @@ package eu.builderscoffee.commons.bungeecord.configuration;
 import eu.builderscoffee.api.common.configuration.annotation.Configuration;
 import lombok.Data;
 
+/**
+ * This class stores permission configuration
+ */
 @Data
 @Configuration("permissions")
 public class PermissionConfiguration {

@@ -15,12 +15,25 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+/**
+ * This class is a template inventory for admin panels
+ */
 public class DefaultAdminTemplateInventory extends DefaultTemplateInventory {
 
+    /***
+     * @param title Title of inventory
+     * @param previousInventory If not null, will show the back arrow at the bottom
+     */
     public DefaultAdminTemplateInventory(@NonNull String title, SmartInventory previousInventory) {
         super(title, previousInventory);
     }
 
+    /***
+     * @param title Title of inventory
+     * @param previousInventory If not null, will show the back arrow at the bottom
+     * @param rows Define amounts of rows
+     * @param columns Define the amounts of columns
+     */
     public DefaultAdminTemplateInventory(@NonNull String title, SmartInventory previousInventory, int rows, int columns) {
         super(title, previousInventory, rows, columns);
     }

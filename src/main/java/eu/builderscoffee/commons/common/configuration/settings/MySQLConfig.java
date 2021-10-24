@@ -4,6 +4,9 @@ import com.zaxxer.hikari.HikariConfig;
 import lombok.Data;
 import lombok.val;
 
+/**
+ * This class stores common SQL data configuration
+ */
 @Data
 public class MySQLConfig {
 

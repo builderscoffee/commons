@@ -1,4 +1,4 @@
-package eu.builderscoffee.commons.bukkit.packets;
+package eu.builderscoffee.commons.bukkit.utils;
 
 import org.bukkit.Bukkit;
 

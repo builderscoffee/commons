@@ -13,12 +13,17 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
+/**
+ * This command allows to send a message in the staffchat channel
+ */
 public class StaffChatCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if((sender instanceof Player && sender.hasPermission("builderscoffee.staffchat"))
+        // Check if has the permission to do it and is player
+        if((sender instanceof Player && sender.hasPermission(Main.getInstance().getPermissions().getStaffchat()))
                 || sender instanceof ConsoleCommandSender){
+            // If more arguments, send message
             if(args.length > 0){
                 String message = "";
                 for (String arg : args) {
@@ -36,6 +41,7 @@ public class StaffChatCommand implements CommandExecutor {
                                 .replace("&", "§"));
                 Redis.publish(CommonTopics.STAFFCHAT, packet);
             }
+            // Else, enable/disable staffchat
             else {
                 if(sender instanceof Player){
                     val player = (Player) sender;

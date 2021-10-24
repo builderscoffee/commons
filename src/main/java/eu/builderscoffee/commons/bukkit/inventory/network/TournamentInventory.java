@@ -7,6 +7,9 @@ import eu.builderscoffee.commons.bukkit.inventory.templates.DefaultAdminTemplate
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+/**
+ * This inventory allows players to manager multiple tournaments
+ */
 public class TournamentInventory extends DefaultAdminTemplateInventory {
 
     public TournamentInventory() {

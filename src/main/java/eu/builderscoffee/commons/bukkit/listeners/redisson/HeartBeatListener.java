@@ -12,10 +12,14 @@ import lombok.val;
 import org.bukkit.Bukkit;
 import org.redisson.api.RSortedSet;
 
+/**
+ * This class is used to catch {@link HeartBeatPacket} and add the heartbeat into the servers list
+ */
 public class HeartBeatListener implements PacketListener {
 
     @ProcessPacket
     public void onHeartBeat(HeartBeatPacket packet){
+        // Create server data container
         val server = new Server();
         server.setHostName(Bukkit.getServerName());
         server.setHostAddress(Bukkit.getIp());
@@ -25,11 +29,14 @@ public class HeartBeatListener implements PacketListener {
         server.setPlayerCount(Bukkit.getOnlinePlayers().size());
         server.setPlayerMaximum(Bukkit.getMaxPlayers());
 
+        // Create an event for eventually be modified by another sub-plugin
         val event = new HeartBeatEvent(server);
         EventHandler.getInstance().callEvent(event);
 
+        // Stop if canceled
         if (event.isCanceled()) return;
 
+        // Add server to servers list
         final RSortedSet<Server> servers = Redis.getRedissonClient().getSortedSet("servers");
         if(servers == null) return;
         if(servers.contains(event.getServer())) servers.remove(event.getServer());

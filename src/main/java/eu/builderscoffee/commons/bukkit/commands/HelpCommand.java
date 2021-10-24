@@ -10,6 +10,9 @@ import java.util.Comparator;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
+/**
+ * This command allows to see all commands available to common players
+ */
 @CommandRegister(command = "help")
 public class HelpCommand implements CommandExecutor {
 

@@ -2,6 +2,9 @@ package eu.builderscoffee.commons.bukkit.configuration.messages;
 
 import lombok.Data;
 
+/**
+ * This class stores chat messages configuration
+ */
 @Data
 public class Chat {
 

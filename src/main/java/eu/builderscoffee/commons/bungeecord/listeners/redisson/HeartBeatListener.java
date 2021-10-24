@@ -12,25 +12,33 @@ import lombok.val;
 import net.md_5.bungee.api.ProxyServer;
 import org.redisson.api.RSortedSet;
 
+/**
+ * This class is used to catch {@link HeartBeatPacket} and add the heartbeat into the servers list
+ */
 public class HeartBeatListener implements PacketListener {
 
     @ProcessPacket
     public void onHeartBeat(HeartBeatPacket packet){
+        // Create server data container
         val serverInfo = new Server();
-        serverInfo.setHostName(ProxyServer.getInstance().getName());
-        // TODO Avoir l'ip et le port du bungee
-        serverInfo.setHostAddress("");
-        serverInfo.setHostPort(0);
+        serverInfo.setHostName(Main.getInstance().getSettings().getName());
+        Main.getInstance().getProxy().getConfig().getListeners().forEach(li-> {
+            serverInfo.setHostAddress(li.getHost().getHostName());
+            serverInfo.setHostPort(li.getQueryPort());
+        });
         serverInfo.setServerType(Server.ServerType.BUNGEECORD);
         serverInfo.setStartingMethod(Main.getInstance().getSettings().getStartingMethod());
         serverInfo.setPlayerCount(ProxyServer.getInstance().getPlayers().size());
         serverInfo.setPlayerMaximum(ProxyServer.getInstance().getConfig().getPlayerLimit());
 
+        // Create an event for eventually be modified by another sub-plugin
         val event = new HeartBeatEvent(serverInfo);
         EventHandler.getInstance().callEvent(event);
 
+        // Stop if canceled
         if (event.isCanceled()) return;
 
+        // Add server to servers list
         final RSortedSet<Server> servers = Redis.getRedissonClient().getSortedSet("servers");
         if(servers != null) {
             servers.add(event.getServer());

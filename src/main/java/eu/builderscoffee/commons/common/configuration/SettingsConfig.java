@@ -7,6 +7,9 @@ import eu.builderscoffee.commons.common.configuration.settings.MySQLConfig;
 import eu.builderscoffee.commons.common.configuration.settings.RedisConfig;
 import lombok.Data;
 
+/**
+ * This class stores common settings data configuration
+ */
 @Data
 @Configuration("settings")
 public class SettingsConfig {
@@ -14,6 +17,7 @@ public class SettingsConfig {
     private Server.ServerStartingMethod startingMethod = Server.ServerStartingMethod.STATIC;
     private PluginMode pluginMode = PluginMode.DEVELOPMENT;
     private LoadMode loadMode = LoadMode.NORMAL;
+    private String name = "Unknown";
     private MySQLConfig mySQL = new MySQLConfig();
     private RedisConfig redis = new RedisConfig();
 

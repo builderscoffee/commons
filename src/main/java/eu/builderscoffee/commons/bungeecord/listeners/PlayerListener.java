@@ -116,7 +116,7 @@ public class PlayerListener implements Listener {
         event.setTarget(server);
     }
 
-    @EventHandler
+    /*@EventHandler
     public void onCommand(ChatEvent event) {
         ProxiedPlayer player = (ProxiedPlayer) event.getSender();
         if (event.isCommand() && event.getMessage().toLowerCase().startsWith("/server")) {
@@ -143,5 +143,5 @@ public class PlayerListener implements Listener {
                 }
             }
         }
-    }
+    }*/
 }
