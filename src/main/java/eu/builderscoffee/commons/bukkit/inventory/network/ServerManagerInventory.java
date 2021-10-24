@@ -5,6 +5,7 @@ import eu.builderscoffee.api.bukkit.gui.content.InventoryContents;
 import eu.builderscoffee.api.bukkit.gui.content.SlotIterator;
 import eu.builderscoffee.api.bukkit.gui.content.SlotPos;
 import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
+import eu.builderscoffee.api.bukkit.utils.serializations.SingleItemSerialization;
 import eu.builderscoffee.api.common.redisson.Redis;
 import eu.builderscoffee.api.common.redisson.infos.Server;
 import eu.builderscoffee.commons.bukkit.inventory.templates.DefaultAdminTemplateInventory;
@@ -13,6 +14,7 @@ import eu.builderscoffee.commons.common.redisson.topics.CommonTopics;
 import lombok.val;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.redisson.api.RSortedSet;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,62 +40,72 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
 
         // Stop item
         val stopItem = new ItemBuilder(Material.CONCRETE, 1, (short) 14).setName("Stopper le serveur");
-        if(!server.getStartingMethod().equals(Server.ServerStartingMethod.DYNAMIC))
+        if (!server.getStartingMethod().equals(Server.ServerStartingMethod.DYNAMIC))
             stopItem.addLoreLine("§cImpossible de stopper ce type de serveur pour le moment.");
         contents.set(0, 8, ClickableItem.of(stopItem.build(),
                 e -> {
-                    if(server.getStartingMethod().equals(Server.ServerStartingMethod.DYNAMIC))
-                    {
+                    if (server.getStartingMethod().equals(Server.ServerStartingMethod.DYNAMIC)) {
                         server.stop();
                         new ServersManagerInventory().INVENTORY.open(player);
                     }
                 }));
 
         // Freeze
-        if(server.getStartingMethod().equals(Server.ServerStartingMethod.DYNAMIC))
+        if (server.getStartingMethod().equals(Server.ServerStartingMethod.DYNAMIC))
             contents.set(0, 7, ClickableItem.of(new ItemBuilder(Material.PACKED_ICE).setName("Freeze").build(),
                     e -> {
                         server.freeze();
                         new ServersManagerInventory().INVENTORY.open(player);
                     }));
 
-        // État
-        val lore = new TreeSet<String>();
-        lore.add("§bStarting method: §a" + server.getStartingMethod());
-        lore.add("§bServer status: §a" + server.getServerStatus());
-        lore.add("§bServerType: §a" + server.getServerType());
-        lore.add("§bLast heartbeat at §a" + new SimpleDateFormat("EEE dd MMM yyyy à hh:mm:ss", Locale.FRANCE).format(server.getLastHeartbeat()));
-        lore.add("§bPlayers: §a" + server.getPlayerCount());
-        lore.add("§bMaximum players: §a" + server.getPlayerMaximum());
-        server.getProperties().forEach((key, value)->{
-            if(value instanceof Date)
-                value = new SimpleDateFormat("EEE dd MMM yyyy à hh:mm:ss", Locale.FRANCE).format((Date) value);
-            lore.add("§b" + key + ": §a" + value);
-        });
-        contents.set(0, 4, ClickableItem.empty(new ItemBuilder(Material.OBSERVER)
-                .setName("État")
-                .addLoreLine(new ArrayList<>(lore))
-                .build()));
-
         // Demander au serveur si une configuration est possible ou néscessaire
-        sendConfigRequest("requestConfig", contents);
+        sendConfigRequest("request_config", contents);
     }
 
     @Override
     public void update(Player player, InventoryContents contents) {
+        final RSortedSet<Server> servers = Redis.getRedissonClient().getSortedSet("servers");
 
+        // Vérifie que la liste existe
+        if (servers == null) return;
+
+        val stream = servers.stream().filter(s -> s.getHostName().equals(server.getHostName()));
+
+        if (stream.count() == 0)
+            new ServersManagerInventory().INVENTORY.open(player);
+        else
+            stream.forEach(s -> {
+                // État
+                val lore = new TreeSet<String>();
+                lore.add("§bStarting method: §a" + s.getStartingMethod());
+                lore.add("§bServer status: §a" + s.getServerStatus());
+                lore.add("§bServerType: §a" + s.getServerType());
+                lore.add("§bLast heartbeat at §a" + new SimpleDateFormat("EEE dd MMM yyyy à hh:mm:ss", Locale.FRANCE).format(s.getLastHeartbeat()));
+                lore.add("§bPlayers: §a" + s.getPlayerCount());
+                lore.add("§bMaximum players: §a" + s.getPlayerMaximum());
+                s.getProperties().forEach((key, value) -> {
+                    if (value instanceof Date)
+                        value = new SimpleDateFormat("EEE dd MMM yyyy à hh:mm:ss", Locale.FRANCE).format((Date) value);
+                    lore.add("§b" + key + ": §a" + value);
+                });
+                contents.set(0, 4, ClickableItem.empty(new ItemBuilder(Material.OBSERVER)
+                        .setName("État")
+                        .addLoreLine(new ArrayList<>(lore))
+                        .build()));
+            });
     }
 
-    private void sendConfigRequest(String action, InventoryContents contents){
+    private void sendConfigRequest(String action, InventoryContents contents) {
         // Create request
         val configPacket = new ServerManagerRequest();
 
         // Define target server & action
         configPacket.setTargetServerName(server.getHostName());
-        configPacket.setAction("");
+        configPacket.setAction(action);
 
         // Show items on response
         configPacket.onResponse = response -> {
+            System.out.println("response of request config");
             // create list to temporary store items
             val configItems = new ArrayList<ClickableItem>();
 
@@ -101,14 +113,15 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
             response.getItems().forEach(itemInfo -> {
                 val i1 = itemInfo.getFirst();
                 val i2 = itemInfo.getSecond();
-                val item = ClickableItem.of(itemInfo.getThird(), e -> {
+                System.out.println(itemInfo.getThird());
+                val item = ClickableItem.of(SingleItemSerialization.getItem(itemInfo.getThird()), e -> {
                     sendConfigRequest(itemInfo.getFourth(), contents);
                 });
 
                 // slot hasn't been chosen
-                if(i1 == -1 || i2 == -1)
+                if (i1 == -1 || i2 == -1)
                     configItems.add(item);
-                // slot has been chosen
+                    // slot has been chosen
                 else
                     contents.set(i1, i2, item);
             });
