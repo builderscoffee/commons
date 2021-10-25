@@ -14,7 +14,9 @@ import org.bukkit.entity.Player;
 import org.redisson.api.RSortedSet;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Locale;
+import java.util.stream.Collectors;
 
 /**
  * This inventory allows players to manage multiple servers
@@ -45,30 +47,29 @@ public class ServersManagerInventory extends DefaultAdminTemplateInventory {
         final RSortedSet<Server> servers = Redis.getRedissonClient().getSortedSet("servers");
 
         // Vérifie que la liste existe
-        if(servers == null) return;
+        if (servers == null) return;
 
         // Boucle de tous les serveurs
-        if(servers.stream().count() > 0)
+        if (servers.stream().count() > 0)
             servers.stream()
                     .sorted()
                     .forEach(s -> {
-                        // Creer une description selon les données du serveur
-                        val lore = new TreeSet<String>();
-                        lore.add("§bStarting method: §a" + s.getStartingMethod());
-                        lore.add("§bServer status: §a" + s.getServerStatus());
-                        lore.add("§bServerType: §a" + s.getServerType());
-                        lore.add("§bLast heartbeat at §a" + new SimpleDateFormat("EEE dd MMM yyyy à hh:mm:ss", Locale.FRANCE).format(s.getLastHeartbeat()));
-                        lore.add("§bPlayers: §a" + s.getPlayerCount());
-                        lore.add("§bMaximum players: §a" + s.getPlayerMaximum());
-                        s.getProperties().forEach((key, value)->lore.add("§b" + key + ": §a" + value));
-
                         // Créer l'item permettant de click
                         serverItems.add(ClickableItem.of(new ItemBuilder(Material.OBSERVER)
-                                .setName(s.getHostName())
-                                .addLoreLine(new ArrayList<>(lore))
-                                .addLoreLine("")
-                                .addLoreLine("§aClic gauche pour gérer")
-                                .build(),
+                                        .setName(s.getHostName())
+                                        .addLoreLine("§bLast heartbeat at §a" + new SimpleDateFormat("EEE dd MMM yyyy à hh:mm:ss", Locale.FRANCE).format(s.getLastHeartbeat()))
+                                        .addLoreLine("§bServerType: §a" + s.getServerType())
+                                        .addLoreLine("§bStarting method: §a" + s.getStartingMethod())
+                                        .addLoreLine("§bServer status: §a" + s.getServerStatus())
+                                        .addLoreLine("§bPlayers: §a" + s.getPlayerCount())
+                                        .addLoreLine("§bMaximum players: §a" + s.getPlayerMaximum())
+                                        .addLoreLine(s.getProperties().entrySet().stream()
+                                                .map(entry -> "§b" + entry.getKey() + ": §a" + entry.getValue())
+                                                .sorted(String::compareTo)
+                                                .collect(Collectors.toList()))
+                                        .addLoreLine("")
+                                        .addLoreLine("§aClic gauche pour gérer")
+                                        .build(),
                                 e -> new ServerManagerInventory(s).INVENTORY.open(player)));
                     });
         // Ajouter les items dans l'inventaire

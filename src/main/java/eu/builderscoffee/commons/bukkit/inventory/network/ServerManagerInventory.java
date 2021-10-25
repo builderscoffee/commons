@@ -18,9 +18,8 @@ import org.redisson.api.RSortedSet;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Locale;
-import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 /**
  * This inventory allows players to manager a specific server
@@ -59,7 +58,7 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
                     }));
 
         // Demander au serveur si une configuration est possible ou néscessaire
-        sendConfigRequest("request_config", contents);
+        sendConfigRequest(player, "request_config", contents);
     }
 
     @Override
@@ -69,29 +68,28 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
         // Vérifie que la liste existe
         if (servers == null) return;
 
-        val stream = servers.stream().filter(s -> s.getHostName().equals(server.getHostName()));
-
-        if (stream.count() == 0)
+        if (servers.stream().filter(s -> s.getHostName().equals(server.getHostName())).count() == 0)
             new ServersManagerInventory().INVENTORY.open(player);
         else
-            stream.forEach(s -> {
+            servers.stream().filter(s -> s.getHostName().equals(server.getHostName())).forEach(s -> {
                 // État
-                val lore = new TreeSet<String>();
-                lore.add("§bStarting method: §a" + s.getStartingMethod());
-                lore.add("§bServer status: §a" + s.getServerStatus());
-                lore.add("§bServerType: §a" + s.getServerType());
-                lore.add("§bLast heartbeat at §a" + new SimpleDateFormat("EEE dd MMM yyyy à hh:mm:ss", Locale.FRANCE).format(s.getLastHeartbeat()));
-                lore.add("§bPlayers: §a" + s.getPlayerCount());
-                lore.add("§bMaximum players: §a" + s.getPlayerMaximum());
-                s.getProperties().forEach((key, value) -> lore.add("§b" + key + ": §a" + value));
                 contents.set(0, 4, ClickableItem.empty(new ItemBuilder(Material.OBSERVER)
                         .setName("État")
-                        .addLoreLine(new ArrayList<>(lore))
+                        .addLoreLine("§bLast heartbeat at §a" + new SimpleDateFormat("EEE dd MMM yyyy à hh:mm:ss", Locale.FRANCE).format(s.getLastHeartbeat()))
+                        .addLoreLine("§bServerType: §a" + s.getServerType())
+                        .addLoreLine("§bStarting method: §a" + s.getStartingMethod())
+                        .addLoreLine("§bServer status: §a" + s.getServerStatus())
+                        .addLoreLine("§bPlayers: §a" + s.getPlayerCount())
+                        .addLoreLine("§bMaximum players: §a" + s.getPlayerMaximum())
+                        .addLoreLine(s.getProperties().entrySet().stream()
+                                .map(entry -> "§b" + entry.getKey() + ": §a" + entry.getValue())
+                                .sorted(String::compareTo)
+                                .collect(Collectors.toList()))
                         .build()));
             });
     }
 
-    private void sendConfigRequest(String action, InventoryContents contents) {
+    private void sendConfigRequest(Player player, String action, InventoryContents contents) {
         // Create request
         val configPacket = new ServerManagerRequest();
 
@@ -101,7 +99,6 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
 
         // Show items on response
         configPacket.onResponse = response -> {
-            System.out.println("response of request config");
             // create list to temporary store items
             val configItems = new ArrayList<ClickableItem>();
 
@@ -110,9 +107,8 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
                 response.getItems().forEach(itemInfo -> {
                     val i1 = itemInfo.getFirst();
                     val i2 = itemInfo.getSecond();
-                    System.out.println(itemInfo.getThird());
                     val item = ClickableItem.of(SingleItemSerialization.getItem(itemInfo.getThird()), e -> {
-                        sendConfigRequest(itemInfo.getFourth(), contents);
+                        sendConfigRequest(player, itemInfo.getFourth(), contents);
                     });
 
                     // slot hasn't been chosen
