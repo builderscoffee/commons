@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * This class is used to send the available configuration as response to a {@link ServerManagerRequest}
@@ -18,10 +18,13 @@ import java.util.ArrayList;
 @Setter
 public class ServerManagerResponse extends ResponsePacket {
 
-    protected String title;
+    private boolean finished = false;
     @Setter(AccessLevel.NONE)
-    protected ArrayList<Quadlet<Integer, Integer, String, String>> items = new ArrayList<>();
-    protected boolean finished = false;
+    private Set<Action> actions = new HashSet<>();
+
+    protected ServerManagerResponse(){
+        super();
+    }
 
     public ServerManagerResponse(String packetId) {
         super(packetId);
@@ -31,7 +34,33 @@ public class ServerManagerResponse extends ResponsePacket {
         super(requestPacket);
     }
 
-    public void addItem(int row, int column, ItemStack item, String action){
-        items.add(new Quadlet(row, column, SingleItemSerialization.serializeItemAsString(item), action));
+    public static abstract class Action{
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            return getClass().equals(o.getClass());
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(getClass());
+        }
+    }
+
+    @Getter
+    public static class Items extends Action{
+        @Setter private String type;
+        private ArrayList<Quadlet<Integer, Integer, String, String>> items = new ArrayList<>();
+
+        public void addItem(int row, int column, ItemStack item, String action){
+            items.add(new Quadlet(row, column, SingleItemSerialization.serializeItemAsString(item), action));
+        }
+    }
+
+    @Getter @Setter
+    public static class ChatRequest extends Action {
+        private String type;
+        private String message;
     }
 }

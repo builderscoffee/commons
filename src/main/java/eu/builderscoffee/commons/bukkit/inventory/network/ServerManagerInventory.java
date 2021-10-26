@@ -10,7 +10,12 @@ import eu.builderscoffee.api.common.redisson.Redis;
 import eu.builderscoffee.api.common.redisson.infos.Server;
 import eu.builderscoffee.commons.bukkit.inventory.templates.DefaultAdminTemplateInventory;
 import eu.builderscoffee.commons.common.redisson.packets.ServerManagerRequest;
+import eu.builderscoffee.commons.common.redisson.packets.ServerManagerResponse;
 import eu.builderscoffee.commons.common.redisson.topics.CommonTopics;
+import eu.builderscoffee.commons.common.utils.Triplet;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
 import lombok.val;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -19,6 +24,7 @@ import org.redisson.api.RSortedSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -26,7 +32,14 @@ import java.util.stream.Collectors;
  */
 public class ServerManagerInventory extends DefaultAdminTemplateInventory {
 
+    @Getter
+    private static ArrayList<Triplet<Player, ServerManagerInventory, String>> chatRequests = new ArrayList<>();
+
     private final Server server;
+    @Getter
+    private InventoryContents contents;
+    @Setter
+    private boolean requestConfigOnOpen = true;
 
     public ServerManagerInventory(Server server) {
         super(server.getHostName(), new ServersManagerInventory().INVENTORY, 5, 9);
@@ -58,7 +71,10 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
                     }));
 
         // Demander au serveur si une configuration est possible ou néscessaire
-        sendConfigRequest(player, "request_config", contents);
+        if(requestConfigOnOpen) sendConfigRequest(player, "request_config", "", contents);
+        requestConfigOnOpen = true;
+
+        this.contents = contents;
     }
 
     @Override
@@ -68,34 +84,39 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
         // Vérifie que la liste existe
         if (servers == null) return;
 
-        if (servers.stream().filter(s -> s.getHostName().equals(server.getHostName())).count() == 0)
-            new ServersManagerInventory().INVENTORY.open(player);
-        else
-            servers.stream().filter(s -> s.getHostName().equals(server.getHostName())).forEach(s -> {
-                // État
-                contents.set(0, 4, ClickableItem.empty(new ItemBuilder(Material.OBSERVER)
-                        .setName("État")
-                        .addLoreLine("§bLast heartbeat at §a" + new SimpleDateFormat("EEE dd MMM yyyy à hh:mm:ss", Locale.FRANCE).format(s.getLastHeartbeat()))
-                        .addLoreLine("§bServerType: §a" + s.getServerType())
-                        .addLoreLine("§bStarting method: §a" + s.getStartingMethod())
-                        .addLoreLine("§bServer status: §a" + s.getServerStatus())
-                        .addLoreLine("§bPlayers: §a" + s.getPlayerCount())
-                        .addLoreLine("§bMaximum players: §a" + s.getPlayerMaximum())
-                        .addLoreLine(s.getProperties().entrySet().stream()
-                                .map(entry -> "§b" + entry.getKey() + ": §a" + entry.getValue())
-                                .sorted(String::compareTo)
-                                .collect(Collectors.toList()))
-                        .build()));
-            });
+        //if (servers.stream().filter(s -> s.getHostName().equals(server.getHostName())).count() == 0)
+        //    new ServersManagerInventory().INVENTORY.open(player);
+        //else
+        servers.stream().filter(s -> s.getHostName().equals(server.getHostName())).forEach(s -> {
+            // État
+            contents.set(0, 4, ClickableItem.empty(new ItemBuilder(Material.OBSERVER)
+                    .setName("État")
+                    .addLoreLine("§bLast heartbeat at §a" + new SimpleDateFormat("EEE dd MMM yyyy à hh:mm:ss", Locale.FRANCE).format(s.getLastHeartbeat()))
+                    .addLoreLine("§bServerType: §a" + s.getServerType())
+                    .addLoreLine("§bStarting method: §a" + s.getStartingMethod())
+                    .addLoreLine("§bServer status: §a" + s.getServerStatus())
+                    .addLoreLine("§bPlayers: §a" + s.getPlayerCount())
+                    .addLoreLine("§bMaximum players: §a" + s.getPlayerMaximum())
+                    .addLoreLine(s.getProperties().entrySet().stream()
+                            .map(entry -> "§b" + entry.getKey() + ": §a" + entry.getValue())
+                            .sorted(String::compareTo)
+                            .collect(Collectors.toList()))
+                    .build()));
+        });
+
+        this.contents = contents;
     }
 
-    private void sendConfigRequest(Player player, String action, InventoryContents contents) {
+    public void sendConfigRequest(@NonNull Player player, @NonNull String type, @NonNull String data, @NonNull InventoryContents contents) {
         // Create request
         val configPacket = new ServerManagerRequest();
 
         // Define target server & action
-        configPacket.setTargetServerName(server.getHostName());
-        configPacket.setAction(action);
+        // TODO reactivate target server
+        //configPacket.setTargetServerName(server.getHostName());
+        configPacket.setTargetServerName("bla");
+        configPacket.setType(type);
+        configPacket.setData(data);
 
         // Show items on response
         configPacket.onResponse = response -> {
@@ -103,21 +124,40 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
             val configItems = new ArrayList<ClickableItem>();
 
             // loop all items
-            if (!response.isFinished())
-                response.getItems().forEach(itemInfo -> {
-                    val i1 = itemInfo.getFirst();
-                    val i2 = itemInfo.getSecond();
-                    val item = ClickableItem.of(SingleItemSerialization.getItem(itemInfo.getThird()), e -> {
-                        sendConfigRequest(player, itemInfo.getFourth(), contents);
-                    });
 
-                    // slot hasn't been chosen
-                    if (i1 == -1 || i2 == -1)
-                        configItems.add(item);
-                        // slot has been chosen
-                    else
-                        contents.set(i1, i2, item);
-                });
+            response.getActions().forEach(action -> {
+                if (action instanceof ServerManagerResponse.Items) {
+                    val itemsAction = (ServerManagerResponse.Items) action;
+
+                    itemsAction.getItems().forEach(itemInfo -> {
+                        val i1 = itemInfo.getFirst();
+                        val i2 = itemInfo.getSecond();
+                        val item = ClickableItem.of(SingleItemSerialization.getItem(itemInfo.getThird()), e -> {
+                            if (!response.isFinished()) sendConfigRequest(player, type, itemInfo.getFourth(), contents);
+                        });
+
+                        // slot hasn't been chosen
+                        if (i1 == -1 || i2 == -1)
+                            configItems.add(item);
+                            // slot has been chosen
+                        else
+                            contents.set(i1, i2, item);
+                    });
+                } else if (action instanceof ServerManagerResponse.ChatRequest) {
+                    val chatRequestAction = (ServerManagerResponse.ChatRequest) action;
+
+                    if (Objects.nonNull(chatRequestAction.getMessage()))
+                        player.sendMessage(chatRequestAction.getMessage());
+
+                    chatRequests.add(new Triplet<>(player, this, chatRequestAction.getType()));
+                    player.closeInventory();
+                    return;
+                }
+            });
+            if (response.isFinished()) {
+                new ServersManagerInventory().INVENTORY.open(player);
+            }
+
 
             // Set items in pagination system
             contents.pagination().setItems(configItems.toArray(new ClickableItem[0]));

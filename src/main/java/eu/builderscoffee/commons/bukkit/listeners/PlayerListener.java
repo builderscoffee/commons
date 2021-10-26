@@ -2,6 +2,7 @@ package eu.builderscoffee.commons.bukkit.listeners;
 
 import eu.builderscoffee.api.common.redisson.Redis;
 import eu.builderscoffee.commons.bukkit.Main;
+import eu.builderscoffee.commons.bukkit.inventory.network.ServerManagerInventory;
 import eu.builderscoffee.commons.common.redisson.packets.StaffChatPacket;
 import eu.builderscoffee.commons.common.redisson.topics.CommonTopics;
 import eu.builderscoffee.commons.common.utils.LuckPermsUtils;
@@ -117,6 +118,20 @@ public class PlayerListener implements Listener {
                     .replace("&", "§"));
             Redis.publish(CommonTopics.STAFFCHAT, packet);
             event.setCancelled(true);
+        }
+        // Server manager chat request
+        else if(ServerManagerInventory.getChatRequests().stream().anyMatch(t -> t.getLeft().equals(player))){
+            event.setCancelled(true);
+
+            val triplet = ServerManagerInventory.getChatRequests().stream()
+                    .filter(t -> t.getLeft().equals(player))
+                    .findFirst().get();
+
+            ServerManagerInventory.getChatRequests().remove(triplet);
+
+            triplet.getCenter().sendConfigRequest(player, triplet.getRight(), event.getMessage(), triplet.getCenter().getContents());
+            triplet.getCenter().setRequestConfigOnOpen(false);
+            triplet.getCenter().INVENTORY.open(player);
         }
         // Normal chat
         else {
