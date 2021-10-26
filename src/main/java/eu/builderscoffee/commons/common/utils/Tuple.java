@@ -9,8 +9,14 @@ import lombok.Data;
  */
 @Data
 public class Tuple<X, Y> {
-    private final X left;
-    private final Y right;
+    private X left;
+    private Y right;
+
+    /**
+     * Used only for reflection
+     */
+    public Tuple() {
+    }
 
     public Tuple(X left, Y right) {
         this.left = left;

@@ -111,10 +111,10 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
         // Create request
         val configPacket = new ServerManagerRequest();
 
+        System.out.println("Send " + type);
+
         // Define target server & action
-        // TODO reactivate target server
-        //configPacket.setTargetServerName(server.getHostName());
-        configPacket.setTargetServerName("bla");
+        configPacket.setTargetServerName(server.getHostName());
         configPacket.setType(type);
         configPacket.setData(data);
 
@@ -124,7 +124,6 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
             val configItems = new ArrayList<ClickableItem>();
 
             // loop all items
-
             response.getActions().forEach(action -> {
                 if (action instanceof ServerManagerResponse.Items) {
                     val itemsAction = (ServerManagerResponse.Items) action;
@@ -133,13 +132,13 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
                         val i1 = itemInfo.getFirst();
                         val i2 = itemInfo.getSecond();
                         val item = ClickableItem.of(SingleItemSerialization.getItem(itemInfo.getThird()), e -> {
-                            if (!response.isFinished()) sendConfigRequest(player, type, itemInfo.getFourth(), contents);
+                            if (!response.isFinished()) sendConfigRequest(player, itemsAction.getType(), itemInfo.getFourth(), contents);
                         });
 
                         // slot hasn't been chosen
                         if (i1 == -1 || i2 == -1)
                             configItems.add(item);
-                            // slot has been chosen
+                        // slot has been chosen
                         else
                             contents.set(i1, i2, item);
                     });
@@ -161,7 +160,7 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
 
             // Set items in pagination system
             contents.pagination().setItems(configItems.toArray(new ClickableItem[0]));
-            contents.pagination().setItemsPerPage(27);
+            contents.pagination().setItemsPerPage(configItems.size() > 27? 27 : configItems.size());
 
             // Define how items are placed in inv
             contents.pagination().addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, SlotPos.of(1, 0)));

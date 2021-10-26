@@ -10,11 +10,17 @@ import lombok.Data;
  */
 @Data
 public class Triplet<X, Y, Z> {
-    private final X left;
-    private final Y center;
-    private final Z right;
+    private X left;
+    private Y center;
+    private Z right;
 
-    public Triplet(X left, Y center,Z right) {
+    /**
+     * Used only for reflection
+     */
+    public Triplet() {
+    }
+
+    public Triplet(X left, Y center, Z right) {
         this.left = left;
         this.center = center;
         this.right = right;

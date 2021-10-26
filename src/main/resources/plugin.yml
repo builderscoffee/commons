@@ -6,6 +6,7 @@ main: eu.builderscoffee.commons.bukkit.Main
 depend: [ BuildersCoffeeAPI, LuckPerms ]
 commands:
   network:
+    aliases: [ net ]
     description: Ouvre le menu network
   menu:
     description: Ouvre le menu network
