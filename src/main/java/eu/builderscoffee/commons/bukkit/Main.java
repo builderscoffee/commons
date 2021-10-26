@@ -97,6 +97,7 @@ public class Main extends JavaPlugin {
             this.getCommand("help").setExecutor(new HelpCommand());
             this.getCommand("broadcast").setExecutor(new BroadcastCommand());
             this.getCommand("staffchat").setExecutor(new StaffChatCommand());
+            this.getCommand("manage").setExecutor(new ManageCommand());
 
             // Listeners
             Plugins.registerListeners(this, new PlayerListener());
