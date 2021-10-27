@@ -7,6 +7,7 @@ import eu.builderscoffee.api.bukkit.gui.content.InventoryProvider;
 import eu.builderscoffee.api.bukkit.gui.content.SlotIterator;
 import eu.builderscoffee.api.bukkit.gui.content.SlotPos;
 import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
+import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
 import eu.builderscoffee.commons.common.data.*;
 import eu.builderscoffee.commons.bukkit.Main;
 import eu.builderscoffee.commons.bukkit.configuration.MessageConfiguration;
@@ -28,7 +29,6 @@ public class SaisonsInventory implements InventoryProvider {
 
     private final Main main = Main.getInstance();
     private final EntityDataStore<Saison> storeSaison = DataManager.getSaisonsStore();
-    private final MessageConfiguration messages = main.getMessages();
 
     private final ProfilEntity profilEntity;
 
@@ -54,6 +54,7 @@ public class SaisonsInventory implements InventoryProvider {
     @Override
     public void init(Player player, InventoryContents contents) {
         val pagination = contents.pagination();
+        val messages = MessageUtils.getMessageConfig(player);
 
         //Fill Black top and bottom
         contents.fillRow(0, blackGlasses);

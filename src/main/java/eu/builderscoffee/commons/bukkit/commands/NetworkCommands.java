@@ -2,6 +2,8 @@ package eu.builderscoffee.commons.bukkit.commands;
 
 import eu.builderscoffee.commons.bukkit.Main;
 import eu.builderscoffee.commons.bukkit.inventory.network.NetworkInventory;
+import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
+import lombok.val;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -19,6 +21,7 @@ public class NetworkCommands implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        val messages = MessageUtils.getMessageConfig(sender);
         if (sender instanceof Player) {
             boolean ret = false;
             switch (args.length) {
@@ -30,13 +33,13 @@ public class NetworkCommands implements CommandExecutor {
             }
 
             if (!ret) {
-                sender.sendMessage(Main.getInstance().getMessages().getPrefix() + Main.getInstance().getMessages().getCommand().getBadSyntaxe());
+                sender.sendMessage(messages.getPrefix() + messages.getCommand().getBadSyntaxe());
             }
 
             return ret;
         }
 
-        sender.sendMessage(Main.getInstance().getMessages().getCommand().getMustBePlayer());
+        sender.sendMessage(messages.getCommand().getMustBePlayer());
         return true;
     }
 }

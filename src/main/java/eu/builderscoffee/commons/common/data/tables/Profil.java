@@ -1,6 +1,7 @@
 package eu.builderscoffee.commons.common.data.tables;
 
 import eu.builderscoffee.commons.bukkit.Main;
+import eu.builderscoffee.commons.bukkit.configuration.MessageConfiguration;
 import io.requery.*;
 import io.requery.query.MutableResult;
 import lombok.Setter;
@@ -9,6 +10,7 @@ import lombok.val;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * {@link Profil} est l'objet utilisé pour stocker le profil d'un joueur.
@@ -50,6 +52,9 @@ public abstract class Profil {
     @Setter
     Timestamp updateDate;
 
+    @Column
+    Lanugages lang;
+
     /* Links to other entity */
 
     @OneToMany(mappedBy = "id_profil")
@@ -83,6 +88,7 @@ public abstract class Profil {
         if (cached == null) {
             val profil = new ProfilEntity();
             profil.setUniqueId(uniqueId);
+            profil.setLang(Lanugages.FR);
             profil.setUpdateDate(new Timestamp(new Date().getTime()));
             profil.setCreationDate(new Timestamp(new Date().getTime()));
             return profil;
@@ -98,5 +104,16 @@ public abstract class Profil {
     @PreUpdate
     protected void onPreUpdate() {
         setUpdateDate(new Timestamp(new Date().getTime()));
+    }
+
+    public enum Lanugages{
+        FR("Français"),
+        EN("English");
+
+        public String name;
+
+        Lanugages(String name) {
+            this.name = name;
+        }
     }
 }

@@ -1,6 +1,9 @@
 package eu.builderscoffee.commons.bukkit.commands;
 
+import eu.builderscoffee.commons.bukkit.Main;
+import eu.builderscoffee.commons.bukkit.configuration.messages.CommandConfigurationPart;
 import eu.builderscoffee.commons.bukkit.utils.CommandUtils;
+import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
 import eu.builderscoffee.commons.common.data.DataManager;
 import eu.builderscoffee.commons.common.data.tables.BuildbattleThemeEntity;
 import lombok.val;
@@ -19,7 +22,7 @@ public class ManageCommand implements CommandExecutor {
             case "themes":
                 return themes(sender, args);
         }
-        sender.sendMessage("§6Options possibles:");
+        sender.sendMessage(MessageUtils.getMessageConfig(sender).getCommand().getManage().getCommandAvailbableOption());
         sender.sendMessage("§7/manage §6themes");
         return true;
     }
@@ -39,7 +42,7 @@ public class ManageCommand implements CommandExecutor {
             case "delete":
                 return themesDelete(sender, args);
         }
-        sender.sendMessage("§6Options possibles:");
+        sender.sendMessage(MessageUtils.getMessageConfig(sender).getCommand().getManage().getCommandAvailbableOption());
         sender.sendMessage("§7/manage themes §6list");
         sender.sendMessage("§7/manage themes §6create");
         sender.sendMessage("§7/manage themes §6update");
@@ -48,7 +51,7 @@ public class ManageCommand implements CommandExecutor {
     }
 
     private boolean themesList(CommandSender sender, String[] args){
-        sender.sendMessage("§6Themes list:");
+        sender.sendMessage(MessageUtils.getMessageConfig(sender).getCommand().getManage().getThemesList());
         val data = DataManager.getBuildbattleThemeStore().select(BuildbattleThemeEntity.class).get();
         data.stream().forEach(theme -> sender.sendMessage("§7 - " + theme.getName()));
         return false;
@@ -58,12 +61,12 @@ public class ManageCommand implements CommandExecutor {
         val name = CommandUtils.getArgument(args, 2);
 
         if(name.isEmpty()){
-            sender.sendMessage("§cLe nom du theme ne doit pas être vide");
+            sender.sendMessage(MessageUtils.getMessageConfig(sender).getCommand().getManage().getThemeNameNotEmpty());
             return true;
         }
 
         if(DataManager.getBuildbattleThemeStore().select(BuildbattleThemeEntity.class).where(BuildbattleThemeEntity.NAME.eq(name)).get().stream().count() > 0){
-            sender.sendMessage("§cLe nom du theme existe déja !");
+            sender.sendMessage(MessageUtils.getMessageConfig(sender).getCommand().getManage().getThemeNameAlreadyExist());
             return true;
         }
 
@@ -72,7 +75,7 @@ public class ManageCommand implements CommandExecutor {
 
         DataManager.getBuildbattleThemeStore().insert(entity);
 
-        sender.sendMessage("§aTheme ajouté");
+        sender.sendMessage(MessageUtils.getMessageConfig(sender).getCommand().getManage().getThemeAdded());
 
         return false;
     }
@@ -82,22 +85,22 @@ public class ManageCommand implements CommandExecutor {
         val newName = CommandUtils.getArgument(args, 3);
 
         if(oldName.isEmpty()){
-            sender.sendMessage("§cLe nom du theme ne doit pas être vide");
+            sender.sendMessage(MessageUtils.getMessageConfig(sender).getCommand().getManage().getThemeNameNotEmpty());
             return true;
         }
 
         if(newName.isEmpty()){
-            sender.sendMessage("§cVous devez aussi entrer le nouveau nom");
+            sender.sendMessage(MessageUtils.getMessageConfig(sender).getCommand().getManage().getThemeNewNameNotEmpty());
             return true;
         }
 
         if(DataManager.getBuildbattleThemeStore().select(BuildbattleThemeEntity.class).where(BuildbattleThemeEntity.NAME.lower().eq(oldName.toLowerCase())).get().stream().count() == 0){
-            sender.sendMessage("§cLe nom du theme n'existe pas !");
+            sender.sendMessage(MessageUtils.getMessageConfig(sender).getCommand().getManage().getThemeNameNotExist());
             return true;
         }
 
         if(DataManager.getBuildbattleThemeStore().select(BuildbattleThemeEntity.class).where(BuildbattleThemeEntity.NAME.lower().eq(newName.toLowerCase())).get().stream().count() > 0){
-            sender.sendMessage("§cLe nouveau nom existe déja !");
+            sender.sendMessage(MessageUtils.getMessageConfig(sender).getCommand().getManage().getThemeNameAlreadyExist());
             return true;
         }
 
@@ -106,7 +109,7 @@ public class ManageCommand implements CommandExecutor {
 
         DataManager.getBuildbattleThemeStore().update(entity);
 
-        sender.sendMessage("§aTheme modifié");
+        sender.sendMessage(MessageUtils.getMessageConfig(sender).getCommand().getManage().getThemeUpdated());
 
         return false;
     }
@@ -115,18 +118,18 @@ public class ManageCommand implements CommandExecutor {
         val name = CommandUtils.getArgument(args, 2);
 
         if(name.isEmpty()){
-            sender.sendMessage("§cLe nom du theme ne doit pas être vide");
+            sender.sendMessage(MessageUtils.getMessageConfig(sender).getCommand().getManage().getThemeNameNotEmpty());
             return true;
         }
 
         if(DataManager.getBuildbattleThemeStore().select(BuildbattleThemeEntity.class).where(BuildbattleThemeEntity.NAME.lower().eq(name.toLowerCase())).get().stream().count() == 0){
-            sender.sendMessage("§cLe nom du theme n'existe pas !");
+            sender.sendMessage(MessageUtils.getMessageConfig(sender).getCommand().getManage().getThemeNameNotExist());
             return true;
         }
 
         DataManager.getBuildbattleThemeStore().delete(DataManager.getBuildbattleThemeStore().select(BuildbattleThemeEntity.class).where(BuildbattleThemeEntity.NAME.lower().eq(name.toLowerCase())).get());
 
-        sender.sendMessage("§aTheme supprimé");
+        sender.sendMessage(MessageUtils.getMessageConfig(sender).getCommand().getManage().getThemeDeleted());
 
         return false;
     }

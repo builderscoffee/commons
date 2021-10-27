@@ -7,9 +7,7 @@ import eu.builderscoffee.api.bukkit.gui.content.InventoryProvider;
 import eu.builderscoffee.api.bukkit.gui.content.SlotPos;
 import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
 import eu.builderscoffee.commons.bukkit.Main;
-import eu.builderscoffee.commons.bukkit.configuration.MessageConfiguration;
-import eu.builderscoffee.commons.bukkit.inventory.network.NetworkInventory;
-import eu.builderscoffee.commons.bukkit.inventory.network.ServersManagerInventory;
+import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
 import lombok.NonNull;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -25,7 +23,6 @@ public class DefaultTemplateInventory implements InventoryProvider {
     protected static final ClickableItem blackGlasses = ClickableItem.empty(new ItemBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 15)).setName("§a").build());
     protected static final ClickableItem greyGlasses = ClickableItem.empty(new ItemBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 7)).setName("§a").build());
 
-    protected final MessageConfiguration messages = Main.getInstance().getMessages();
     protected final SmartInventory previousInventory;
 
     protected int rows;
@@ -67,7 +64,7 @@ public class DefaultTemplateInventory implements InventoryProvider {
 
             if(previousInventory != null){
                 // Retour
-                contents.set(rows - 1, 0, ClickableItem.of(new ItemBuilder(Material.ARROW).setName(messages.getRetourItem().replace("&", "§")).build(),
+                contents.set(rows - 1, 0, ClickableItem.of(new ItemBuilder(Material.ARROW).setName(MessageUtils.getMessageConfig(player).getRetourItem().replace("&", "§")).build(),
                         e -> previousInventory.open(player)));
             }
         }

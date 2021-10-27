@@ -10,6 +10,8 @@ import eu.builderscoffee.commons.bukkit.utils.BookUtil;
 import eu.builderscoffee.commons.bukkit.Main;
 import eu.builderscoffee.commons.bukkit.configuration.MessageConfiguration;
 import eu.builderscoffee.commons.bukkit.utils.BungeeUtils;
+import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
+import lombok.val;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
@@ -38,13 +40,14 @@ public class NetworkInventory implements InventoryProvider {
             .manager(Main.getInstance().getInventoryManager())
             .build();
     private final Main main = Main.getInstance();
-    private final MessageConfiguration messages = main.getMessages();
     private static final ClickableItem blackGlasses = ClickableItem.empty(new ItemBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 15)).setName("§a").build());
     private static final ClickableItem greyGlasses = ClickableItem.empty(new ItemBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 7)).setName("§a").build());
     private static final ClickableItem lightgreyGlasses = ClickableItem.empty(new ItemBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 8)).setName("§a").build());
 
     @Override
     public void init(Player player, InventoryContents contents) {
+        val messages = MessageUtils.getMessageConfig(player);
+
         //Fill Black borders
         contents.fillRect(SlotPos.of(0, 0), SlotPos.of(4, 0), blackGlasses);
         contents.fillRect(SlotPos.of(0, 8), SlotPos.of(4, 8), blackGlasses);
@@ -115,11 +118,14 @@ public class NetworkInventory implements InventoryProvider {
         // Quitter
         contents.set(5, 0, ClickableItem.of(new ItemBuilder(Material.BARRIER).setName(messages.getNetwork().getCloseItem().replace("&", "§")).build(),
                 e -> contents.inventory().close(player)));
+
+        // Langues
+        contents.set(5, 7, ClickableItem.of(new ItemBuilder(Material.PAINTING).setName(messages.getNetwork().getLanguageItem().replace("&", "§")).build(),
+                e -> new LanguageInventory().INVENTORY.open(player)));
+
         // Cosmétiques
         contents.set(5, 8, ClickableItem.of(new ItemBuilder(Material.CHEST).setName(messages.getNetwork().getCosmeticsItem().replace("&", "§")).build(),
                 e -> player.sendMessage("§cIl n'y a pas de grains de café en stock")));
-
-
     }
 
     @Override

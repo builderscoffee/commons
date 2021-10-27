@@ -10,7 +10,7 @@ import java.util.List;
  * This class stores network messages configuration
  */
 @Data
-public class Network {
+public class NetworkConfigurationPart {
 
     // - Hub Item
     String hubItem = "&aHub";
@@ -38,4 +38,6 @@ public class Network {
     String serverManagerItem = "&bGérer les serveurs";
     // - Cosmetics Item
     String CosmeticsItem = "&aCosmétiques";
+    // - Cosmetics Item
+    String languageItem = "&aLangues";
 }

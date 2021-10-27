@@ -23,7 +23,6 @@ import java.util.function.Predicate;
  */
 public class OptionInventory extends DefaultAdminTemplateInventory {
 
-    private final MessageConfiguration messages = Main.getInstance().getMessages();
     private final BiConsumer<Player, InventoryClickEvent> acceptedAction;
     private final BiConsumer<Player, InventoryClickEvent> rejectedAction;
     private final String option;

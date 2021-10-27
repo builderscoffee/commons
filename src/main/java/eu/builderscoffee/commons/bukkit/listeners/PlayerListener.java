@@ -3,6 +3,9 @@ package eu.builderscoffee.commons.bukkit.listeners;
 import eu.builderscoffee.api.common.redisson.Redis;
 import eu.builderscoffee.commons.bukkit.Main;
 import eu.builderscoffee.commons.bukkit.inventory.network.ServerManagerInventory;
+import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
+import eu.builderscoffee.commons.common.data.DataManager;
+import eu.builderscoffee.commons.common.data.tables.Profil;
 import eu.builderscoffee.commons.common.redisson.packets.StaffChatPacket;
 import eu.builderscoffee.commons.common.redisson.topics.CommonTopics;
 import eu.builderscoffee.commons.common.utils.LuckPermsUtils;
@@ -16,6 +19,8 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scoreboard.Scoreboard;
+
+import java.util.Objects;
 
 public class PlayerListener implements Listener {
 
@@ -31,8 +36,14 @@ public class PlayerListener implements Listener {
         }
 
         // Mettre à jour le pseudo si ce n'est pas correcte
-        if (!player.getName().equalsIgnoreCase(profil.getName()))
+        if (!player.getName().equalsIgnoreCase(profil.getName())){
             profil.setName(player.getName());
+            DataManager.getProfilStore().update(profil);
+        }
+        if(Objects.isNull(profil.getLang())){
+            profil.setLang(Profil.Lanugages.FR);
+            DataManager.getProfilStore().update(profil);
+        }
 
         // Suppression des équipes précédemment enregistrés
         Bukkit.getOnlinePlayers().forEach(loopPlayer -> {
@@ -62,8 +73,8 @@ public class PlayerListener implements Listener {
         }
 
         // Message de join
-        if (LuckPermsUtils.getWeight(player.getUniqueId()) > Main.getInstance().getMessages().getJoin().getWeight()) {
-            event.setJoinMessage(Main.getInstance().getMessages().getJoin().getMessage()
+        if (LuckPermsUtils.getWeight(player.getUniqueId()) > MessageUtils.getMessageConfig(player).getJoin().getWeight()) {
+            event.setJoinMessage(MessageUtils.getMessageConfig(player).getJoin().getMessage()
                 .replace("%player%", player.getName())
                 .replace("%prefix%", LuckPermsUtils.getPrefixOrEmpty(player.getUniqueId()))
                 .replace("%suffix%", LuckPermsUtils.getSuffixOrEmpty(player.getUniqueId()))
@@ -71,8 +82,6 @@ public class PlayerListener implements Listener {
         } else {
             event.setJoinMessage(null);
         }
-
-
     }
 
     @EventHandler
@@ -80,8 +89,8 @@ public class PlayerListener implements Listener {
         val player = event.getPlayer();
 
         // Message de leave
-        if (LuckPermsUtils.getWeight(player.getUniqueId()) > Main.getInstance().getMessages().getQuit().getWeight()) {
-            event.setQuitMessage(Main.getInstance().getMessages().getQuit().getMessage()
+        if (LuckPermsUtils.getWeight(player.getUniqueId()) > MessageUtils.getMessageConfig(player).getQuit().getWeight()) {
+            event.setQuitMessage(MessageUtils.getMessageConfig(player).getQuit().getMessage()
                 .replace("&", "§")
                 .replace("%player%", player.getName()));
         } else {
@@ -110,7 +119,7 @@ public class PlayerListener implements Listener {
         if (Main.getInstance().getStaffchatPlayers().contains(event.getPlayer().getUniqueId())) {
             val packet = new StaffChatPacket()
                 .setPlayerName(player.getName())
-                .setMessage(Main.getInstance().getMessages().getChat().getStaffChatFormat()
+                .setMessage(MessageUtils.getMessageConfig(player).getChat().getStaffChatFormat()
                     .replace("%player%", player.getName())
                     .replace("%prefix%", prefix)
                     .replace("%suffix%", suffix)
@@ -135,7 +144,7 @@ public class PlayerListener implements Listener {
         }
         // Normal chat
         else {
-            event.setFormat(Main.getInstance().getMessages().getChat().getFormat()
+            event.setFormat(MessageUtils.getMessageConfig(player).getChat().getFormat()
                 .replace("%player%", player.getName())
                 .replace("%prefix%", prefix)
                 .replace("%suffix%", suffix)

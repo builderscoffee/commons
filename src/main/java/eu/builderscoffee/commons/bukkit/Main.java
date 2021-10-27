@@ -12,8 +12,10 @@ import eu.builderscoffee.commons.bukkit.listeners.ConnexionListener;
 import eu.builderscoffee.commons.bukkit.listeners.PlayerListener;
 import eu.builderscoffee.commons.bukkit.listeners.redisson.HeartBeatListener;
 import eu.builderscoffee.commons.bukkit.listeners.redisson.StaffChatListener;
+import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
 import eu.builderscoffee.commons.common.configuration.SettingsConfig;
 import eu.builderscoffee.commons.common.data.DataManager;
+import eu.builderscoffee.commons.common.data.tables.Profil;
 import eu.builderscoffee.commons.common.data.tables.ProfilEntity;
 import eu.builderscoffee.commons.common.redisson.topics.CommonTopics;
 import eu.builderscoffee.commons.common.utils.Cache;
@@ -26,6 +28,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import static eu.builderscoffee.api.common.configuration.Configuration.readOrCreateConfiguration;
@@ -41,7 +45,7 @@ public class Main extends JavaPlugin {
     private static Main instance;
 
     //Configuration
-    private MessageConfiguration messages;
+    private Map<Profil.Lanugages, MessageConfiguration> messages;
     private PermissionsConfiguration permissions;
     private SettingsConfig settings;
 
@@ -57,7 +61,7 @@ public class Main extends JavaPlugin {
         instance = this;
 
         // Configuration
-        messages = readOrCreateConfiguration(this.getName(), MessageConfiguration.class);
+        messages = readOrCreateConfiguration(this.getName(), MessageConfiguration.class, Profil.Lanugages.class);
         permissions = readOrCreateConfiguration(this.getName(), PermissionsConfiguration.class);
         settings = readOrCreateConfiguration(this.getName(), SettingsConfig.class);
 
@@ -110,7 +114,7 @@ public class Main extends JavaPlugin {
     @SneakyThrows
     @Override
     public void onDisable() {
-        DataManager.getHikari().close();
-        Redis.close();
+        if(Objects.nonNull(DataManager.getHikari())) DataManager.getHikari().close();
+        if(Objects.nonNull(Redis.getRedissonClient())) Redis.close();
     }
 }

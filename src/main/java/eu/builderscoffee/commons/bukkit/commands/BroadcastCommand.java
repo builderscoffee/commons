@@ -1,6 +1,8 @@
 package eu.builderscoffee.commons.bukkit.commands;
 
 import eu.builderscoffee.commons.bukkit.Main;
+import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
+import lombok.val;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -22,17 +24,17 @@ public class BroadcastCommand implements CommandExecutor {
                 message += arg + " ";
             }
             if (message.length() > 3) {
-                Bukkit.broadcastMessage(Main.getInstance().getMessages().getChat().getBroadcastFormat().replace("%message%", message)
+                Bukkit.broadcastMessage(MessageUtils.getMessageConfig(sender).getChat().getBroadcastFormat().replace("%message%", message)
                         .replace("&", "§")
                 );
                 return false;
             }
 
-            sender.sendMessage("§cLe message doit être plus long que 3 charactères !");
+            sender.sendMessage(MessageUtils.getMessageConfig(sender).getCommand().getBroadcast().getMessageNeedsToBeLonger());
             return true;
         }
 
-        sender.sendMessage("§cVous n'avez pas la permission !");
+        sender.sendMessage(MessageUtils.getMessageConfig(sender).getCommand().getNoPremission());
         return true;
     }
 }

@@ -6,6 +6,7 @@ import eu.builderscoffee.api.bukkit.gui.content.InventoryContents;
 import eu.builderscoffee.api.bukkit.gui.content.InventoryProvider;
 import eu.builderscoffee.api.bukkit.gui.content.SlotPos;
 import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
+import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
 import eu.builderscoffee.commons.bukkit.utils.SkullCreator;
 import eu.builderscoffee.commons.bukkit.Main;
 import eu.builderscoffee.commons.bukkit.configuration.MessageConfiguration;
@@ -32,7 +33,6 @@ public class ProfilInventory implements InventoryProvider {
     public final SmartInventory INVENTORY;
 
     private final Main main = Main.getInstance();
-    private final MessageConfiguration messages = main.getMessages();
 
     private final ProfilEntity profilEntity;
 
@@ -60,6 +60,7 @@ public class ProfilInventory implements InventoryProvider {
 
     @Override
     public void init(Player player, InventoryContents contents) {
+        val messages = MessageUtils.getMessageConfig(player);
 
         //Fill Black borders
         contents.fillRect(SlotPos.of(0, 0), SlotPos.of(5, 0), blackGlasses);

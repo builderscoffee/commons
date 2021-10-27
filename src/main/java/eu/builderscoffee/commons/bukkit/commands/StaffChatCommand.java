@@ -3,6 +3,8 @@ package eu.builderscoffee.commons.bukkit.commands;
 import eu.builderscoffee.api.common.redisson.Redis;
 import eu.builderscoffee.api.common.redisson.RedisTopic;
 import eu.builderscoffee.commons.bukkit.Main;
+import eu.builderscoffee.commons.bukkit.configuration.MessageConfiguration;
+import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
 import eu.builderscoffee.commons.common.redisson.packets.StaffChatPacket;
 import eu.builderscoffee.commons.common.redisson.topics.CommonTopics;
 import eu.builderscoffee.commons.common.utils.LuckPermsUtils;
@@ -20,6 +22,8 @@ public class StaffChatCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        val messages = MessageUtils.getMessageConfig(sender);
+
         // Check if has the permission to do it and is player
         if((sender instanceof Player && sender.hasPermission(Main.getInstance().getPermissions().getStaffchat()))
                 || sender instanceof ConsoleCommandSender){
@@ -33,7 +37,7 @@ public class StaffChatCommand implements CommandExecutor {
                 val suffix = (sender instanceof Player)? LuckPermsUtils.getSuffixOrEmpty(((Player)sender).getUniqueId()) : "";
                 val packet = new StaffChatPacket()
                         .setPlayerName(sender.getName())
-                        .setMessage(Main.getInstance().getMessages().getChat().getStaffChatFormat()
+                        .setMessage(messages.getChat().getStaffChatFormat()
                                 .replace("%player%", sender.getName())
                                 .replace("%prefix%", prefix)
                                 .replace("%suffix%", suffix)
@@ -46,11 +50,11 @@ public class StaffChatCommand implements CommandExecutor {
                 if(sender instanceof Player){
                     val player = (Player) sender;
                     if(Main.getInstance().getStaffchatPlayers().contains(player.getUniqueId())){
-                        player.sendMessage("§bVous avez désactivé le staffchat");
+                        player.sendMessage(messages.getCommand().getStaffchat().getDisableStaffchat());
                         Main.getInstance().getStaffchatPlayers().remove(player.getUniqueId());
                     }
                     else {
-                        player.sendMessage("§bVous avez activé le staffchat");
+                        player.sendMessage(messages.getCommand().getStaffchat().getEnableStaffchat());
                         Main.getInstance().getStaffchatPlayers().add(player.getUniqueId());
                     }
                 }
@@ -60,7 +64,7 @@ public class StaffChatCommand implements CommandExecutor {
             }
             return true;
         }
-        sender.sendMessage("§cVous n'avez pas la permission !");
+        sender.sendMessage(messages.getCommand().getNoPremission());
         return true;
     }
 }

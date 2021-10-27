@@ -10,7 +10,7 @@ import java.util.List;
  * This class stores profil messages configuration
  */
 @Data
-public class Profil {
+public class ProfilConfigurationPart {
 
     // - Skull Item
     String skullItem = "&b%player%";

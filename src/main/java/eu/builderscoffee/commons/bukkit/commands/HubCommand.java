@@ -2,6 +2,7 @@ package eu.builderscoffee.commons.bukkit.commands;
 
 import eu.builderscoffee.commons.bukkit.Main;
 import eu.builderscoffee.commons.bukkit.utils.BungeeUtils;
+import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -20,7 +21,7 @@ public class HubCommand implements CommandExecutor {
             return true;
         }
 
-        sender.sendMessage(Main.getInstance().getMessages().getCommand().getMustBePlayer());
+        sender.sendMessage(MessageUtils.getMessageConfig(sender).getCommand().getMustBePlayer());
         return true;
     }
 }

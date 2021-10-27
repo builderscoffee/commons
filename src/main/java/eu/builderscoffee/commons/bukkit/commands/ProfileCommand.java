@@ -3,6 +3,7 @@ package eu.builderscoffee.commons.bukkit.commands;
 import eu.builderscoffee.commons.bukkit.Main;
 import eu.builderscoffee.commons.bukkit.inventory.profile.ProfilInventory;
 import eu.builderscoffee.commons.common.data.DataManager;
+import eu.builderscoffee.commons.common.data.tables.Profil;
 import eu.builderscoffee.commons.common.data.tables.ProfilEntity;
 import lombok.val;
 import org.bukkit.command.Command;
@@ -37,7 +38,7 @@ public class ProfileCommand implements CommandExecutor {
             return true;
         }
 
-        sender.sendMessage(Main.getInstance().getMessages().getCommand().getMustBePlayer());
+        sender.sendMessage(Main.getInstance().getMessages().get(Profil.Lanugages.FR).getCommand().getMustBePlayer());
         return true;
     }
 }

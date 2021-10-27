@@ -6,7 +6,7 @@ import lombok.Data;
  * This class stores chat messages configuration
  */
 @Data
-public class Chat {
+public class ChatConfigurationPart {
 
     String format = "&7%prefix%%player%%suffix% &8>> &f%message%";
     String staffChatFormat = "&b[SC] &7%prefix%%player%%suffix% &8>> &f%message%";

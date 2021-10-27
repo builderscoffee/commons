@@ -8,6 +8,7 @@ import eu.builderscoffee.api.bukkit.gui.content.SlotIterator;
 import eu.builderscoffee.api.bukkit.gui.content.SlotPos;
 import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
 import eu.builderscoffee.commons.bukkit.Main;
+import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
 import eu.builderscoffee.commons.bukkit.utils.SkullCreator;
 import eu.builderscoffee.commons.bukkit.configuration.MessageConfiguration;
 import eu.builderscoffee.commons.common.data.*;
@@ -36,7 +37,6 @@ public class NoteInventory implements InventoryProvider {
     public final SmartInventory INVENTORY;
 
     private final Main main = Main.getInstance();
-    private final MessageConfiguration messages = main.getMessages();
 
     private final EntityDataStore<Note> storeNotes = DataManager.getNotesStore();
 
@@ -82,6 +82,7 @@ public class NoteInventory implements InventoryProvider {
 
     @Override
     public void init(Player player, InventoryContents contents) {
+        val messages = MessageUtils.getMessageConfig(player);
         val page = contents.pagination();
 
         //Fill Black borders
