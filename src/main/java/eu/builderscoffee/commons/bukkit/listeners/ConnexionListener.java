@@ -7,10 +7,13 @@ import eu.builderscoffee.commons.common.data.tables.*;
 import eu.builderscoffee.commons.bukkit.listeners.event.DataStatueEvent;
 import lombok.val;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class ConnexionListener implements Listener {
@@ -18,6 +21,28 @@ public class ConnexionListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onAsyncPreLogin(AsyncPlayerPreLoginEvent event) {
         Bukkit.getServer().getPluginManager().callEvent(new DataStatueEvent.Load(event.getUniqueId().toString()));
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerPreLogin(final AsyncPlayerPreLoginEvent e) {
+        val whitelist = Main.getInstance().getWhitelist();
+        for (final Player player : Main.getInstance().getServer().getOnlinePlayers()) {
+            if (player.getName().equalsIgnoreCase(e.getName()) ||
+                    player.getUniqueId().equals(e.getUniqueId()) ||
+                    player.getUniqueId().toString().toLowerCase().replaceAll("-", "").equalsIgnoreCase(e.getUniqueId().toString().toLowerCase().replaceAll("-", ""))) {
+                e.setKickMessage(whitelist.getKick_message());
+                e.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_WHITELIST);
+            }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerLogin(PlayerLoginEvent e){
+        val whitelist = Main.getInstance().getWhitelist();
+        if(!whitelist.getIp_whitelist().contains(e.getRealAddress().getHostAddress())){
+            e.setKickMessage(whitelist.getKick_message());
+            e.setResult(PlayerLoginEvent.Result.KICK_WHITELIST);
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

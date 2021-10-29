@@ -8,6 +8,7 @@ import eu.builderscoffee.api.common.redisson.RedisTopic;
 import eu.builderscoffee.commons.bukkit.commands.*;
 import eu.builderscoffee.commons.bukkit.configuration.MessageConfiguration;
 import eu.builderscoffee.commons.bukkit.configuration.PermissionsConfiguration;
+import eu.builderscoffee.commons.bukkit.configuration.WhitelistConfiguration;
 import eu.builderscoffee.commons.bukkit.listeners.ConnexionListener;
 import eu.builderscoffee.commons.bukkit.listeners.PlayerListener;
 import eu.builderscoffee.commons.bukkit.listeners.redisson.HeartBeatListener;
@@ -48,6 +49,7 @@ public class Main extends JavaPlugin {
     private Map<Profil.Lanugages, MessageConfiguration> messages;
     private PermissionsConfiguration permissions;
     private SettingsConfig settings;
+    private WhitelistConfiguration whitelist;
 
     private InventoryManager inventoryManager;
 
@@ -64,6 +66,7 @@ public class Main extends JavaPlugin {
         messages = readOrCreateConfiguration(this.getName(), MessageConfiguration.class, Profil.Lanugages.class);
         permissions = readOrCreateConfiguration(this.getName(), PermissionsConfiguration.class);
         settings = readOrCreateConfiguration(this.getName(), SettingsConfig.class);
+        whitelist = readOrCreateConfiguration(this.getName(), WhitelistConfiguration.class);
 
         // Initialize Redisson
         val redisCredentials = new RedisCredentials()
