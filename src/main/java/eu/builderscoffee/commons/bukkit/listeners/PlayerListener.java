@@ -6,6 +6,7 @@ import eu.builderscoffee.commons.bukkit.inventory.network.ServerManagerInventory
 import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
 import eu.builderscoffee.commons.common.data.DataManager;
 import eu.builderscoffee.commons.common.data.tables.Profil;
+import eu.builderscoffee.commons.common.redisson.packets.ServerManagerRequest;
 import eu.builderscoffee.commons.common.redisson.packets.StaffChatPacket;
 import eu.builderscoffee.commons.common.redisson.topics.CommonTopics;
 import eu.builderscoffee.commons.common.utils.LuckPermsUtils;
@@ -138,7 +139,7 @@ public class PlayerListener implements Listener {
 
             ServerManagerInventory.getChatRequests().remove(triplet);
 
-            triplet.getCenter().sendConfigRequest(player, triplet.getRight(), event.getMessage(), triplet.getCenter().getContents());
+            triplet.getCenter().sendConfigRequest(player, triplet.getRight(), event.getMessage(), ServerManagerRequest.ItemAction.NONE, triplet.getCenter().getContents());
             triplet.getCenter().setRequestConfigOnOpen(false);
             triplet.getCenter().INVENTORY.open(player);
         }

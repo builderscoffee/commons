@@ -71,7 +71,7 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
                     }));
 
         // Demander au serveur si une configuration est possible ou néscessaire
-        if(requestConfigOnOpen) sendConfigRequest(player, "request_config", "", contents);
+        if(requestConfigOnOpen) sendConfigRequest(player, "request_config", "", ServerManagerRequest.ItemAction.NONE, contents);
         requestConfigOnOpen = true;
 
         this.contents = contents;
@@ -107,11 +107,9 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
         this.contents = contents;
     }
 
-    public void sendConfigRequest(@NonNull Player player, @NonNull String type, @NonNull String data, @NonNull InventoryContents contents) {
+    public void sendConfigRequest(@NonNull Player player, @NonNull String type, @NonNull String data, @NonNull ServerManagerRequest.ItemAction itemAction, @NonNull InventoryContents contents) {
         // Create request
         val configPacket = new ServerManagerRequest();
-
-        System.out.println("Send " + type);
 
         // Define target server & action
         configPacket.setTargetServerName(server.getHostName());
@@ -132,7 +130,28 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
                         val i1 = itemInfo.getFirst();
                         val i2 = itemInfo.getSecond();
                         val item = ClickableItem.of(SingleItemSerialization.getItem(itemInfo.getThird()), e -> {
-                            if (!response.isFinished()) sendConfigRequest(player, itemsAction.getType(), itemInfo.getFourth(), contents);
+                            ServerManagerRequest.ItemAction currentItemAction = ServerManagerRequest.ItemAction.NONE;
+                            switch (e.getClick()){
+                                case LEFT:
+                                    currentItemAction = ServerManagerRequest.ItemAction.LEFT_CLICK;
+                                    break;
+                                case SHIFT_LEFT:
+                                    currentItemAction = ServerManagerRequest.ItemAction.SHIFT_LEFT_CLICK;
+                                    break;
+                                case RIGHT:
+                                    currentItemAction = ServerManagerRequest.ItemAction.RIGHT_CLICK;
+                                    break;
+                                case SHIFT_RIGHT:
+                                    currentItemAction = ServerManagerRequest.ItemAction.SHIFT_RIGHT_CLICK;
+                                    break;
+                                case MIDDLE:
+                                    currentItemAction = ServerManagerRequest.ItemAction.MIDDLE_CLICK;
+                                    break;
+                                case DROP:
+                                    currentItemAction = ServerManagerRequest.ItemAction.DROP;
+                                    break;
+                            }
+                            if (!response.isFinished()) sendConfigRequest(player, itemsAction.getType(), itemInfo.getFourth(), currentItemAction, contents);
                         });
 
                         // slot hasn't been chosen
@@ -157,6 +176,7 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
                 new ServersManagerInventory().INVENTORY.open(player);
             }
 
+            contents.fillRect(SlotPos.of(1, 0), SlotPos.of(3, columns - 1), null);
 
             // Set items in pagination system
             contents.pagination().setItems(configItems.toArray(new ClickableItem[0]));

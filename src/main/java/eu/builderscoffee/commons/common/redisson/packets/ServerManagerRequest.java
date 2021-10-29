@@ -14,4 +14,15 @@ public class ServerManagerRequest extends RequestPacket<ServerManagerResponse> {
 
     private String type;
     private String data;
+    private ItemAction itemAction = ItemAction.NONE;
+
+    public enum ItemAction{
+        NONE,
+        LEFT_CLICK,
+        RIGHT_CLICK,
+        SHIFT_LEFT_CLICK,
+        SHIFT_RIGHT_CLICK,
+        MIDDLE_CLICK,
+        DROP
+    }
 }
