@@ -1,8 +1,8 @@
 name: BuildersCoffeeCommons
 version: 0.1
 description: Commons for Builders Coffe.
-author: Ketsu_sama
-main: eu.builderscoffee.commons.bukkit.Main
+author: BuildersCoffee_Team
+main: eu.builderscoffee.commons.bukkit.CommonsBukkit
 depend: [ BuildersCoffeeAPI, LuckPerms ]
 commands:
   network:

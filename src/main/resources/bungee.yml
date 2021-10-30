@@ -1,8 +1,8 @@
 name: BuildersCoffeeCommons
 version: 0.1
 description: Commons for Builders Coffe.
-author: Ketsu_sama
-main: eu.builderscoffee.commons.bungeecord.Main
+author: BuildersCoffee_Team
+main: eu.builderscoffee.commons.bungeecord.CommonsBungeeCord
 depends: [ "BuildersCoffeeAPI", "LuckPerms" ]
 commands:
   staffchat:
