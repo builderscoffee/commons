@@ -1,14 +1,11 @@
 package eu.builderscoffee.commons.bungeecord.listeners;
 
 import com.google.common.collect.Iterables;
-import eu.builderscoffee.commons.bungeecord.Main;
+import eu.builderscoffee.commons.bungeecord.CommonsBungeeCord;
 import eu.builderscoffee.commons.bungeecord.utils.TextComponentUtil;
 import lombok.val;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.config.ServerInfo;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.event.ServerKickEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -74,7 +71,7 @@ public class PlayerListener implements Listener {
         boolean match = false;
 
         for (BaseComponent baseComponent : event.getKickReasonComponent()) {
-            for (String keyword : Main.getInstance().getMessages().getWhitelistRedirectMessagesKeywords()) {
+            for (String keyword : CommonsBungeeCord.getInstance().getMessages().getWhitelistRedirectMessagesKeywords()) {
                 if (baseComponent.toLegacyText().contains(keyword)) {
                     match = true;
                 }
@@ -85,7 +82,7 @@ public class PlayerListener implements Listener {
             return;
         }
 
-        val server = ProxyServer.getInstance().getServerInfo(Main.getInstance().getMessages().getServerRedirectName());
+        val server = ProxyServer.getInstance().getServerInfo(CommonsBungeeCord.getInstance().getMessages().getServerRedirectName());
 
         if (server == null) {
             return;
@@ -98,7 +95,7 @@ public class PlayerListener implements Listener {
         event.setCancelled(true);
         event.setCancelServer(server);
 
-        event.getPlayer().sendMessage(TextComponentUtil.decodeColor(Main.getInstance().getMessages().getServerRedirectionMessage()));
+        event.getPlayer().sendMessage(TextComponentUtil.decodeColor(CommonsBungeeCord.getInstance().getMessages().getServerRedirectionMessage()));
     }
 
     @EventHandler
@@ -107,7 +104,7 @@ public class PlayerListener implements Listener {
             return;
         }
 
-        val server = ProxyServer.getInstance().getServerInfo(Main.getInstance().getMessages().getServerRedirectName());
+        val server = ProxyServer.getInstance().getServerInfo(CommonsBungeeCord.getInstance().getMessages().getServerRedirectName());
 
         if (server == null) {
             return;

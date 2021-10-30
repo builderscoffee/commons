@@ -1,6 +1,6 @@
 package eu.builderscoffee.commons.bukkit.commands;
 
-import eu.builderscoffee.commons.bukkit.Main;
+import eu.builderscoffee.commons.bukkit.CommonsBukkit;
 import eu.builderscoffee.commons.bukkit.utils.BungeeUtils;
 import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
 import org.bukkit.command.Command;
@@ -17,7 +17,7 @@ public class HubCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
             // TODO Make more generic to dynamic hub servers
-            BungeeUtils.sendPlayerToServer(Main.getInstance(), (Player) sender, "hub");
+            BungeeUtils.sendPlayerToServer(CommonsBukkit.getInstance(), (Player) sender, "hub");
             return true;
         }
 

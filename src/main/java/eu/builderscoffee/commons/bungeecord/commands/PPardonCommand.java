@@ -1,6 +1,6 @@
 package eu.builderscoffee.commons.bungeecord.commands;
 
-import eu.builderscoffee.commons.bungeecord.Main;
+import eu.builderscoffee.commons.bungeecord.CommonsBungeeCord;
 import eu.builderscoffee.commons.bungeecord.utils.TextComponentUtil;
 import eu.builderscoffee.commons.common.data.DataManager;
 import eu.builderscoffee.commons.common.data.tables.BanEntity;
@@ -12,13 +12,13 @@ import net.md_5.bungee.api.plugin.Command;
 public class PPardonCommand extends Command {
 
     public PPardonCommand() {
-        super("ppardon", Main.getInstance().getPermissions().getPpardonPermission());
+        super("ppardon", CommonsBungeeCord.getInstance().getPermissions().getPpardonPermission());
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if(!sender.hasPermission(Main.getInstance().getPermissions().getPpardonPermission())){
-            sender.sendMessage(TextComponentUtil.decodeColor(Main.getInstance().getMessages().getNoPermission()));
+        if(!sender.hasPermission(CommonsBungeeCord.getInstance().getPermissions().getPpardonPermission())){
+            sender.sendMessage(TextComponentUtil.decodeColor(CommonsBungeeCord.getInstance().getMessages().getNoPermission()));
             return;
         }
 
@@ -48,6 +48,6 @@ public class PPardonCommand extends Command {
 
         banStore.delete(ban);
         sender.sendMessage(TextComponentUtil.decodeColor("§aVous avez débanni " + profil.getName()));
-        Main.getInstance().getLogger().info("§7" + sender.getName() + " §8débanni §7" + profil.getName());
+        CommonsBungeeCord.getInstance().getLogger().info("§7" + sender.getName() + " §8débanni §7" + profil.getName());
     }
 }

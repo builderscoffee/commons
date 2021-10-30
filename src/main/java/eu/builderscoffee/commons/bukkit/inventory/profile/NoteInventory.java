@@ -7,10 +7,9 @@ import eu.builderscoffee.api.bukkit.gui.content.InventoryProvider;
 import eu.builderscoffee.api.bukkit.gui.content.SlotIterator;
 import eu.builderscoffee.api.bukkit.gui.content.SlotPos;
 import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
-import eu.builderscoffee.commons.bukkit.Main;
+import eu.builderscoffee.commons.bukkit.CommonsBukkit;
 import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
 import eu.builderscoffee.commons.bukkit.utils.SkullCreator;
-import eu.builderscoffee.commons.bukkit.configuration.MessageConfiguration;
 import eu.builderscoffee.commons.common.data.*;
 import eu.builderscoffee.commons.common.data.tables.BuildbattleEntity;
 import eu.builderscoffee.commons.common.data.tables.Note;
@@ -36,7 +35,7 @@ public class NoteInventory implements InventoryProvider {
 
     public final SmartInventory INVENTORY;
 
-    private final Main main = Main.getInstance();
+    private final CommonsBukkit commonsBukkit = CommonsBukkit.getInstance();
 
     private final EntityDataStore<Note> storeNotes = DataManager.getNotesStore();
 
@@ -76,7 +75,7 @@ public class NoteInventory implements InventoryProvider {
                 .provider(this)
                 .size(6, 9)
                 .title(ChatColor.WHITE + "Note")
-                .manager(Main.getInstance().getInventoryManager())
+                .manager(CommonsBukkit.getInstance().getInventoryManager())
                 .build();
     }
 

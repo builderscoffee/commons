@@ -1,8 +1,6 @@
 package eu.builderscoffee.commons.bukkit.commands;
 
-import eu.builderscoffee.commons.bukkit.Main;
 import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
-import lombok.val;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

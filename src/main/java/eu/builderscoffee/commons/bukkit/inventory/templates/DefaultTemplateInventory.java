@@ -6,7 +6,7 @@ import eu.builderscoffee.api.bukkit.gui.content.InventoryContents;
 import eu.builderscoffee.api.bukkit.gui.content.InventoryProvider;
 import eu.builderscoffee.api.bukkit.gui.content.SlotPos;
 import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
-import eu.builderscoffee.commons.bukkit.Main;
+import eu.builderscoffee.commons.bukkit.CommonsBukkit;
 import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
 import lombok.NonNull;
 import org.bukkit.ChatColor;
@@ -50,7 +50,7 @@ public class DefaultTemplateInventory implements InventoryProvider {
                 .provider(this)
                 .size(rows, columns)
                 .title(ChatColor.WHITE + title)
-                .manager(Main.getInstance().getInventoryManager())
+                .manager(CommonsBukkit.getInstance().getInventoryManager())
                 .build();
         this.previousInventory = previousInventory;
     }

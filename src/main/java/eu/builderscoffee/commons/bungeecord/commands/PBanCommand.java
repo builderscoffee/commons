@@ -1,6 +1,6 @@
 package eu.builderscoffee.commons.bungeecord.commands;
 
-import eu.builderscoffee.commons.bungeecord.Main;
+import eu.builderscoffee.commons.bungeecord.CommonsBungeeCord;
 import eu.builderscoffee.commons.bungeecord.utils.DateUtil;
 import eu.builderscoffee.commons.bungeecord.utils.TextComponentUtil;
 import eu.builderscoffee.commons.common.data.DataManager;
@@ -20,13 +20,13 @@ import java.util.UUID;
 public class PBanCommand extends Command {
 
     public PBanCommand() {
-        super("pban", Main.getInstance().getPermissions().getPbanPermission());
+        super("pban", CommonsBungeeCord.getInstance().getPermissions().getPbanPermission());
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        if(!sender.hasPermission(Main.getInstance().getPermissions().getPpardonPermission())){
-            sender.sendMessage(TextComponentUtil.decodeColor(Main.getInstance().getMessages().getNoPermission()));
+        if(!sender.hasPermission(CommonsBungeeCord.getInstance().getPermissions().getPpardonPermission())){
+            sender.sendMessage(TextComponentUtil.decodeColor(CommonsBungeeCord.getInstance().getMessages().getNoPermission()));
             return;
         }
 
@@ -46,7 +46,7 @@ public class PBanCommand extends Command {
 
         val user = LuckPermsUtils.getUser(UUID.fromString(profil.getUniqueId()));
 
-        if(user != null && LuckPermsUtils.hasPermission(UUID.fromString(profil.getUniqueId()), Main.getInstance().getPermissions().getPbanByPassPermission())){
+        if(user != null && LuckPermsUtils.hasPermission(UUID.fromString(profil.getUniqueId()), CommonsBungeeCord.getInstance().getPermissions().getPbanByPassPermission())){
             return;
         }
 
@@ -96,7 +96,7 @@ public class PBanCommand extends Command {
         banStore.insert(banEntity);
 
         String message = "";
-        for (String s : Main.getInstance().getMessages().getBanMessage()) {
+        for (String s : CommonsBungeeCord.getInstance().getMessages().getBanMessage()) {
             String line = s.replace("%reason%", banReason)
                     .replace("%time%", DateUtil.formatDateDiff(banTimestamp))
                     .replace("&", "§");
@@ -112,13 +112,13 @@ public class PBanCommand extends Command {
                 .forEach(player -> player.disconnect(TextComponentUtil.decodeColor(finalMessage)));
 
         ProxyServer.getInstance().getPlayers().stream()
-                .forEach(player -> player.sendMessage(TextComponentUtil.decodeColor(Main.getInstance().getMessages().getBanBroadcastMessage().replace("%author%", sender.getName())
+                .forEach(player -> player.sendMessage(TextComponentUtil.decodeColor(CommonsBungeeCord.getInstance().getMessages().getBanBroadcastMessage().replace("%author%", sender.getName())
                         .replace("%player%", profil.getName())
                         .replace("%time%", DateUtil.formatDateDiff(finalBanTimestamp))
                         .replace("%reason%", finalBanReason)
                         .replace("&", "§"))));
 
-        System.out.println(Main.getInstance().getMessages().getBanBroadcastMessage().replace("%author%", sender.getName())
+        System.out.println(CommonsBungeeCord.getInstance().getMessages().getBanBroadcastMessage().replace("%author%", sender.getName())
                 .replace("%player%", profil.getName())
                 .replace("%time%", DateUtil.formatDateDiff(banTimestamp))
                 .replace("%reason%", banReason)

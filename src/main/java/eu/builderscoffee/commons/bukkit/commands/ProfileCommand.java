@@ -1,6 +1,6 @@
 package eu.builderscoffee.commons.bukkit.commands;
 
-import eu.builderscoffee.commons.bukkit.Main;
+import eu.builderscoffee.commons.bukkit.CommonsBukkit;
 import eu.builderscoffee.commons.bukkit.inventory.profile.ProfilInventory;
 import eu.builderscoffee.commons.common.data.DataManager;
 import eu.builderscoffee.commons.common.data.tables.Profil;
@@ -38,7 +38,7 @@ public class ProfileCommand implements CommandExecutor {
             return true;
         }
 
-        sender.sendMessage(Main.getInstance().getMessages().get(Profil.Lanugages.FR).getCommand().getMustBePlayer());
+        sender.sendMessage(CommonsBukkit.getInstance().getMessages().get(Profil.Languages.FR).getCommand().getMustBePlayer());
         return true;
     }
 }

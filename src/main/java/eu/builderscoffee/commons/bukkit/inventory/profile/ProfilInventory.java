@@ -8,8 +8,7 @@ import eu.builderscoffee.api.bukkit.gui.content.SlotPos;
 import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
 import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
 import eu.builderscoffee.commons.bukkit.utils.SkullCreator;
-import eu.builderscoffee.commons.bukkit.Main;
-import eu.builderscoffee.commons.bukkit.configuration.MessageConfiguration;
+import eu.builderscoffee.commons.bukkit.CommonsBukkit;
 import eu.builderscoffee.commons.common.data.*;
 import eu.builderscoffee.commons.common.data.tables.BuildbattleEntity;
 import eu.builderscoffee.commons.common.data.tables.ProfilEntity;
@@ -32,7 +31,7 @@ public class ProfilInventory implements InventoryProvider {
 
     public final SmartInventory INVENTORY;
 
-    private final Main main = Main.getInstance();
+    private final CommonsBukkit commonsBukkit = CommonsBukkit.getInstance();
 
     private final ProfilEntity profilEntity;
 
@@ -54,7 +53,7 @@ public class ProfilInventory implements InventoryProvider {
                 .provider(this)
                 .size(6, 9)
                 .title(ChatColor.WHITE + "Profil >> " + profilEntity.getName())
-                .manager(Main.getInstance().getInventoryManager())
+                .manager(CommonsBukkit.getInstance().getInventoryManager())
                 .build();
     }
 

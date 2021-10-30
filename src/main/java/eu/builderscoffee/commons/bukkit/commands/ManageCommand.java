@@ -1,7 +1,5 @@
 package eu.builderscoffee.commons.bukkit.commands;
 
-import eu.builderscoffee.commons.bukkit.Main;
-import eu.builderscoffee.commons.bukkit.configuration.messages.CommandConfigurationPart;
 import eu.builderscoffee.commons.bukkit.utils.CommandUtils;
 import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
 import eu.builderscoffee.commons.common.data.DataManager;
@@ -18,6 +16,8 @@ public class ManageCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        //if(!sender.hasPermission())
+
         switch (CommandUtils.getArgument(args, 0).toLowerCase()){
             case "themes":
                 return themes(sender, args);

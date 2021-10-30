@@ -7,8 +7,7 @@ import eu.builderscoffee.api.bukkit.gui.content.InventoryProvider;
 import eu.builderscoffee.api.bukkit.gui.content.SlotPos;
 import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
 import eu.builderscoffee.commons.bukkit.utils.BookUtil;
-import eu.builderscoffee.commons.bukkit.Main;
-import eu.builderscoffee.commons.bukkit.configuration.MessageConfiguration;
+import eu.builderscoffee.commons.bukkit.CommonsBukkit;
 import eu.builderscoffee.commons.bukkit.utils.BungeeUtils;
 import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
 import lombok.val;
@@ -37,9 +36,9 @@ public class NetworkInventory implements InventoryProvider {
             .provider(new NetworkInventory())
             .size(6, 9)
             .title(ChatColor.WHITE + "Menu Builders Coffee")
-            .manager(Main.getInstance().getInventoryManager())
+            .manager(CommonsBukkit.getInstance().getInventoryManager())
             .build();
-    private final Main main = Main.getInstance();
+    private final CommonsBukkit commonsBukkit = CommonsBukkit.getInstance();
     private static final ClickableItem blackGlasses = ClickableItem.empty(new ItemBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 15)).setName("§a").build());
     private static final ClickableItem greyGlasses = ClickableItem.empty(new ItemBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 7)).setName("§a").build());
     private static final ClickableItem lightgreyGlasses = ClickableItem.empty(new ItemBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 8)).setName("§a").build());
@@ -67,10 +66,10 @@ public class NetworkInventory implements InventoryProvider {
 
         // Serveur hub
         contents.set(1, 3, ClickableItem.of(new ItemBuilder(Material.NETHER_STAR).setName(messages.getNetwork().getHubItem().replace("&", "§")).build(),
-                e -> BungeeUtils.sendPlayerToServer(main, player, "hub")));
+                e -> BungeeUtils.sendPlayerToServer(commonsBukkit, player, "hub")));
         // Serveur BuildBattle
         contents.set(1, 5, ClickableItem.of(new ItemBuilder(Material.ENCHANTMENT_TABLE).setName(messages.getNetwork().getBuildBattleItem().replace("&", "§")).build(),
-                e -> BungeeUtils.sendPlayerToServer(main, player, "plot")));
+                e -> BungeeUtils.sendPlayerToServer(commonsBukkit, player, "plot")));
         // Régles du serveur
         contents.set(3, 3, ClickableItem.of(new ItemBuilder(Material.BOOK_AND_QUILL).setName(messages.getNetwork().getRulesBookItem().replace("&", "§")).build(),
                 e -> {
@@ -109,7 +108,7 @@ public class NetworkInventory implements InventoryProvider {
                     player.closeInventory();
                 }));
 
-        if(player.hasPermission(main.getPermissions().getServerManagerSee())){
+        if(player.hasPermission(commonsBukkit.getPermissions().getServerManagerSee())){
             // ServerManager
             contents.set(5, 1, ClickableItem.of(new ItemBuilder(Material.PAPER).setName(messages.getNetwork().getServerManagerItem().replace("&", "§")).build(),
                     e -> new ServersManagerInventory().INVENTORY.open(player)));

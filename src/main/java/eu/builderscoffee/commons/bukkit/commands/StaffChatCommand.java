@@ -1,9 +1,7 @@
 package eu.builderscoffee.commons.bukkit.commands;
 
 import eu.builderscoffee.api.common.redisson.Redis;
-import eu.builderscoffee.api.common.redisson.RedisTopic;
-import eu.builderscoffee.commons.bukkit.Main;
-import eu.builderscoffee.commons.bukkit.configuration.MessageConfiguration;
+import eu.builderscoffee.commons.bukkit.CommonsBukkit;
 import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
 import eu.builderscoffee.commons.common.redisson.packets.StaffChatPacket;
 import eu.builderscoffee.commons.common.redisson.topics.CommonTopics;
@@ -25,7 +23,7 @@ public class StaffChatCommand implements CommandExecutor {
         val messages = MessageUtils.getMessageConfig(sender);
 
         // Check if has the permission to do it and is player
-        if((sender instanceof Player && sender.hasPermission(Main.getInstance().getPermissions().getStaffchat()))
+        if((sender instanceof Player && sender.hasPermission(CommonsBukkit.getInstance().getPermissions().getStaffchat()))
                 || sender instanceof ConsoleCommandSender){
             // If more arguments, send message
             if(args.length > 0){
@@ -49,13 +47,13 @@ public class StaffChatCommand implements CommandExecutor {
             else {
                 if(sender instanceof Player){
                     val player = (Player) sender;
-                    if(Main.getInstance().getStaffchatPlayers().contains(player.getUniqueId())){
+                    if(CommonsBukkit.getInstance().getStaffchatPlayers().contains(player.getUniqueId())){
                         player.sendMessage(messages.getCommand().getStaffchat().getDisableStaffchat());
-                        Main.getInstance().getStaffchatPlayers().remove(player.getUniqueId());
+                        CommonsBukkit.getInstance().getStaffchatPlayers().remove(player.getUniqueId());
                     }
                     else {
                         player.sendMessage(messages.getCommand().getStaffchat().getEnableStaffchat());
-                        Main.getInstance().getStaffchatPlayers().add(player.getUniqueId());
+                        CommonsBukkit.getInstance().getStaffchatPlayers().add(player.getUniqueId());
                     }
                 }
                 else {

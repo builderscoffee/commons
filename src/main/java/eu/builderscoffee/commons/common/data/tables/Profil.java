@@ -1,7 +1,6 @@
 package eu.builderscoffee.commons.common.data.tables;
 
-import eu.builderscoffee.commons.bukkit.Main;
-import eu.builderscoffee.commons.bukkit.configuration.MessageConfiguration;
+import eu.builderscoffee.commons.bukkit.CommonsBukkit;
 import io.requery.*;
 import io.requery.query.MutableResult;
 import lombok.Setter;
@@ -10,7 +9,6 @@ import lombok.val;
 
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.Objects;
 
 /**
  * {@link Profil} est l'objet utilisé pour stocker le profil d'un joueur.
@@ -53,7 +51,7 @@ public abstract class Profil {
     Timestamp updateDate;
 
     @Column
-    Lanugages lang;
+    Languages lang;
 
     /* Links to other entity */
 
@@ -84,11 +82,11 @@ public abstract class Profil {
      * @return Entité
      */
     public static ProfilEntity getOrCreate(String uniqueId) {
-        val cached = Main.getInstance().getProfilCache().get(uniqueId);
+        val cached = CommonsBukkit.getInstance().getProfilCache().get(uniqueId);
         if (cached == null) {
             val profil = new ProfilEntity();
             profil.setUniqueId(uniqueId);
-            profil.setLang(Lanugages.FR);
+            profil.setLang(Languages.FR);
             profil.setUpdateDate(new Timestamp(new Date().getTime()));
             profil.setCreationDate(new Timestamp(new Date().getTime()));
             return profil;
@@ -106,13 +104,13 @@ public abstract class Profil {
         setUpdateDate(new Timestamp(new Date().getTime()));
     }
 
-    public enum Lanugages{
+    public enum Languages {
         FR("Français"),
         EN("English");
 
         public String name;
 
-        Lanugages(String name) {
+        Languages(String name) {
             this.name = name;
         }
     }

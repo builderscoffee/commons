@@ -1,6 +1,5 @@
 package eu.builderscoffee.commons.bukkit.commands;
 
-import eu.builderscoffee.commons.bukkit.Main;
 import eu.builderscoffee.commons.bukkit.inventory.network.NetworkInventory;
 import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
 import lombok.val;

@@ -35,10 +35,10 @@ import static eu.builderscoffee.api.common.configuration.Configuration.writeConf
  * This class is the main class of the Commons Proxy plugin
  */
 @Getter
-public class Main extends Plugin {
+public class CommonsBungeeCord extends Plugin {
 
     @Getter
-    private static Main instance;
+    private static CommonsBungeeCord instance;
 
     //Configuration
     private MessageConfiguration messages;
@@ -85,7 +85,7 @@ public class Main extends Plugin {
             val server = ProxyServer.getInstance().getServerInfo(messages.getServerRedirectName());
             if (server == null) {
                 val newServer = (ServerInfo) getProxy().getServers().values().toArray()[0];
-                Main.getInstance().getMessages().setServerRedirectName(newServer.getName());
+                CommonsBungeeCord.getInstance().getMessages().setServerRedirectName(newServer.getName());
                 writeConfiguration(this.getDescription().getName(), messages);
             }
 

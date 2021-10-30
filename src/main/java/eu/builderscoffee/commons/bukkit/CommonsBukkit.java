@@ -13,7 +13,6 @@ import eu.builderscoffee.commons.bukkit.listeners.ConnexionListener;
 import eu.builderscoffee.commons.bukkit.listeners.PlayerListener;
 import eu.builderscoffee.commons.bukkit.listeners.redisson.HeartBeatListener;
 import eu.builderscoffee.commons.bukkit.listeners.redisson.StaffChatListener;
-import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
 import eu.builderscoffee.commons.common.configuration.SettingsConfig;
 import eu.builderscoffee.commons.common.data.DataManager;
 import eu.builderscoffee.commons.common.data.tables.Profil;
@@ -40,13 +39,13 @@ import static eu.builderscoffee.commons.bukkit.commands.HelpCommand.registerComm
  * This class is the main class of the Commons Bukkit plugin
  */
 @Getter
-public class Main extends JavaPlugin {
+public class CommonsBukkit extends JavaPlugin {
 
     @Getter
-    private static Main instance;
+    private static CommonsBukkit instance;
 
     //Configuration
-    private Map<Profil.Lanugages, MessageConfiguration> messages;
+    private Map<Profil.Languages, MessageConfiguration> messages;
     private PermissionsConfiguration permissions;
     private SettingsConfig settings;
     private WhitelistConfiguration whitelist;
@@ -63,7 +62,7 @@ public class Main extends JavaPlugin {
         instance = this;
 
         // Configuration
-        messages = readOrCreateConfiguration(this.getName(), MessageConfiguration.class, Profil.Lanugages.class);
+        messages = readOrCreateConfiguration(this.getName(), MessageConfiguration.class, Profil.Languages.class);
         permissions = readOrCreateConfiguration(this.getName(), PermissionsConfiguration.class);
         settings = readOrCreateConfiguration(this.getName(), SettingsConfig.class);
         whitelist = readOrCreateConfiguration(this.getName(), WhitelistConfiguration.class);

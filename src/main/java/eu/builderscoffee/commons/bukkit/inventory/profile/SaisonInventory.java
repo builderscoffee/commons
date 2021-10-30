@@ -6,8 +6,7 @@ import eu.builderscoffee.api.bukkit.gui.content.InventoryContents;
 import eu.builderscoffee.api.bukkit.gui.content.InventoryProvider;
 import eu.builderscoffee.api.bukkit.gui.content.SlotPos;
 import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
-import eu.builderscoffee.commons.bukkit.Main;
-import eu.builderscoffee.commons.bukkit.configuration.MessageConfiguration;
+import eu.builderscoffee.commons.bukkit.CommonsBukkit;
 import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
 import eu.builderscoffee.commons.bukkit.utils.SkullCreator;
 import eu.builderscoffee.commons.common.data.DataManager;
@@ -43,7 +42,7 @@ public class SaisonInventory implements InventoryProvider {
     private static final ItemStack limeSkull = SkullCreator.itemFromBase64(LIME);
     private static final ItemStack redSkull = SkullCreator.itemFromBase64(RED);
     public final SmartInventory INVENTORY;
-    private final Main main = Main.getInstance();
+    private final CommonsBukkit commonsBukkit = CommonsBukkit.getInstance();
     private final EntityDataStore<Saison> storeSaison = DataManager.getSaisonsStore();
     private final ProfilEntity profilEntity;
     private final SaisonEntity saisonEntity;
@@ -63,7 +62,7 @@ public class SaisonInventory implements InventoryProvider {
                 .provider(this)
                 .size(6, 9)
                 .title(ChatColor.WHITE + "Saison " + saisonEntity.getId())
-                .manager(Main.getInstance().getInventoryManager())
+                .manager(CommonsBukkit.getInstance().getInventoryManager())
                 .build();
     }
 

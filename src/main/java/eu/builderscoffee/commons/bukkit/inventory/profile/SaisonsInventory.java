@@ -9,8 +9,7 @@ import eu.builderscoffee.api.bukkit.gui.content.SlotPos;
 import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
 import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
 import eu.builderscoffee.commons.common.data.*;
-import eu.builderscoffee.commons.bukkit.Main;
-import eu.builderscoffee.commons.bukkit.configuration.MessageConfiguration;
+import eu.builderscoffee.commons.bukkit.CommonsBukkit;
 import eu.builderscoffee.commons.common.data.tables.ProfilEntity;
 import eu.builderscoffee.commons.common.data.tables.Saison;
 import eu.builderscoffee.commons.common.data.tables.SaisonEntity;
@@ -27,7 +26,7 @@ public class SaisonsInventory implements InventoryProvider {
 
     public final SmartInventory INVENTORY;
 
-    private final Main main = Main.getInstance();
+    private final CommonsBukkit commonsBukkit = CommonsBukkit.getInstance();
     private final EntityDataStore<Saison> storeSaison = DataManager.getSaisonsStore();
 
     private final ProfilEntity profilEntity;
@@ -47,7 +46,7 @@ public class SaisonsInventory implements InventoryProvider {
                 .provider(this)
                 .size(6, 9)
                 .title(ChatColor.WHITE + "Liste des saisons")
-                .manager(Main.getInstance().getInventoryManager())
+                .manager(CommonsBukkit.getInstance().getInventoryManager())
                 .build();
     }
 

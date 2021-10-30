@@ -1,7 +1,7 @@
 package eu.builderscoffee.commons.bukkit.listeners;
 
 import eu.builderscoffee.api.common.redisson.Redis;
-import eu.builderscoffee.commons.bukkit.Main;
+import eu.builderscoffee.commons.bukkit.CommonsBukkit;
 import eu.builderscoffee.commons.bukkit.inventory.network.ServerManagerInventory;
 import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
 import eu.builderscoffee.commons.common.data.DataManager;
@@ -19,7 +19,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.Objects;
 
@@ -30,7 +29,7 @@ public class PlayerListener implements Listener {
         val player = event.getPlayer();
 
         // Check si le profil est bien crées
-        val profil = Main.getInstance().getProfilCache().get(player.getUniqueId().toString());
+        val profil = CommonsBukkit.getInstance().getProfilCache().get(player.getUniqueId().toString());
         if (profil == null) {
             player.kickPlayer("§6§lBuilders Coffee Server \n§cUne erreur est survenue lors du chargement de données.\n§cVeuillez vous reconnecter");
             return;
@@ -42,7 +41,7 @@ public class PlayerListener implements Listener {
             DataManager.getProfilStore().update(profil);
         }
         if(Objects.isNull(profil.getLang())){
-            profil.setLang(Profil.Lanugages.FR);
+            profil.setLang(Profil.Languages.FR);
             DataManager.getProfilStore().update(profil);
         }
 
@@ -117,7 +116,7 @@ public class PlayerListener implements Listener {
         val suffix = LuckPermsUtils.getSuffixOrEmpty(player.getUniqueId());
 
         // StaffChat
-        if (Main.getInstance().getStaffchatPlayers().contains(event.getPlayer().getUniqueId())) {
+        if (CommonsBukkit.getInstance().getStaffchatPlayers().contains(event.getPlayer().getUniqueId())) {
             val packet = new StaffChatPacket()
                 .setPlayerName(player.getName())
                 .setMessage(MessageUtils.getMessageConfig(player).getChat().getStaffChatFormat()

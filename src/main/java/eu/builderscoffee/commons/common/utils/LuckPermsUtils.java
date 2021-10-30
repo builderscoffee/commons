@@ -1,6 +1,5 @@
 package eu.builderscoffee.commons.common.utils;
 
-import eu.builderscoffee.commons.bukkit.Main;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.val;
@@ -8,7 +7,6 @@ import net.luckperms.api.LuckPerms;
 import net.luckperms.api.cacheddata.CachedMetaData;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.query.QueryOptions;
-import org.bukkit.entity.Player;
 
 import java.util.Objects;
 import java.util.UUID;
