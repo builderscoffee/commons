@@ -66,7 +66,6 @@ public class ServerManagerResponse extends ResponsePacket {
 
     @Getter @Setter
     public static class ChatResponse extends Action {
-        private String type;
         private String message;
     }
 }
