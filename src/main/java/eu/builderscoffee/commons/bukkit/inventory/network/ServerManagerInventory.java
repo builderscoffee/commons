@@ -17,6 +17,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.val;
+import org.apache.commons.lang3.tuple.Triple;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.redisson.api.RSortedSet;
@@ -121,8 +122,9 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
         configPacket.onResponse = response -> {
             // create list to temporary store items
             val configItems = new ArrayList<ClickableItem>();
+            val customConfigItems = new ArrayList<Triplet<Integer, Integer, ClickableItem>>();
 
-            contents.fillRect(SlotPos.of(1, 0), SlotPos.of(3, columns - 1), null);
+            contents.fillSquare(SlotPos.of(1, 0), SlotPos.of(3, columns - 1), lightGreyGlasses);
 
             // loop all items
             response.getActions().forEach(action -> {
@@ -162,7 +164,7 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
                             configItems.add(item);
                         // slot has been chosen
                         else
-                            contents.set(i1, i2, item);
+                            customConfigItems.add(new Triplet<>(i1, i2, item));
                     });
                 } else if (action instanceof ServerManagerResponse.ChatRequest) {
                     val chatRequestAction = (ServerManagerResponse.ChatRequest) action;
@@ -186,10 +188,13 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
 
             // Set items in pagination system
             contents.pagination().setItems(configItems.toArray(new ClickableItem[0]));
-            contents.pagination().setItemsPerPage(configItems.size() > 27? 27 : configItems.size());
+            contents.pagination().setItemsPerPage(27);
 
             // Define how items are placed in inv
             contents.pagination().addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, SlotPos.of(1, 0)));
+
+            //
+            customConfigItems.forEach(triplet -> contents.set(triplet.getLeft(), triplet.getCenter(), triplet.getRight()));
         };
 
         // Send request

@@ -22,6 +22,7 @@ public class DefaultTemplateInventory implements InventoryProvider {
     public final SmartInventory INVENTORY;
     protected static final ClickableItem blackGlasses = ClickableItem.empty(new ItemBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 15)).setName("§a").build());
     protected static final ClickableItem greyGlasses = ClickableItem.empty(new ItemBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 7)).setName("§a").build());
+    protected static final ClickableItem lightGreyGlasses = ClickableItem.empty(new ItemBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 8)).setName("§a").build());
 
     protected final SmartInventory previousInventory;
 
