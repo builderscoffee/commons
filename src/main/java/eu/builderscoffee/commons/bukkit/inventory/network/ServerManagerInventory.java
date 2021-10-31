@@ -115,6 +115,7 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
         configPacket.setTargetServerName(server.getHostName());
         configPacket.setType(type);
         configPacket.setData(data);
+        configPacket.setItemAction(itemAction);
 
         // Show items on response
         configPacket.onResponse = response -> {

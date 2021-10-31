@@ -49,9 +49,12 @@ public class ServersManagerInventory extends DefaultAdminTemplateInventory {
         // Vérifie que la liste existe
         if (servers == null) return;
 
+        // Creating temporary servers list to avoid changes
+        val tempServers = servers.stream().collect(Collectors.toList());
+
         // Boucle de tous les serveurs
-        if (servers.stream().count() > 0)
-            servers.stream()
+        if (tempServers.stream().count() > 0)
+            tempServers.stream()
                     .sorted()
                     .forEach(s -> {
                         // Créer l'item permettant de click
