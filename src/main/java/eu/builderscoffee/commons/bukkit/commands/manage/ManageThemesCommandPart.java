@@ -9,6 +9,7 @@ import eu.builderscoffee.commons.common.data.tables.BuildbattleThemeEntity;
 import lombok.val;
 import org.bukkit.command.CommandSender;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class ManageThemesCommandPart extends ManageCommand.ManageCommandPart {
@@ -70,22 +71,36 @@ public class ManageThemesCommandPart extends ManageCommand.ManageCommandPart {
             return false;
         }
 
-        val name = CommandUtils.getArgument(args, 2);
-
-        if(name.isEmpty()){
+        if(CommandUtils.getArgument(args, 2).isEmpty()){
             sender.sendMessage(messages.getManage().getThemes().getNameNotEmpty().replace("&", "§"));
             return true;
         }
 
-        if(DataManager.getBuildbattleThemeStore().select(BuildbattleThemeEntity.class).where(BuildbattleThemeEntity.NAME.eq(name)).get().stream().count() > 0){
-            sender.sendMessage(messages.getManage().getThemes().getNameAlreadyExist().replace("&", "§"));
-            return true;
+        val arguments = new ArrayList<String>();
+        for(int i = 2; i < args.length; i++){
+            arguments.add(args[i]);
         }
 
-        val entity = new BuildbattleThemeEntity();
-        entity.setName(name);
+        val split = String.join(" ", arguments).split(",");
+        val entities = new ArrayList<BuildbattleThemeEntity>();
 
-        DataManager.getBuildbattleThemeStore().insert(entity);
+        for (String value : split) {
+            val name = value.trim();
+
+            if(DataManager.getBuildbattleThemeStore().select(BuildbattleThemeEntity.class).where(BuildbattleThemeEntity.NAME.eq(name)).get().stream().count() > 0){
+                sender.sendMessage(messages.getManage().getThemes().getNameAlreadyExist()
+                        .replace("&", "§")
+                        .replace("%name%", name));
+                return true;
+            }
+
+            val entity = new BuildbattleThemeEntity();
+            entity.setName(name);
+
+            entities.add(entity);
+        }
+
+        entities.forEach(DataManager.getBuildbattleThemeStore()::insert);
 
         sender.sendMessage(messages.getManage().getThemes().getAdded().replace("&", "§"));
 
@@ -99,28 +114,41 @@ public class ManageThemesCommandPart extends ManageCommand.ManageCommandPart {
             return false;
         }
 
-        val oldName = CommandUtils.getArgument(args, 2);
-        val newName = CommandUtils.getArgument(args, 3);
+        val arguments = new ArrayList<String>();
+        for(int i = 2; i < args.length; i++){
+            arguments.add(args[i]);
+        }
+
+        val split = String.join(" ", arguments).split(",");
+
+        if(split.length != 2){
+            sender.sendMessage(messages.getManage().getThemes().getNamesUpdateNotCorrectFilled().replace("&", "§"));
+            sender.sendMessage("§cExample: /manage themes update oldname, newname");
+            return false;
+        }
+
+        val oldName = split[0].trim();
+        val newName = split[1].trim();
 
         if(oldName.isEmpty()){
             sender.sendMessage(messages.getManage().getThemes().getNameNotEmpty().replace("&", "§"));
-            return true;
+            return false;
         }
 
         if(newName.isEmpty()){
             sender.sendMessage(messages.getManage().getThemes().getNewNameNotEmpty().replace("&", "§"));
-            return true;
+            return false;
         }
 
         val entity = DataManager.getBuildbattleThemeStore().select(BuildbattleThemeEntity.class).where(BuildbattleThemeEntity.NAME.lower().eq(oldName.toLowerCase())).get().firstOrNull();
         if(Objects.isNull(entity)){
             sender.sendMessage(MessageUtils.getMessageConfig(sender).getCommand().getManage().getThemes().getNameNotExist().replace("&", "§"));
-            return true;
+            return false;
         }
 
         if(DataManager.getBuildbattleThemeStore().select(BuildbattleThemeEntity.class).where(BuildbattleThemeEntity.NAME.lower().eq(newName.toLowerCase())).get().stream().count() > 0){
             sender.sendMessage(MessageUtils.getMessageConfig(sender).getCommand().getManage().getThemes().getNameAlreadyExist().replace("&", "§"));
-            return true;
+            return false;
         }
 
         entity.setName(newName);
@@ -139,7 +167,12 @@ public class ManageThemesCommandPart extends ManageCommand.ManageCommandPart {
             return false;
         }
 
-        val name = CommandUtils.getArgument(args, 2);
+        val arguments = new ArrayList<String>();
+        for(int i = 2; i < args.length; i++){
+            arguments.add(args[i]);
+        }
+
+        val name = String.join(" ", arguments).trim();
 
         if(name.isEmpty()){
             sender.sendMessage(MessageUtils.getMessageConfig(sender).getCommand().getManage().getThemes().getNameNotEmpty().replace("&", "§"));
