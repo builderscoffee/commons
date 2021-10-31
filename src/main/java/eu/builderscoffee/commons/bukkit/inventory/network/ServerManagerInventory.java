@@ -122,6 +122,8 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
             // create list to temporary store items
             val configItems = new ArrayList<ClickableItem>();
 
+            contents.fillRect(SlotPos.of(1, 0), SlotPos.of(3, columns - 1), null);
+
             // loop all items
             response.getActions().forEach(action -> {
                 if (action instanceof ServerManagerResponse.Items) {
@@ -171,13 +173,16 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
                     chatRequests.add(new Triplet<>(player, this, chatRequestAction.getType()));
                     player.closeInventory();
                     return;
+                } else if (action instanceof ServerManagerResponse.ChatResponse) {
+                    val chatresponseAction = (ServerManagerResponse.ChatResponse) action;
+
+                    if (Objects.nonNull(chatresponseAction.getMessage()))
+                        player.sendMessage(chatresponseAction.getMessage());
                 }
             });
             if (response.isFinished()) {
                 new ServersManagerInventory().INVENTORY.open(player);
             }
-
-            contents.fillRect(SlotPos.of(1, 0), SlotPos.of(3, columns - 1), null);
 
             // Set items in pagination system
             contents.pagination().setItems(configItems.toArray(new ClickableItem[0]));
