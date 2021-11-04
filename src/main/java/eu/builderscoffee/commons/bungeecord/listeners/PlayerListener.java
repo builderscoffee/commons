@@ -3,9 +3,11 @@ package eu.builderscoffee.commons.bungeecord.listeners;
 import com.google.common.collect.Iterables;
 import eu.builderscoffee.commons.bungeecord.CommonsBungeeCord;
 import eu.builderscoffee.commons.bungeecord.utils.TextComponentUtil;
+import eu.builderscoffee.commons.common.configuration.SettingsConfig;
 import lombok.val;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.event.ServerKickEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -104,7 +106,15 @@ public class PlayerListener implements Listener {
             return;
         }
 
-        val server = ProxyServer.getInstance().getServerInfo(CommonsBungeeCord.getInstance().getMessages().getServerRedirectName());
+        val server = ProxyServer.getInstance().getServers().values().stream()
+                .filter(s -> {
+                    if(CommonsBungeeCord.getInstance().getSettings().getPluginMode().equals(SettingsConfig.PluginMode.DEVELOPMENT))
+                        return s.getName().contains("hub") && s.getName().contains("dev");
+                    return s.getName().contains("hub") && !s.getName().contains("dev");
+                })
+                .findFirst().orElse(null);
+
+        //val server = ProxyServer.getInstance().getServerInfo(CommonsBungeeCord.getInstance().getMessages().getServerRedirectName());
 
         if (server == null) {
             return;
