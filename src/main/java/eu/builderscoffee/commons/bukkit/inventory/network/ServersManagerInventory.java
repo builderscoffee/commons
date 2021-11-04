@@ -7,7 +7,9 @@ import eu.builderscoffee.api.bukkit.gui.content.SlotPos;
 import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
 import eu.builderscoffee.api.common.redisson.Redis;
 import eu.builderscoffee.api.common.redisson.infos.Server;
+import eu.builderscoffee.commons.bukkit.CommonsBukkit;
 import eu.builderscoffee.commons.bukkit.inventory.templates.DefaultAdminTemplateInventory;
+import eu.builderscoffee.commons.bukkit.utils.BungeeUtils;
 import lombok.val;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -72,8 +74,14 @@ public class ServersManagerInventory extends DefaultAdminTemplateInventory {
                                                 .collect(Collectors.toList()))
                                         .addLoreLine("")
                                         .addLoreLine("§aClic gauche pour gérer")
+                                        .addLoreLine("§aClic droit pour y aller")
                                         .build(),
-                                e -> new ServerManagerInventory(s).INVENTORY.open(player)));
+                                e -> {
+                                    if(e.isLeftClick())
+                                        new ServerManagerInventory(s).INVENTORY.open(player);
+                                    else if(e.isRightClick())
+                                        BungeeUtils.sendPlayerToServer(CommonsBukkit.getInstance(), player, s.getHostName());
+                                }));
                     });
         // Ajouter les items dans l'inventaire
         contents.pagination().setItems(serverItems.toArray(new ClickableItem[0]));

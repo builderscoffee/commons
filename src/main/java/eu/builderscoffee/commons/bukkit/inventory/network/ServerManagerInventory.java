@@ -182,8 +182,11 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
                         player.sendMessage(chatresponseAction.getMessage());
                 }
             });
+
+            // If true will ignore
             if (response.isFinished()) {
-                new ServersManagerInventory().INVENTORY.open(player);
+                player.closeInventory();
+                return;
             }
 
             // Set items in pagination system
