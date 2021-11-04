@@ -5,6 +5,7 @@ import eu.builderscoffee.commons.bungeecord.CommonsBungeeCord;
 import eu.builderscoffee.commons.bungeecord.utils.TextComponentUtil;
 import eu.builderscoffee.commons.common.configuration.SettingsConfig;
 import lombok.val;
+import lombok.var;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -56,99 +57,75 @@ public class PlayerListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onServerKick(final ServerKickEvent event) {
         // When running in single-server mode, we can't kick people to the hub if they are on the hub.
-        if (ProxyServer.getInstance().getServers().size() <= 1 && Iterables.getOnlyElement(ProxyServer.getInstance().getServers().values()).equals(event.getKickedFrom())) {
-            return;
-        }
+        if (ProxyServer.getInstance().getServers().size() <= 1 && Iterables.getOnlyElement(ProxyServer.getInstance().getServers().values()).equals(event.getKickedFrom())) return;
 
-        if (event.getPlayer().getServer() == null) {
-            // Not connected before
-            return;
-        }
+        // Not connected before
+        if (event.getPlayer().getServer() == null) return;
 
-        if (!event.getPlayer().getServer().getInfo().equals(event.getKickedFrom())) {
-            // We aren't even on that server, so ignore it.
-            return;
-        }
+        // We aren't even on that server, so ignore it.
+        if (!event.getPlayer().getServer().getInfo().equals(event.getKickedFrom())) return;
 
         boolean match = false;
 
+        // Check kick reason if it is needed to connect the player to a hub
         for (BaseComponent baseComponent : event.getKickReasonComponent()) {
             for (String keyword : CommonsBungeeCord.getInstance().getMessages().getWhitelistRedirectMessagesKeywords()) {
-                if (baseComponent.toLegacyText().contains(keyword)) {
+                if (baseComponent.toLegacyText().toLowerCase().contains(keyword.toLowerCase())) {
                     match = true;
                 }
             }
         }
 
-        if (!match) {
-            return;
-        }
+        if (!match) return;
 
-        val server = ProxyServer.getInstance().getServerInfo(CommonsBungeeCord.getInstance().getMessages().getServerRedirectName());
+        // Get any hub server as backup server
+        val anyHubServer = ProxyServer.getInstance().getServers().values().stream()
+                .filter(s -> !event.getPlayer().getServer().getInfo().equals(s))
+                .filter(s -> s.getName().contains("hub"))
+                .findFirst().orElse(null);
 
-        if (server == null) {
-            return;
-        }
+        // Get the correct hub server depends on de server mode
+        var hubServer = ProxyServer.getInstance().getServers().values().stream()
+                .filter(s -> !event.getPlayer().getServer().getInfo().equals(s))
+                .filter(s -> {
+                    if(CommonsBungeeCord.getInstance().getSettings().getPluginMode().equals(SettingsConfig.PluginMode.DEVELOPMENT))
+                        return s.getName().contains("hub") && s.getName().contains("dev");
+                    return s.getName().contains("hub") && !s.getName().contains("dev");
+                })
+                .findFirst()
+                .orElse(anyHubServer);
 
-        if (event.getPlayer().getServer().getInfo().equals(server)) {
-            return;
-        }
+        if (hubServer == null) return;
 
+        // Move player to the fallback server
         event.setCancelled(true);
-        event.setCancelServer(server);
+        event.setCancelServer(hubServer);
 
-        event.getPlayer().sendMessage(TextComponentUtil.decodeColor(CommonsBungeeCord.getInstance().getMessages().getServerRedirectionMessage()));
+        event.getPlayer().sendMessage(TextComponentUtil.decodeColor(CommonsBungeeCord.getInstance().getMessages().getServerRedirectionMessage().replace("%server%", hubServer.getName())));
     }
 
     @EventHandler
     public void onServerConnect(ServerConnectEvent event) {
-        if (event.getPlayer().getServer() != null) {
-            return;
-        }
+        // check if player was on a server before
+        if (event.getPlayer().getServer() != null) return;
 
+        // Get any hub server as backup server
+        val anyHubServer = ProxyServer.getInstance().getServers().values().stream()
+                .filter(s -> s.getName().contains("hub"))
+                .findFirst().orElse(null);
+
+        // Get the correct hub server depends on de server mode
         val server = ProxyServer.getInstance().getServers().values().stream()
                 .filter(s -> {
                     if(CommonsBungeeCord.getInstance().getSettings().getPluginMode().equals(SettingsConfig.PluginMode.DEVELOPMENT))
                         return s.getName().contains("hub") && s.getName().contains("dev");
                     return s.getName().contains("hub") && !s.getName().contains("dev");
                 })
-                .findFirst().orElse(null);
+                .findFirst().orElse(anyHubServer);
 
-        //val server = ProxyServer.getInstance().getServerInfo(CommonsBungeeCord.getInstance().getMessages().getServerRedirectName());
+        if (server == null) return;
 
-        if (server == null) {
-            return;
-        }
-
+        // Connect player to correct server
         event.setTarget(server);
     }
-
-    /*@EventHandler
-    public void onCommand(ChatEvent event) {
-        ProxiedPlayer player = (ProxiedPlayer) event.getSender();
-        if (event.isCommand() && event.getMessage().toLowerCase().startsWith("/server")) {
-            val args = event.getMessage().split(" ");
-            ServerInfo server = null;
-            if (args.length > 2) {
-                for (int i = 0; i < args.length; i++) {
-                    if (i == 1) {
-                        server = ProxyServer.getInstance().getServerInfo(args[i]);
-                        if (server == null) {
-                            return;
-                        }
-                    } else if (i == 2 && args[i].toLowerCase().equals("default")) {
-                        if (player.hasPermission(Main.getInstance().getPermissions().getServerDefaultPermission())) {
-                            event.setCancelled(true);
-                            Main.getInstance().getMessages().setServerRedirectName(server.getName());
-                            writeConfiguration(Main.getInstance().getDescription().getName(), Main.getInstance().getMessages());
-                            event.setCancelled(true);
-                            player.sendMessage(TextComponentUtil.decodeColor("§aLe serveur " + server.getName() + " est désormais le serveur par default"));
-                        } else {
-                            player.sendMessage(TextComponentUtil.decodeColor(Main.getInstance().getMessages().getNoPermission().replace("&", "§")));
-                        }
-                    }
-                }
-            }
-        }
-    }*/
 }

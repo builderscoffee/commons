@@ -24,7 +24,7 @@ public class MessageConfiguration {
     List<String> banMessage = Arrays.asList("&6BuildersCoffee &8- &7Ban", "&6Raison &8>> &7%reason%", "",  "&6Temps &8>> &7%time%");
     String banBroadcastMessage = "&6BuildersCoffee &7>> &6%author% &7a banni &6%player% &7pendent &6%time% &7pour: &f%reason%";
     @Getter
-    List<String> whitelistRedirectMessagesKeywords = Arrays.asList("fermé");
+    List<String> whitelistRedirectMessagesKeywords = Arrays.asList("fermé", "closed");
     String serverRedirectName = "hub";
-    String serverRedirectionMessage = "&cLe serveur sur lequel vous étiez est maintenant en fermé, vous êtes désormais connecté au hub.";
+    String serverRedirectionMessage = "&cLe serveur sur lequel vous étiez est maintenant en fermé, vous êtes désormais connecté au %server%.";
 }
