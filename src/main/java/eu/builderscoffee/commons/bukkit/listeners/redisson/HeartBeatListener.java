@@ -23,7 +23,7 @@ public class HeartBeatListener implements PacketListener {
     public void onHeartBeat(HeartBeatPacket packet){
         // Create server data container
         val server = new Server();
-        server.setHostName(Bukkit.getServerName());
+        server.setHostName(CommonsBukkit.getInstance().getSettings().getName());
         server.setHostAddress(Bukkit.getIp());
         server.setHostPort(Bukkit.getPort());
         server.setServerType(Server.ServerType.SPIGOT);
