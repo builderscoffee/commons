@@ -1,5 +1,7 @@
 package eu.builderscoffee.commons.bungeecord.listeners.redisson;
 
+import eu.builderscoffee.api.common.data.DataManager;
+import eu.builderscoffee.api.common.data.tables.ServerActivityEntity;
 import eu.builderscoffee.api.common.events.EventHandler;
 import eu.builderscoffee.api.common.events.events.HeartBeatEvent;
 import eu.builderscoffee.api.common.redisson.Redis;
@@ -17,6 +19,8 @@ import org.redisson.api.RSortedSet;
  */
 public class HeartBeatListener implements PacketListener {
 
+    private Server.ServerStatus lastStatus = Server.ServerStatus.STARTING;
+
     @ProcessPacket
     public void onHeartBeat(HeartBeatPacket packet){
         // Create server data container
@@ -27,6 +31,7 @@ public class HeartBeatListener implements PacketListener {
             serverInfo.setHostPort(li.getQueryPort());
         });
         serverInfo.setServerType(Server.ServerType.BUNGEECORD);
+        serverInfo.setServerStatus(Server.ServerStatus.RUNNING);
         serverInfo.setStartingMethod(CommonsBungeeCord.getInstance().getSettings().getStartingMethod());
         serverInfo.setPlayerCount(ProxyServer.getInstance().getPlayers().size());
         serverInfo.setPlayerMaximum(ProxyServer.getInstance().getConfig().getPlayerLimit());
@@ -42,6 +47,14 @@ public class HeartBeatListener implements PacketListener {
         final RSortedSet<Server> servers = Redis.getRedissonClient().getSortedSet("servers");
         if(servers != null) {
             servers.add(event.getServer());
+        }
+
+        if(event.getServer().getServerStatus() != lastStatus){
+            val entity = new ServerActivityEntity();
+            entity.setServerName(event.getServer().getHostName());
+            entity.setMessage("Server status of " + event.getServer().getHostName() + " changed from ''" + lastStatus + " to ''" + event.getServer().getServerStatus());
+            DataManager.getServerActivityStore().insert(entity);
+            lastStatus = event.getServer().getServerStatus();
         }
     }
 }

@@ -15,9 +15,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.redisson.api.RSortedSet;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -64,11 +62,11 @@ public class ServersManagerInventory extends DefaultAdminTemplateInventory {
                     .sorted()
                     .forEach(s -> {
                         val itemB = new ItemBuilder(Material.OBSERVER)
-                                        .setName(s.getHostName() + " §7(" + s.getServerStatus().name().toLowerCase() + ")")
-                                        .addLoreLine("§f" + capitalizeFirstLetter(s.getStartingMethod().name()) + " " + s.getServerType().name().toLowerCase() + " §bserver")
-                                        .addLoreLine("§f" + s.getPlayerCount() + "§b/§f" + s.getPlayerMaximum() + " §bjoueurs");
+                                .setName(s.getHostName() + " §7(" + s.getServerStatus().name().toLowerCase() + ")")
+                                .addLoreLine("§f" + capitalizeFirstLetter(s.getStartingMethod().name()) + " " + s.getServerType().name().toLowerCase() + " §bserver")
+                                .addLoreLine("§f" + s.getPlayerCount() + "§b/§f" + s.getPlayerMaximum() + " §bjoueurs");
 
-                        if(s.getProperties().entrySet().size() > 0){
+                        if (s.getProperties().entrySet().size() > 0) {
                             itemB.addLoreLine("§bDonnées supplémentaires: ");
                             itemB.addLoreLine(s.getProperties().entrySet().stream()
                                     .map(entry -> "  §b" + entry.getKey() + ": §a" + entry.getValue())
@@ -81,9 +79,9 @@ public class ServersManagerInventory extends DefaultAdminTemplateInventory {
                                         .addLoreLine("§aClic droit pour y aller")
                                         .build(),
                                 e -> {
-                                    if(e.isLeftClick())
+                                    if (e.isLeftClick())
                                         new ServerManagerInventory(s).INVENTORY.open(player);
-                                    else if(e.isRightClick())
+                                    else if (e.isRightClick())
                                         BungeeUtils.sendPlayerToServer(CommonsBukkit.getInstance(), player, s.getHostName());
                                 }));
                     });
@@ -95,7 +93,7 @@ public class ServersManagerInventory extends DefaultAdminTemplateInventory {
         contents.pagination().addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, SlotPos.of(1, 0)));
     }
 
-    private String capitalizeFirstLetter(String text){
+    private String capitalizeFirstLetter(String text) {
         return text.substring(0, 1).toUpperCase() + text.substring(1).toLowerCase();
     }
 }
