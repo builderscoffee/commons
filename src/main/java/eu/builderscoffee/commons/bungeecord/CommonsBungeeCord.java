@@ -1,5 +1,6 @@
 package eu.builderscoffee.commons.bungeecord;
 
+import eu.builderscoffee.api.common.data.DataManager;
 import eu.builderscoffee.api.common.redisson.Redis;
 import eu.builderscoffee.api.common.redisson.RedisCredentials;
 import eu.builderscoffee.api.common.redisson.RedisTopic;
@@ -13,10 +14,9 @@ import eu.builderscoffee.commons.bungeecord.listeners.PlayerListener;
 import eu.builderscoffee.commons.bungeecord.listeners.redisson.HeartBeatListener;
 import eu.builderscoffee.commons.bungeecord.listeners.redisson.ServersListListener;
 import eu.builderscoffee.commons.common.configuration.SettingsConfig;
-import eu.builderscoffee.commons.common.data.DataManager;
-import eu.builderscoffee.commons.common.data.tables.ProfilEntity;
 import eu.builderscoffee.commons.common.utils.Cache;
 import eu.builderscoffee.commons.common.utils.LuckPermsUtils;
+import eu.builderscoffee.commons.common.utils.ProfilCache;
 import lombok.Getter;
 import lombok.val;
 import net.luckperms.api.LuckPermsProvider;
@@ -47,7 +47,7 @@ public class CommonsBungeeCord extends Plugin {
     private SettingsConfig settings;
 
     // Cache des profils
-    private Cache<String, ProfilEntity> profilCache = new Cache<>();
+    private ProfilCache profilCache = new ProfilCache();
 
     @Override
     public void onEnable() {

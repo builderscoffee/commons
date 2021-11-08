@@ -1,9 +1,8 @@
 package eu.builderscoffee.commons.bukkit.listeners;
 
+import eu.builderscoffee.api.common.data.DataManager;
+import eu.builderscoffee.api.common.data.tables.ProfilEntity;
 import eu.builderscoffee.commons.bukkit.CommonsBukkit;
-import eu.builderscoffee.commons.common.data.DataManager;
-import eu.builderscoffee.commons.common.data.tables.Profil;
-import eu.builderscoffee.commons.common.data.tables.*;
 import eu.builderscoffee.commons.bukkit.listeners.event.DataStatueEvent;
 import lombok.val;
 import org.bukkit.Bukkit;
@@ -52,15 +51,14 @@ public class ConnexionListener implements Listener {
     @EventHandler
     public void onLoad(DataStatueEvent.Load event) {
         val instance = CommonsBukkit.getInstance();
-        val store = DataManager.getProfilStore();
         val uniqueId = event.getUniqueId();
         // Récupère ou créer une nouvelle entité
-        try(val query =  store.select(ProfilEntity.class).where(ProfilEntity.UNIQUE_ID.eq(uniqueId))
+        try(val query =  DataManager.getProfilStore().select(ProfilEntity.class).where(ProfilEntity.UNIQUE_ID.eq(uniqueId))
                 .get()) {
             ProfilEntity entity = query.firstOrNull();
             if (entity == null) {
-                entity = Profil.getOrCreate(uniqueId);
-                store.insert(entity);
+                entity = CommonsBukkit.getInstance().getProfilCache().getOrCreate(uniqueId);
+                DataManager.getProfilStore().insert(entity);
             }
             instance.getProfilCache().put(uniqueId, entity);
         }

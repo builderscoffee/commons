@@ -1,11 +1,11 @@
 package eu.builderscoffee.commons.bukkit.listeners;
 
+import eu.builderscoffee.api.common.data.DataManager;
+import eu.builderscoffee.api.common.data.tables.Profil;
 import eu.builderscoffee.api.common.redisson.Redis;
 import eu.builderscoffee.commons.bukkit.CommonsBukkit;
 import eu.builderscoffee.commons.bukkit.inventory.network.ServerManagerInventory;
 import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
-import eu.builderscoffee.commons.common.data.DataManager;
-import eu.builderscoffee.commons.common.data.tables.Profil;
 import eu.builderscoffee.commons.common.redisson.packets.ServerManagerRequest;
 import eu.builderscoffee.commons.common.redisson.packets.StaffChatPacket;
 import eu.builderscoffee.commons.common.redisson.topics.CommonTopics;

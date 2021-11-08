@@ -6,15 +6,12 @@ import eu.builderscoffee.api.bukkit.gui.content.InventoryContents;
 import eu.builderscoffee.api.bukkit.gui.content.InventoryProvider;
 import eu.builderscoffee.api.bukkit.gui.content.SlotPos;
 import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
+import eu.builderscoffee.api.common.data.tables.BuildbattleEntity;
+import eu.builderscoffee.api.common.data.tables.ProfilEntity;
+import eu.builderscoffee.api.common.data.tables.SaisonEntity;
 import eu.builderscoffee.commons.bukkit.CommonsBukkit;
 import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
 import eu.builderscoffee.commons.bukkit.utils.SkullCreator;
-import eu.builderscoffee.commons.common.data.DataManager;
-import eu.builderscoffee.commons.common.data.tables.BuildbattleEntity;
-import eu.builderscoffee.commons.common.data.tables.ProfilEntity;
-import eu.builderscoffee.commons.common.data.tables.Saison;
-import eu.builderscoffee.commons.common.data.tables.SaisonEntity;
-import io.requery.sql.EntityDataStore;
 import lombok.val;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -43,7 +40,6 @@ public class SaisonInventory implements InventoryProvider {
     private static final ItemStack redSkull = SkullCreator.itemFromBase64(RED);
     public final SmartInventory INVENTORY;
     private final CommonsBukkit commonsBukkit = CommonsBukkit.getInstance();
-    private final EntityDataStore<Saison> storeSaison = DataManager.getSaisonsStore();
     private final ProfilEntity profilEntity;
     private final SaisonEntity saisonEntity;
 

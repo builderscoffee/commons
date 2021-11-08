@@ -5,7 +5,7 @@ import lombok.val;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class Cache<K, V> {
+public class Cache<K, V> {
     
     private final Map<K, V> cache = new HashMap<>();
 

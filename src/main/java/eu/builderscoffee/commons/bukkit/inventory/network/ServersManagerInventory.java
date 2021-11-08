@@ -40,6 +40,10 @@ public class ServersManagerInventory extends DefaultAdminTemplateInventory {
         // Tournois
         contents.set(rows - 1, 5, ClickableItem.of(new ItemBuilder(Material.BANNER).setName("Gérer les tournois").build(),
                 e -> new TournamentInventory().INVENTORY.open(player)));
+
+        // Server Activities
+        contents.set(rows - 1, 7, ClickableItem.of(new ItemBuilder(Material.SIGN).setName("Activités des serveurs").build(),
+                e -> new ServersActivitiesInventory().INVENTORY.open(player)));
     }
 
     @Override
@@ -59,19 +63,19 @@ public class ServersManagerInventory extends DefaultAdminTemplateInventory {
             tempServers.stream()
                     .sorted()
                     .forEach(s -> {
-                        // Créer l'item permettant de click
-                        serverItems.add(ClickableItem.of(new ItemBuilder(Material.OBSERVER)
-                                        .setName(s.getHostName())
-                                        .addLoreLine("§bLast heartbeat at §a" + new SimpleDateFormat("EEE dd MMM yyyy à hh:mm:ss", Locale.FRANCE).format(s.getLastHeartbeat()))
-                                        .addLoreLine("§bServerType: §a" + s.getServerType())
-                                        .addLoreLine("§bStarting method: §a" + s.getStartingMethod())
-                                        .addLoreLine("§bServer status: §a" + s.getServerStatus())
-                                        .addLoreLine("§bPlayers: §a" + s.getPlayerCount())
-                                        .addLoreLine("§bMaximum players: §a" + s.getPlayerMaximum())
-                                        .addLoreLine(s.getProperties().entrySet().stream()
-                                                .map(entry -> "§b" + entry.getKey() + ": §a" + entry.getValue())
-                                                .sorted(String::compareTo)
-                                                .collect(Collectors.toList()))
+                        val itemB = new ItemBuilder(Material.OBSERVER)
+                                        .setName(s.getHostName() + " §7(" + s.getServerStatus().name().toLowerCase() + ")")
+                                        .addLoreLine("§f" + capitalizeFirstLetter(s.getStartingMethod().name()) + " " + s.getServerType().name().toLowerCase() + " §bserver")
+                                        .addLoreLine("§f" + s.getPlayerCount() + "§b/§f" + s.getPlayerMaximum() + " §bjoueurs");
+
+                        if(s.getProperties().entrySet().size() > 0){
+                            itemB.addLoreLine("§bDonnées supplémentaires: ");
+                            itemB.addLoreLine(s.getProperties().entrySet().stream()
+                                    .map(entry -> "  §b" + entry.getKey() + ": §a" + entry.getValue())
+                                    .sorted(String::compareTo)
+                                    .collect(Collectors.toList()));
+                        }
+                        serverItems.add(ClickableItem.of(itemB
                                         .addLoreLine("")
                                         .addLoreLine("§aClic gauche pour gérer")
                                         .addLoreLine("§aClic droit pour y aller")
@@ -89,5 +93,9 @@ public class ServersManagerInventory extends DefaultAdminTemplateInventory {
 
         // Définit comment l'inventaire doit afficher les items
         contents.pagination().addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, SlotPos.of(1, 0)));
+    }
+
+    private String capitalizeFirstLetter(String text){
+        return text.substring(0, 1).toUpperCase() + text.substring(1).toLowerCase();
     }
 }

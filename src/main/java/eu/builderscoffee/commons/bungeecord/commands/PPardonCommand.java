@@ -1,10 +1,10 @@
 package eu.builderscoffee.commons.bungeecord.commands;
 
+import eu.builderscoffee.api.common.data.DataManager;
+import eu.builderscoffee.api.common.data.tables.BanEntity;
+import eu.builderscoffee.api.common.data.tables.ProfilEntity;
 import eu.builderscoffee.commons.bungeecord.CommonsBungeeCord;
 import eu.builderscoffee.commons.bungeecord.utils.TextComponentUtil;
-import eu.builderscoffee.commons.common.data.DataManager;
-import eu.builderscoffee.commons.common.data.tables.BanEntity;
-import eu.builderscoffee.commons.common.data.tables.ProfilEntity;
 import lombok.val;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
@@ -27,8 +27,7 @@ public class PPardonCommand extends Command {
             return;
         }
 
-        val profileStore = DataManager.getProfilStore();
-        ProfilEntity profil = profileStore.select(ProfilEntity.class)
+        ProfilEntity profil = DataManager.getProfilStore().select(ProfilEntity.class)
                 .where(ProfilEntity.NAME.lower().eq(args[0].toLowerCase()))
                 .get().firstOrNull();
         if(profil == null){

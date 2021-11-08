@@ -1,5 +1,7 @@
 package eu.builderscoffee.commons.bukkit.listeners.redisson;
 
+import eu.builderscoffee.api.common.data.DataManager;
+import eu.builderscoffee.api.common.data.tables.ServerActivityEntity;
 import eu.builderscoffee.api.common.events.EventHandler;
 import eu.builderscoffee.api.common.events.events.HeartBeatEvent;
 import eu.builderscoffee.api.common.redisson.Redis;
@@ -19,6 +21,8 @@ import java.util.Objects;
  */
 public class HeartBeatListener implements PacketListener {
 
+    private Server.ServerStatus lastStatus = Server.ServerStatus.STARTING;
+
     @ProcessPacket
     public void onHeartBeat(HeartBeatPacket packet){
         // Create server data container
@@ -27,6 +31,7 @@ public class HeartBeatListener implements PacketListener {
         server.setHostAddress(Bukkit.getIp());
         server.setHostPort(Bukkit.getPort());
         server.setServerType(Server.ServerType.SPIGOT);
+        server.setServerStatus(Server.ServerStatus.RUNNING);
         server.setStartingMethod(CommonsBukkit.getInstance().getSettings().getStartingMethod());
         server.setPlayerCount(Bukkit.getOnlinePlayers().size());
         server.setPlayerMaximum(Bukkit.getMaxPlayers());
@@ -40,8 +45,17 @@ public class HeartBeatListener implements PacketListener {
 
         // Add server to servers list
         final RSortedSet<Server> servers = Redis.getRedissonClient().getSortedSet("servers");
-        if(Objects.isNull(servers) || Objects.isNull(event) || Objects.isNull(event.getServer())) return;
-        if(servers.stream().anyMatch(s -> s.getHostName().equals(event.getServer().getHostName()))) servers.remove(event.getServer());
-        servers.add(event.getServer());
+        if(Objects.nonNull(servers) && Objects.nonNull(event) && Objects.nonNull(event.getServer())) {
+            if(servers.stream().anyMatch(s -> s.getHostName().equals(event.getServer().getHostName()))) servers.remove(event.getServer());
+            servers.add(event.getServer());
+        }
+
+        if(event.getServer().getServerStatus() != lastStatus){
+            val entity = new ServerActivityEntity();
+            entity.setServerName(event.getServer().getHostName());
+            entity.setMessage("Server status of " + event.getServer().getHostName() + " changed from ''" + lastStatus + " to ''" + event.getServer().getServerStatus());
+            DataManager.getServerActivityStore().insert(entity);
+            lastStatus = event.getServer().getServerStatus();
+        }
     }
 }

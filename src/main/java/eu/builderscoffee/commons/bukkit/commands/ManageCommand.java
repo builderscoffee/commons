@@ -5,22 +5,15 @@ import eu.builderscoffee.commons.bukkit.commands.manage.ManageSeasonsCommandPart
 import eu.builderscoffee.commons.bukkit.commands.manage.ManageThemesCommandPart;
 import eu.builderscoffee.commons.bukkit.utils.CommandUtils;
 import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
-import eu.builderscoffee.commons.common.data.DataManager;
-import eu.builderscoffee.commons.common.data.tables.BuildbattleThemeEntity;
-import eu.builderscoffee.commons.common.data.tables.Saison;
-import eu.builderscoffee.commons.common.data.tables.SaisonEntity;
 import lombok.Getter;
 import lombok.val;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 /**
  * This command allows to broadcast a message on the server

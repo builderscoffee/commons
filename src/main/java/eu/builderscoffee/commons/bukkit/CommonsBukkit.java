@@ -2,6 +2,8 @@ package eu.builderscoffee.commons.bukkit;
 
 import eu.builderscoffee.api.bukkit.gui.InventoryManager;
 import eu.builderscoffee.api.bukkit.utils.Plugins;
+import eu.builderscoffee.api.common.data.DataManager;
+import eu.builderscoffee.api.common.data.tables.Profil;
 import eu.builderscoffee.api.common.redisson.Redis;
 import eu.builderscoffee.api.common.redisson.RedisCredentials;
 import eu.builderscoffee.api.common.redisson.RedisTopic;
@@ -13,12 +15,9 @@ import eu.builderscoffee.commons.bukkit.listeners.ConnexionListener;
 import eu.builderscoffee.commons.bukkit.listeners.PlayerListener;
 import eu.builderscoffee.commons.bukkit.listeners.redisson.HeartBeatListener;
 import eu.builderscoffee.commons.bukkit.listeners.redisson.StaffChatListener;
+import eu.builderscoffee.commons.common.utils.ProfilCache;
 import eu.builderscoffee.commons.common.configuration.SettingsConfig;
-import eu.builderscoffee.commons.common.data.DataManager;
-import eu.builderscoffee.commons.common.data.tables.Profil;
-import eu.builderscoffee.commons.common.data.tables.ProfilEntity;
 import eu.builderscoffee.commons.common.redisson.topics.CommonTopics;
-import eu.builderscoffee.commons.common.utils.Cache;
 import eu.builderscoffee.commons.common.utils.LuckPermsUtils;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -27,10 +26,7 @@ import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 import static eu.builderscoffee.api.common.configuration.Configuration.readOrCreateConfiguration;
 import static eu.builderscoffee.commons.bukkit.commands.HelpCommand.registerCommand;
@@ -52,7 +48,7 @@ public class CommonsBukkit extends JavaPlugin {
 
     private InventoryManager inventoryManager;
 
-    private Cache<String, ProfilEntity> profilCache = new Cache<>();
+    private ProfilCache profilCache = new ProfilCache();
     private ArrayList<UUID> staffchatPlayers = new ArrayList<>();
 
     @SneakyThrows

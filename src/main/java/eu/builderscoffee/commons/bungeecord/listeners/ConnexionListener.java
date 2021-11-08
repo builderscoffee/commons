@@ -1,10 +1,10 @@
 package eu.builderscoffee.commons.bungeecord.listeners;
 
+import eu.builderscoffee.api.common.data.DataManager;
+import eu.builderscoffee.api.common.data.tables.ProfilEntity;
+import eu.builderscoffee.commons.bukkit.CommonsBukkit;
 import eu.builderscoffee.commons.bungeecord.CommonsBungeeCord;
 import eu.builderscoffee.commons.bungeecord.listeners.event.DataStatueEvent;
-import eu.builderscoffee.commons.common.data.DataManager;
-import eu.builderscoffee.commons.common.data.tables.Profil;
-import eu.builderscoffee.commons.common.data.tables.ProfilEntity;
 import lombok.val;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -30,15 +30,14 @@ public class ConnexionListener implements Listener {
     @EventHandler
     public void onLoad(DataStatueEvent.Load event) {
         val instance = CommonsBungeeCord.getInstance();
-        val store = DataManager.getProfilStore();
         val uniqueId = event.getUniqueId();
         // Récupère ou créer une nouvelle entité
-        try(val query =  store.select(ProfilEntity.class).where(ProfilEntity.UNIQUE_ID.eq(uniqueId))
+        try(val query =  DataManager.getProfilStore().select(ProfilEntity.class).where(ProfilEntity.UNIQUE_ID.eq(uniqueId))
                 .get()) {
             ProfilEntity entity = query.firstOrNull();
             if (entity == null) {
-                entity = Profil.getOrCreate(uniqueId);
-                entity = store.insert(entity);
+                entity = CommonsBungeeCord.getInstance().getProfilCache().getOrCreate(uniqueId);
+                entity = DataManager.getProfilStore().insert(entity);
             }
             instance.getProfilCache().put(uniqueId, entity);
         }
@@ -54,9 +53,8 @@ public class ConnexionListener implements Listener {
             CommonsBungeeCord.getInstance().getLogger().warning("§cLe joueur n'avait pas de donnée (" + this.getClass().getName() + ".java:" + currentLine + ")");
             return;
         }
-        val store = DataManager.getProfilStore();
         try{
-            val query = store.update(entity);
+            val query = DataManager.getProfilStore().update(entity);
         } catch (Exception e){
             e.printStackTrace();
         }

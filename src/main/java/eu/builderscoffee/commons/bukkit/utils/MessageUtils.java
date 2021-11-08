@@ -1,8 +1,8 @@
 package eu.builderscoffee.commons.bukkit.utils;
 
+import eu.builderscoffee.api.common.data.tables.Profil;
 import eu.builderscoffee.commons.bukkit.CommonsBukkit;
 import eu.builderscoffee.commons.bukkit.configuration.MessageConfiguration;
-import eu.builderscoffee.commons.common.data.tables.Profil;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.bukkit.command.CommandSender;

@@ -7,14 +7,14 @@ import eu.builderscoffee.api.bukkit.gui.content.InventoryProvider;
 import eu.builderscoffee.api.bukkit.gui.content.SlotIterator;
 import eu.builderscoffee.api.bukkit.gui.content.SlotPos;
 import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
+import eu.builderscoffee.api.common.data.DataManager;
+import eu.builderscoffee.api.common.data.tables.BuildbattleEntity;
+import eu.builderscoffee.api.common.data.tables.Note;
+import eu.builderscoffee.api.common.data.tables.NoteEntity;
+import eu.builderscoffee.api.common.data.tables.ProfilEntity;
 import eu.builderscoffee.commons.bukkit.CommonsBukkit;
 import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
 import eu.builderscoffee.commons.bukkit.utils.SkullCreator;
-import eu.builderscoffee.commons.common.data.*;
-import eu.builderscoffee.commons.common.data.tables.BuildbattleEntity;
-import eu.builderscoffee.commons.common.data.tables.Note;
-import eu.builderscoffee.commons.common.data.tables.NoteEntity;
-import eu.builderscoffee.commons.common.data.tables.ProfilEntity;
 import io.requery.query.NamedExpression;
 import io.requery.query.Result;
 import io.requery.query.Tuple;
@@ -36,8 +36,6 @@ public class NoteInventory implements InventoryProvider {
     public final SmartInventory INVENTORY;
 
     private final CommonsBukkit commonsBukkit = CommonsBukkit.getInstance();
-
-    private final EntityDataStore<Note> storeNotes = DataManager.getNotesStore();
 
     private final ProfilEntity profilEntity;
     private final BuildbattleEntity buildbattleEntity;
@@ -108,7 +106,7 @@ public class NoteInventory implements InventoryProvider {
         contents.set(SlotPos.of(0, 4), ClickableItem.empty(bbSkull));
 
         // Position
-        try(Result<Tuple> query = storeNotes
+        try(Result<Tuple> query = DataManager.getNotesStore()
                 .select(
                         NamedExpression.ofInteger("id_profil"),
                         NamedExpression.ofInteger("fun + amenagement + beaute + creativite + folklore").sum().as("total"))

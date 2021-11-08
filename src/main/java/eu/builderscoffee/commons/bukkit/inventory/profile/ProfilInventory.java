@@ -6,13 +6,13 @@ import eu.builderscoffee.api.bukkit.gui.content.InventoryContents;
 import eu.builderscoffee.api.bukkit.gui.content.InventoryProvider;
 import eu.builderscoffee.api.bukkit.gui.content.SlotPos;
 import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
+import eu.builderscoffee.api.common.data.tables.BuildbattleEntity;
+import eu.builderscoffee.api.common.data.tables.ProfilEntity;
+import eu.builderscoffee.api.common.data.tables.SaisonEntity;
+import eu.builderscoffee.commons.bukkit.CommonsBukkit;
 import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
 import eu.builderscoffee.commons.bukkit.utils.SkullCreator;
-import eu.builderscoffee.commons.bukkit.CommonsBukkit;
-import eu.builderscoffee.commons.common.data.*;
-import eu.builderscoffee.commons.common.data.tables.BuildbattleEntity;
-import eu.builderscoffee.commons.common.data.tables.ProfilEntity;
-import eu.builderscoffee.commons.common.data.tables.SaisonEntity;
+import eu.builderscoffee.api.common.data.*;
 import eu.builderscoffee.commons.common.utils.LuckPermsUtils;
 import lombok.val;
 import org.bukkit.ChatColor;
@@ -123,11 +123,7 @@ GROUP BY sub.id_buildbattle
 
                     if(!buildbattles.isEmpty()){
                         // Sort saisons per date
-                        Collections.sort(buildbattles, new Comparator<BuildbattleEntity>() {
-                            public int compare(BuildbattleEntity o1, BuildbattleEntity o2) {
-                                return o1.getDate().compareTo(o2.getDate());
-                            }
-                        });
+                        Collections.sort(buildbattles, Comparator.comparing(BuildbattleEntity::getDate));
 
                         // Open invetory of the last saison played
                         new NoteInventory(profilEntity, buildbattles.get(0)).INVENTORY.open(player);

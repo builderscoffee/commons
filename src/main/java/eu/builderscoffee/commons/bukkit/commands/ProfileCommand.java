@@ -1,10 +1,10 @@
 package eu.builderscoffee.commons.bukkit.commands;
 
+import eu.builderscoffee.api.common.data.DataManager;
+import eu.builderscoffee.api.common.data.tables.Profil;
+import eu.builderscoffee.api.common.data.tables.ProfilEntity;
 import eu.builderscoffee.commons.bukkit.CommonsBukkit;
 import eu.builderscoffee.commons.bukkit.inventory.profile.ProfilInventory;
-import eu.builderscoffee.commons.common.data.DataManager;
-import eu.builderscoffee.commons.common.data.tables.Profil;
-import eu.builderscoffee.commons.common.data.tables.ProfilEntity;
 import lombok.val;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

@@ -7,13 +7,11 @@ import eu.builderscoffee.api.bukkit.gui.content.InventoryProvider;
 import eu.builderscoffee.api.bukkit.gui.content.SlotIterator;
 import eu.builderscoffee.api.bukkit.gui.content.SlotPos;
 import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
-import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
-import eu.builderscoffee.commons.common.data.*;
+import eu.builderscoffee.api.common.data.DataManager;
+import eu.builderscoffee.api.common.data.tables.ProfilEntity;
+import eu.builderscoffee.api.common.data.tables.SaisonEntity;
 import eu.builderscoffee.commons.bukkit.CommonsBukkit;
-import eu.builderscoffee.commons.common.data.tables.ProfilEntity;
-import eu.builderscoffee.commons.common.data.tables.Saison;
-import eu.builderscoffee.commons.common.data.tables.SaisonEntity;
-import io.requery.sql.EntityDataStore;
+import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
 import lombok.val;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -27,7 +25,6 @@ public class SaisonsInventory implements InventoryProvider {
     public final SmartInventory INVENTORY;
 
     private final CommonsBukkit commonsBukkit = CommonsBukkit.getInstance();
-    private final EntityDataStore<Saison> storeSaison = DataManager.getSaisonsStore();
 
     private final ProfilEntity profilEntity;
 
@@ -63,7 +60,7 @@ public class SaisonsInventory implements InventoryProvider {
         contents.fillRect(SlotPos.of(2, 0), SlotPos.of(2, 8), blackGlasses);
 
         // Get saisons
-        try(val saison = storeSaison.select(SaisonEntity.class)
+        try(val saison = DataManager.getSaisonsStore().select(SaisonEntity.class)
                 .orderBy(SaisonEntity.ID)
                 .get()){
 
