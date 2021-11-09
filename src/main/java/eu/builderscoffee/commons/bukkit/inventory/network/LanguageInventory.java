@@ -6,7 +6,9 @@ import eu.builderscoffee.api.bukkit.gui.content.InventoryContents;
 import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
 import eu.builderscoffee.api.common.data.DataManager;
 import eu.builderscoffee.api.common.data.tables.Profil;
+import eu.builderscoffee.api.common.events.EventHandler;
 import eu.builderscoffee.commons.bukkit.CommonsBukkit;
+import eu.builderscoffee.commons.bukkit.events.builderscoffee.LanguageChangeEvent;
 import eu.builderscoffee.commons.bukkit.inventory.templates.DefaultTemplateInventory;
 import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
 import lombok.val;
@@ -26,13 +28,21 @@ public class LanguageInventory extends DefaultTemplateInventory {
     public void init(Player player, InventoryContents contents) {
         super.init(player, contents);
 
+        // Loop all languages
         for (int i = 0; i < Profil.Languages.values().length; i++) {
             val value = Profil.Languages.values()[i];
+            // Add item
             contents.set(2, i, ClickableItem.of(new ItemBuilder(Material.PAINTING).setName(value.name).build(),
                     e -> {
+                        // Change language
                         val profil = CommonsBukkit.getInstance().getProfilCache().get(player.getUniqueId().toString());
                         profil.setLang(value);
                         DataManager.getProfilStore().update(profil);
+
+                        // Call event for any update
+                        EventHandler.getInstance().callEvent(new LanguageChangeEvent(player, value));
+
+                        // Open network inventory
                         NetworkInventory.INVENTORY.open(player);
                     }));
         }

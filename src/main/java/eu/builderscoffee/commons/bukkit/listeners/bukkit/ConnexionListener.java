@@ -1,9 +1,9 @@
-package eu.builderscoffee.commons.bukkit.listeners;
+package eu.builderscoffee.commons.bukkit.listeners.bukkit;
 
 import eu.builderscoffee.api.common.data.DataManager;
 import eu.builderscoffee.api.common.data.tables.ProfilEntity;
 import eu.builderscoffee.commons.bukkit.CommonsBukkit;
-import eu.builderscoffee.commons.bukkit.listeners.event.DataStatueEvent;
+import eu.builderscoffee.commons.bukkit.events.bukkit.DataStatueEvent;
 import lombok.val;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

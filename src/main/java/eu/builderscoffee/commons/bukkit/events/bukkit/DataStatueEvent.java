@@ -1,4 +1,4 @@
-package eu.builderscoffee.commons.bukkit.listeners.event;
+package eu.builderscoffee.commons.bukkit.events.bukkit;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

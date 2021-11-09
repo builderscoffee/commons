@@ -1,4 +1,4 @@
-package eu.builderscoffee.commons.bukkit.inventory.network;
+package eu.builderscoffee.commons.bukkit.inventory.servermanager;
 
 import eu.builderscoffee.api.bukkit.gui.ClickableItem;
 import eu.builderscoffee.api.bukkit.gui.SmartInventory;
