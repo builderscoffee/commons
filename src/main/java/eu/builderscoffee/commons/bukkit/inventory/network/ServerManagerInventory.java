@@ -1,6 +1,7 @@
 package eu.builderscoffee.commons.bukkit.inventory.network;
 
 import eu.builderscoffee.api.bukkit.gui.ClickableItem;
+import eu.builderscoffee.api.bukkit.gui.SmartInventory;
 import eu.builderscoffee.api.bukkit.gui.content.InventoryContents;
 import eu.builderscoffee.api.bukkit.gui.content.SlotIterator;
 import eu.builderscoffee.api.bukkit.gui.content.SlotPos;
@@ -8,7 +9,9 @@ import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
 import eu.builderscoffee.api.bukkit.utils.serializations.SingleItemSerialization;
 import eu.builderscoffee.api.common.redisson.Redis;
 import eu.builderscoffee.api.common.redisson.infos.Server;
+import eu.builderscoffee.commons.bukkit.inventory.OptionInventory;
 import eu.builderscoffee.commons.bukkit.inventory.templates.DefaultAdminTemplateInventory;
+import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
 import eu.builderscoffee.commons.common.redisson.packets.ServerManagerRequest;
 import eu.builderscoffee.commons.common.redisson.packets.ServerManagerResponse;
 import eu.builderscoffee.commons.common.redisson.topics.CommonTopics;
@@ -17,7 +20,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.val;
-import org.apache.commons.lang3.tuple.Triple;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.redisson.api.RSortedSet;
@@ -42,8 +44,8 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
     @Setter
     private boolean requestConfigOnOpen = true;
 
-    public ServerManagerInventory(Server server) {
-        super(server.getHostName(), new ServersManagerInventory().INVENTORY, 5, 9);
+    public ServerManagerInventory(SmartInventory previousInventory, Server server) {
+        super(server.getHostName(), previousInventory, 5, 9);
         this.server = server;
     }
 
@@ -51,25 +53,40 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
     public void init(Player player, InventoryContents contents) {
         super.init(player, contents);
 
+        val messages = MessageUtils.getMessageConfig(player).getInventory().getServerManager();
+
         // Stop item
-        val stopItem = new ItemBuilder(Material.CONCRETE, 1, (short) 14).setName("Stopper le serveur");
+        val stopItem = new ItemBuilder(Material.CONCRETE, 1, (short) 14).setName(messages.getStopServer().replace("&", "§"));
         if (!server.getStartingMethod().equals(Server.ServerStartingMethod.DYNAMIC))
             stopItem.addLoreLine("§cImpossible de stopper ce type de serveur pour le moment.");
         contents.set(0, 8, ClickableItem.of(stopItem.build(),
                 e -> {
                     if (server.getStartingMethod().equals(Server.ServerStartingMethod.DYNAMIC)) {
-                        server.stop();
-                        new ServersManagerInventory().INVENTORY.open(player);
+                        new OptionInventory(messages.getTitle()
+                                .replace("&", "§")
+                                .replace("%server%", server.getHostName()),
+                                messages.getStopServerConfirmationQuestion()
+                                        .replace("&", "§")
+                                        .replace("%server%", server.getHostName()),
+                                this.INVENTORY,
+                                (e1, p1) -> {
+                                    server.stop();
+                                    new ServersManagerInventory(this.INVENTORY, player).INVENTORY.open(player);
+                                },
+                                (e2, p2) ->{
+                                    this.INVENTORY.open(player);
+                                }).INVENTORY.open(player);
+
                     }
                 }));
 
         // Freeze
-        if (server.getStartingMethod().equals(Server.ServerStartingMethod.DYNAMIC))
+        /*if (server.getStartingMethod().equals(Server.ServerStartingMethod.DYNAMIC))
             contents.set(0, 7, ClickableItem.of(new ItemBuilder(Material.PACKED_ICE).setName("Freeze").build(),
                     e -> {
                         server.freeze();
-                        new ServersManagerInventory().INVENTORY.open(player);
-                    }));
+                        new ServersManagerInventory(this.INVENTORY, player).INVENTORY.open(player);
+                    }));*/
 
         // Demander au serveur si une configuration est possible ou néscessaire
         if(requestConfigOnOpen) sendConfigRequest(player, "request_config", "", ServerManagerRequest.ItemAction.NONE, contents);

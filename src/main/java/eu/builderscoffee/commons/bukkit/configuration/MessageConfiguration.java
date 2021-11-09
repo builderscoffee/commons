@@ -16,10 +16,11 @@ public final class MessageConfiguration {
     String serverCloseMessage = "§cLe serveur s'est fermé. Vous avez été déplacé dans le hub.";
     String retourItem = "§7Retour";
 
-    private ChatConfigurationPart chat = new ChatConfigurationPart();
-    private CommandConfigurationPart command = new CommandConfigurationPart();
-    private NetworkConfigurationPart network = new NetworkConfigurationPart();
-    private ProfilConfigurationPart profil = new ProfilConfigurationPart();
-    private JoinConfigurationPart join = new JoinConfigurationPart();
-    private QuitConfigurationPart quit = new QuitConfigurationPart();
+    ChatConfigurationPart chat = new ChatConfigurationPart();
+    CommandConfigurationPart command = new CommandConfigurationPart();
+    NetworkConfigurationPart network = new NetworkConfigurationPart();
+    ProfilConfigurationPart profil = new ProfilConfigurationPart();
+    JoinConfigurationPart join = new JoinConfigurationPart();
+    QuitConfigurationPart quit = new QuitConfigurationPart();
+    InventoryConfigurationPart inventory = new InventoryConfigurationPart();
 }

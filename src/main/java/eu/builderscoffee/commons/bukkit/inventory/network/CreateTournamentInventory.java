@@ -1,9 +1,11 @@
 package eu.builderscoffee.commons.bukkit.inventory.network;
 
 import eu.builderscoffee.api.bukkit.gui.ClickableItem;
+import eu.builderscoffee.api.bukkit.gui.SmartInventory;
 import eu.builderscoffee.api.bukkit.gui.content.InventoryContents;
 import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
 import eu.builderscoffee.commons.bukkit.inventory.templates.DefaultAdminTemplateInventory;
+import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
 import lombok.val;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -16,8 +18,8 @@ public class CreateTournamentInventory extends DefaultAdminTemplateInventory {
     private short teams = 10;
     private short plotsSize = 32;
 
-    public CreateTournamentInventory() {
-        super("Create Tournament", new TournamentInventory().INVENTORY, 5, 9);
+    public CreateTournamentInventory(SmartInventory previousInventory, Player player) {
+        super(MessageUtils.getMessageConfig(player).getInventory().getCreateTournament().getTitle(), previousInventory, 5, 9);
     }
 
     @Override

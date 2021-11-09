@@ -111,7 +111,7 @@ public class NetworkInventory implements InventoryProvider {
         if(player.hasPermission(commonsBukkit.getPermissions().getServerManagerSee())){
             // ServerManager
             contents.set(5, 1, ClickableItem.of(new ItemBuilder(Material.PAPER).setName(messages.getNetwork().getServerManagerItem().replace("&", "§")).build(),
-                    e -> new ServersManagerInventory().INVENTORY.open(player)));
+                    e -> new ServersManagerInventory(INVENTORY, player).INVENTORY.open(player)));
         }
 
         // Quitter
@@ -120,7 +120,7 @@ public class NetworkInventory implements InventoryProvider {
 
         // Langues
         contents.set(5, 7, ClickableItem.of(new ItemBuilder(Material.PAINTING).setName(messages.getNetwork().getLanguageItem().replace("&", "§")).build(),
-                e -> new LanguageInventory().INVENTORY.open(player)));
+                e -> new LanguageInventory(INVENTORY, player).INVENTORY.open(player)));
 
         // Cosmétiques
         contents.set(5, 8, ClickableItem.of(new ItemBuilder(Material.CHEST).setName(messages.getNetwork().getCosmeticsItem().replace("&", "§")).build(),

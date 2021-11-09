@@ -1,9 +1,11 @@
 package eu.builderscoffee.commons.bukkit.inventory.network;
 
 import eu.builderscoffee.api.bukkit.gui.ClickableItem;
+import eu.builderscoffee.api.bukkit.gui.SmartInventory;
 import eu.builderscoffee.api.bukkit.gui.content.InventoryContents;
 import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
 import eu.builderscoffee.commons.bukkit.inventory.templates.DefaultAdminTemplateInventory;
+import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -12,8 +14,8 @@ import org.bukkit.entity.Player;
  */
 public class CreatePlotServerInventory extends DefaultAdminTemplateInventory {
 
-    public CreatePlotServerInventory() {
-        super("Create Plot", new CreateServerInventory().INVENTORY, 5, 9);
+    public CreatePlotServerInventory(SmartInventory previousInventory, Player player) {
+        super(MessageUtils.getMessageConfig(player).getInventory().getCreatePlot().getTitle(), previousInventory, 5, 9);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package eu.builderscoffee.commons.bukkit.inventory.network;
 
 import eu.builderscoffee.api.bukkit.gui.ClickableItem;
+import eu.builderscoffee.api.bukkit.gui.SmartInventory;
 import eu.builderscoffee.api.bukkit.gui.content.InventoryContents;
 import eu.builderscoffee.api.bukkit.gui.content.SlotIterator;
 import eu.builderscoffee.api.bukkit.gui.content.SlotPos;
@@ -10,6 +11,7 @@ import eu.builderscoffee.api.common.redisson.infos.Server;
 import eu.builderscoffee.commons.bukkit.CommonsBukkit;
 import eu.builderscoffee.commons.bukkit.inventory.templates.DefaultAdminTemplateInventory;
 import eu.builderscoffee.commons.bukkit.utils.BungeeUtils;
+import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
 import lombok.val;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -23,40 +25,44 @@ import java.util.stream.Collectors;
  */
 public class ServersManagerInventory extends DefaultAdminTemplateInventory {
 
-    public ServersManagerInventory() {
-        super("Server Manager", NetworkInventory.INVENTORY, 5, 9);
+    public ServersManagerInventory(SmartInventory previousInventory, Player player) {
+        super(MessageUtils.getMessageConfig(player).getInventory().getServerManager().getTitle(), previousInventory, 5, 9);
     }
 
     @Override
     public void init(Player player, InventoryContents contents) {
         super.init(player, contents);
 
-        // Creer un serveur
-        contents.set(rows - 1, 3, ClickableItem.of(new ItemBuilder(Material.NETHER_STAR).setName("Creer un serveur").build(),
-                e -> new CreateServerInventory().INVENTORY.open(player)));
+        val messages = MessageUtils.getMessageConfig(player).getInventory().getServersManager();
 
-        // Tournois
-        contents.set(rows - 1, 5, ClickableItem.of(new ItemBuilder(Material.BANNER).setName("Gérer les tournois").build(),
-                e -> new TournamentInventory().INVENTORY.open(player)));
+        // Create server
+        contents.set(rows - 1, 3, ClickableItem.of(new ItemBuilder(Material.NETHER_STAR).setName(messages.getCreateServer().replace("&", "§")).build(),
+                e -> new CreateServerInventory(this.INVENTORY, player).INVENTORY.open(player)));
+
+        // Tournaments
+        contents.set(rows - 1, 5, ClickableItem.of(new ItemBuilder(Material.BANNER).setName(messages.getManageTournaments().replace("&", "§")).build(),
+                e -> new TournamentInventory(this.INVENTORY, player).INVENTORY.open(player)));
 
         // Server Activities
-        contents.set(rows - 1, 7, ClickableItem.of(new ItemBuilder(Material.SIGN).setName("Activités des serveurs").build(),
-                e -> new ServersActivitiesInventory().INVENTORY.open(player)));
+        contents.set(rows - 1, 7, ClickableItem.of(new ItemBuilder(Material.SIGN).setName(messages.getServersActivities().replace("&", "§")).build(),
+                e -> new ServersActivitiesInventory(this.INVENTORY, player).INVENTORY.open(player)));
     }
 
     @Override
     public void update(Player player, InventoryContents contents) {
+        val messages = MessageUtils.getMessageConfig(player).getInventory().getServersManager();
+
         val serverItems = new ArrayList<ClickableItem>();
-        // Récupère les données de serveurs
+        // Get data from redisson
         final RSortedSet<Server> servers = Redis.getRedissonClient().getSortedSet("servers");
 
-        // Vérifie que la liste existe
+        // Check if server list exists
         if (servers == null) return;
 
         // Creating temporary servers list to avoid changes
         val tempServers = servers.stream().collect(Collectors.toList());
 
-        // Boucle de tous les serveurs
+        // Loop each server
         if (tempServers.stream().count() > 0)
             tempServers.stream()
                     .sorted()
@@ -69,27 +75,27 @@ public class ServersManagerInventory extends DefaultAdminTemplateInventory {
                         if (s.getProperties().entrySet().size() > 0) {
                             itemB.addLoreLine("§bDonnées supplémentaires: ");
                             itemB.addLoreLine(s.getProperties().entrySet().stream()
-                                    .map(entry -> "  §b" + entry.getKey() + ": §a" + entry.getValue())
+                                    .map(entry -> "  §b" + entry.getKey() + ": §f" + entry.getValue())
                                     .sorted(String::compareTo)
                                     .collect(Collectors.toList()));
                         }
                         serverItems.add(ClickableItem.of(itemB
                                         .addLoreLine("")
-                                        .addLoreLine("§aClic gauche pour gérer")
-                                        .addLoreLine("§aClic droit pour y aller")
+                                        .addLoreLine(messages.getServerLeftClick().replace("&", "§"))
+                                        .addLoreLine(messages.getServerRightClick().replace("&", "§"))
                                         .build(),
                                 e -> {
                                     if (e.isLeftClick())
-                                        new ServerManagerInventory(s).INVENTORY.open(player);
+                                        new ServerManagerInventory(this.INVENTORY, s).INVENTORY.open(player);
                                     else if (e.isRightClick())
                                         BungeeUtils.sendPlayerToServer(CommonsBukkit.getInstance(), player, s.getHostName());
                                 }));
                     });
-        // Ajouter les items dans l'inventaire
+        // Add items in inventory
         contents.pagination().setItems(serverItems.toArray(new ClickableItem[0]));
         contents.pagination().setItemsPerPage(27);
 
-        // Définit comment l'inventaire doit afficher les items
+        // Define how items are arranged
         contents.pagination().addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, SlotPos.of(1, 0)));
     }
 
