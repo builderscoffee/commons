@@ -41,5 +41,10 @@
       <option name="name" value="bungeecord-repo" />
       <option name="url" value="https://oss.sonatype.org/content/repositories/snapshots" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="github" />
+      <option name="name" value="GitHub BuildersCoffee API Packages" />
+      <option name="url" value="https://maven.pkg.github.com/builderscoffee/api" />
+    </remote-repository>
   </component>
 </project>
