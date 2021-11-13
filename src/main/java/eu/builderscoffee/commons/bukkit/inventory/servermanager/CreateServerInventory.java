@@ -85,7 +85,25 @@ public class CreateServerInventory extends DefaultAdminTemplateInventory {
 
         // Plot
         contents.set(2, 6, ClickableItem.of(new ItemBuilder(Material.WOOL, 1, (short) 7).setName("Plot").build(),
-                e -> new CreatePlotServerInventory(this.INVENTORY, player).INVENTORY.open(player)));
+                e -> {
+                    if(e.isShiftClick()){
+                        newServerMode = newServerMode.equals(SettingsConfig.PluginMode.PRODUCTION)? SettingsConfig.PluginMode.DEVELOPMENT : SettingsConfig.PluginMode.PRODUCTION;
+                        init(player, contents);
+                    }
+                    else{
+                        new OptionInventory("Démarer un serveur",
+                                "Êtes vous sûr de vouloir démarer \nun serveur §fplot §cen §f" + newServerMode.toString() + "§c?",
+                                this.INVENTORY,
+                                (e1, p1) -> {
+                                    createServer("plot");
+                                    new ServersManagerInventory(this.INVENTORY, player).INVENTORY.open(player);
+                                },
+                                (e2, p2) ->{
+                                    this.INVENTORY.open(player);
+                                })
+                                .INVENTORY.open(player);
+                    }
+                }));
     }
 
     @Override

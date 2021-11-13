@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/BuildersCoffeeCommons.iml" filepath="$PROJECT_DIR$/BuildersCoffeeCommons.iml" />
       <module fileurl="file://$PROJECT_DIR$/commons.iml" filepath="$PROJECT_DIR$/commons.iml" />
     </modules>
   </component>

@@ -2,7 +2,6 @@ package eu.builderscoffee.commons.bungeecord.listeners;
 
 import eu.builderscoffee.api.common.data.DataManager;
 import eu.builderscoffee.api.common.data.tables.ProfilEntity;
-import eu.builderscoffee.commons.bukkit.CommonsBukkit;
 import eu.builderscoffee.commons.bungeecord.CommonsBungeeCord;
 import eu.builderscoffee.commons.bungeecord.listeners.event.DataStatueEvent;
 import lombok.val;
