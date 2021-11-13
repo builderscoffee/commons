@@ -93,8 +93,8 @@
     <repositories>
         <repository>
             <id>github</id>
-            <name>GitHub BuildersCoffee API Packages</name>
-            <url>https://maven.pkg.github.com/builderscoffee/api</url>
+            <name>GitHub BuildersCoffee Packages</name>
+            <url>https://maven.pkg.github.com/builderscoffee/*</url>
         </repository>
         <repository>
             <id>spigotmc-repo</id>
