@@ -1,9 +1,9 @@
-name: BuildersCoffeeCommons
+name: Commons
 version: 0.1
 description: Commons for Builders Coffe.
-author: BuildersCoffee_Team
+author: BuildersCoffee
 main: eu.builderscoffee.commons.bukkit.CommonsBukkit
-depend: [ BuildersCoffeeAPI, LuckPerms ]
+depend: [ API, LuckPerms ]
 commands:
   network:
     aliases: [ net ]
