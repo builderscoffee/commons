@@ -69,7 +69,7 @@ jobs:
         with:
           url: 'http://54.36.124.50:3000/'
           data: '{"type": "commons" ,"version": "${{ steps.branch_check.outputs.env_name }}" }'
-          files: '{ "file": "${{ github.workspace }}/target/BuildersCoffeeAPI.jar" }'
+          files: '{ "file": "${{ github.workspace }}/target/BuildersCoffeeCommons.jar" }'
           username: ${{ secrets.INFRA_USER }}
           password: ${{ secrets.INFRA_PASSWORD }}
 
