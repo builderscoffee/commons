@@ -42,7 +42,7 @@ jobs:
             [{
                 "id": "github",
                 "username": "${{ secrets.GIT_USER }}",
-                "password": "${{ secrets.GIT_PASSWORD }}"
+                "password": "${{ secrets.GIT_TOKEN }}"
             }]
 
       # Check branch name and put name in env variable
