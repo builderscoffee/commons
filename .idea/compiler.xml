@@ -8,10 +8,12 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="BuildersCoffeeCommons" />
+        <module name="commons" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="BuildersCoffeeCommons" target="1.5" />
+      <module name="commons" target="1.5" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
