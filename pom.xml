@@ -148,7 +148,7 @@
 
         <dependency>
             <groupId>eu.builderscoffee</groupId>
-            <artifactId>BuildersCoffeeAPI</artifactId>
+            <artifactId>api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
