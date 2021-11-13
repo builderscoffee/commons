@@ -11,7 +11,12 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="BuildersCoffeeCommons" target="1.8" />
+      <module name="BuildersCoffeeCommons" target="1.5" />
     </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="BuildersCoffeeCommons" options="" />
+    </option>
   </component>
 </project>
