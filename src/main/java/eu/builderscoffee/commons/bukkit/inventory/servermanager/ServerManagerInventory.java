@@ -48,8 +48,12 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
     @Override
     public void init(Player player, InventoryContents contents) {
         super.init(player, contents);
+        System.out.println("init");
 
         val messages = MessageUtils.getMessageConfig(player).getInventory().getServerManager();
+
+        // Server item
+        setServerItem(contents, server);
 
         // Stop item
         val stopItem = new ItemBuilder(Material.CONCRETE, 1, (short) 14).setName(messages.getStopServer().replace("&", "§"));
@@ -99,7 +103,7 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
                             .limit(pageItemsAction.getMaxPerPage())
                             .collect(Collectors.toList()).iterator();
 
-                    for(int row = 1; row < 3 && iterator.hasNext(); row++){
+                    for(int row = 1; row <= 3 && iterator.hasNext(); row++){
                         for(int column = 0; column < 9 && iterator.hasNext(); column++){
                             contents.set(row, column, iterator.next());
                         }
@@ -109,14 +113,14 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
                     if(page != 0)
                         contents.set(rows - 1, 3, ClickableItem.of(pageItemsAction.getPreviousPageItem(), e -> {
                             page--;
-                            init(player, new InventoryContents.Impl(INVENTORY, player));
+                            init(player, contents);
                         }));
 
                     // Next
                     if(pageItemsAction.getItems().size() / pageItemsAction.getMaxPerPage() > page)
-                        contents.set(rows - 1, 3, ClickableItem.of(pageItemsAction.getNextPageItem(), e -> {
+                        contents.set(rows - 1, 5, ClickableItem.of(pageItemsAction.getNextPageItem(), e -> {
                             page++;
-                            init(player, new InventoryContents.Impl(INVENTORY, player));
+                            init(player, contents);
                         }));
                 } else if (action instanceof ServerManagerResponse.ChatRequest) {
                     val chatRequestAction = (ServerManagerResponse.ChatRequest) action;
@@ -150,25 +154,7 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
         // Vérifie que la liste existe
         if (servers == null) return;
 
-        //if (servers.stream().filter(s -> s.getHostName().equals(server.getHostName())).count() == 0)
-        //    new ServersManagerInventory().INVENTORY.open(player);
-        //else
-        servers.stream().filter(s -> s.getHostName().equals(server.getHostName())).forEach(s -> {
-            // État
-            contents.set(0, 4, ClickableItem.empty(new ItemBuilder(Material.OBSERVER)
-                    .setName("État")
-                    .addLoreLine("§bLast heartbeat at §a" + new SimpleDateFormat("EEE dd MMM yyyy à hh:mm:ss", Locale.FRANCE).format(s.getLastHeartbeat()))
-                    .addLoreLine("§bServerType: §a" + s.getServerType())
-                    .addLoreLine("§bStarting method: §a" + s.getStartingMethod())
-                    .addLoreLine("§bServer status: §a" + s.getServerStatus())
-                    .addLoreLine("§bPlayers: §a" + s.getPlayerCount())
-                    .addLoreLine("§bMaximum players: §a" + s.getPlayerMaximum())
-                    .addLoreLine(s.getProperties().entrySet().stream()
-                            .map(entry -> "§b" + entry.getKey() + ": §a" + entry.getValue())
-                            .sorted(String::compareTo)
-                            .collect(Collectors.toList()))
-                    .build()));
-        });
+        servers.stream().filter(s -> s.getHostName().equals(server.getHostName())).forEach(s -> setServerItem(contents, s));
     }
 
     public void sendConfigRequest(@NonNull Player player, @NonNull String type, @NonNull String data, @NonNull ServerManagerRequest.ItemAction itemAction, InventoryContents contents) {
@@ -217,5 +203,21 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
             }
             sendConfigRequest(player, type, action, currentItemAction, contents);
         });
+    }
+
+    private void setServerItem(InventoryContents contents, Server s){
+        contents.set(0, 4, ClickableItem.empty(new ItemBuilder(Material.OBSERVER)
+                .setName("État")
+                .addLoreLine("§bLast heartbeat at §a" + new SimpleDateFormat("EEE dd MMM yyyy à hh:mm:ss", Locale.FRANCE).format(s.getLastHeartbeat()))
+                .addLoreLine("§bServerType: §a" + s.getServerType())
+                .addLoreLine("§bStarting method: §a" + s.getStartingMethod())
+                .addLoreLine("§bServer status: §a" + s.getServerStatus())
+                .addLoreLine("§bPlayers: §a" + s.getPlayerCount())
+                .addLoreLine("§bMaximum players: §a" + s.getPlayerMaximum())
+                .addLoreLine(s.getProperties().entrySet().stream()
+                        .map(entry -> "§b" + entry.getKey() + ": §a" + entry.getValue())
+                        .sorted(String::compareTo)
+                        .collect(Collectors.toList()))
+                .build()));
     }
 }
