@@ -5,6 +5,7 @@ import eu.builderscoffee.api.common.data.tables.BanEntity;
 import eu.builderscoffee.api.common.data.tables.ProfilEntity;
 import eu.builderscoffee.commons.bungeecord.CommonsBungeeCord;
 import eu.builderscoffee.commons.bungeecord.utils.DateUtil;
+import eu.builderscoffee.commons.bungeecord.utils.MessageUtils;
 import eu.builderscoffee.commons.bungeecord.utils.TextComponentUtil;
 import eu.builderscoffee.commons.common.utils.LuckPermsUtils;
 import lombok.val;
@@ -26,7 +27,7 @@ public class PBanCommand extends Command {
     @Override
     public void execute(CommandSender sender, String[] args) {
         if(!sender.hasPermission(CommonsBungeeCord.getInstance().getPermissions().getPpardonPermission())){
-            sender.sendMessage(TextComponentUtil.decodeColor(CommonsBungeeCord.getInstance().getMessages().getNoPermission()));
+            sender.sendMessage(TextComponentUtil.decodeColor(MessageUtils.getMessageConfig(sender).getNoPermission()));
             return;
         }
 
@@ -95,7 +96,7 @@ public class PBanCommand extends Command {
         banStore.insert(banEntity);
 
         String message = "";
-        for (String s : CommonsBungeeCord.getInstance().getMessages().getBanMessage()) {
+        for (String s : MessageUtils.getMessageConfig(sender).getBanMessage()) {
             String line = s.replace("%reason%", banReason)
                     .replace("%time%", DateUtil.formatDateDiff(banTimestamp))
                     .replace("&", "§");
@@ -111,13 +112,13 @@ public class PBanCommand extends Command {
                 .forEach(player -> player.disconnect(TextComponentUtil.decodeColor(finalMessage)));
 
         ProxyServer.getInstance().getPlayers().stream()
-                .forEach(player -> player.sendMessage(TextComponentUtil.decodeColor(CommonsBungeeCord.getInstance().getMessages().getBanBroadcastMessage().replace("%author%", sender.getName())
+                .forEach(player -> player.sendMessage(TextComponentUtil.decodeColor(MessageUtils.getMessageConfig(sender).getBanBroadcastMessage().replace("%author%", sender.getName())
                         .replace("%player%", profil.getName())
                         .replace("%time%", DateUtil.formatDateDiff(finalBanTimestamp))
                         .replace("%reason%", finalBanReason)
                         .replace("&", "§"))));
 
-        System.out.println(CommonsBungeeCord.getInstance().getMessages().getBanBroadcastMessage().replace("%author%", sender.getName())
+        System.out.println(MessageUtils.getMessageConfig(sender).getBanBroadcastMessage().replace("%author%", sender.getName())
                 .replace("%player%", profil.getName())
                 .replace("%time%", DateUtil.formatDateDiff(banTimestamp))
                 .replace("%reason%", banReason)

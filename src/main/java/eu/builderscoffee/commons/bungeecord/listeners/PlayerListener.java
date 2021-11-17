@@ -2,6 +2,7 @@ package eu.builderscoffee.commons.bungeecord.listeners;
 
 import com.google.common.collect.Iterables;
 import eu.builderscoffee.commons.bungeecord.CommonsBungeeCord;
+import eu.builderscoffee.commons.bungeecord.utils.MessageUtils;
 import eu.builderscoffee.commons.bungeecord.utils.TextComponentUtil;
 import eu.builderscoffee.commons.common.configuration.SettingsConfig;
 import lombok.val;
@@ -69,7 +70,7 @@ public class PlayerListener implements Listener {
 
         // Check kick reason if it is needed to connect the player to a hub
         for (BaseComponent baseComponent : event.getKickReasonComponent()) {
-            for (String keyword : CommonsBungeeCord.getInstance().getMessages().getWhitelistRedirectMessagesKeywords()) {
+            for (String keyword : MessageUtils.getDefaultMessageConfig().getWhitelistRedirectMessagesKeywords()) {
                 if (baseComponent.toLegacyText().toLowerCase().contains(keyword.toLowerCase())) {
                     match = true;
                 }
@@ -101,7 +102,7 @@ public class PlayerListener implements Listener {
         event.setCancelled(true);
         event.setCancelServer(hubServer);
 
-        event.getPlayer().sendMessage(TextComponentUtil.decodeColor(CommonsBungeeCord.getInstance().getMessages().getServerRedirectionMessage().replace("%server%", hubServer.getName())));
+        event.getPlayer().sendMessage(TextComponentUtil.decodeColor(MessageUtils.getDefaultMessageConfig().getServerRedirectionMessage().replace("%server%", hubServer.getName())));
     }
 
     @EventHandler

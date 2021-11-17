@@ -1,4 +1,4 @@
-package eu.builderscoffee.commons.bukkit.utils;
+package eu.builderscoffee.commons.common.utils;
 
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;

@@ -13,6 +13,7 @@ public class PermissionConfiguration {
     // Permissions
     String globalPermission = "builderscoffee.bungeecord.*";
     String pbanPermission = "builderscoffee.bungeecord.pban";
+    String movePermission = "builderscoffee.bungeecord.move";
     String databasePermission = "builderscoffee.bungeecord.database";
     String pbanByPassPermission = "builderscoffee.bungeecord.bypass.pban";
     String ppardonPermission = "builderscoffee.bungeecord.ppardon";

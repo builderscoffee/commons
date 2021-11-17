@@ -4,6 +4,7 @@ import eu.builderscoffee.api.common.data.DataManager;
 import eu.builderscoffee.api.common.data.tables.BanEntity;
 import eu.builderscoffee.api.common.data.tables.ProfilEntity;
 import eu.builderscoffee.commons.bungeecord.CommonsBungeeCord;
+import eu.builderscoffee.commons.bungeecord.utils.MessageUtils;
 import eu.builderscoffee.commons.bungeecord.utils.TextComponentUtil;
 import lombok.val;
 import net.md_5.bungee.api.CommandSender;
@@ -18,7 +19,7 @@ public class PPardonCommand extends Command {
     @Override
     public void execute(CommandSender sender, String[] args) {
         if(!sender.hasPermission(CommonsBungeeCord.getInstance().getPermissions().getPpardonPermission())){
-            sender.sendMessage(TextComponentUtil.decodeColor(CommonsBungeeCord.getInstance().getMessages().getNoPermission()));
+            sender.sendMessage(TextComponentUtil.decodeColor(MessageUtils.getMessageConfig(sender).getNoPermission()));
             return;
         }
 

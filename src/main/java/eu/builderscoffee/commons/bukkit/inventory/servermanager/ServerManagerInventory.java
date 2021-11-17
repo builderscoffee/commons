@@ -22,6 +22,7 @@ import lombok.Setter;
 import lombok.val;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.redisson.api.RSortedSet;
 
 import java.text.SimpleDateFormat;
@@ -39,14 +40,22 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
     private static ArrayList<Triplet<Player, ServerManagerInventory, String>> chatRequests = new ArrayList<>();
 
     private final Server server;
-    @Getter
-    private InventoryContents contents;
-    @Setter
-    private boolean requestConfigOnOpen = true;
+    private ServerManagerResponse response;
+    private int page;
 
     public ServerManagerInventory(SmartInventory previousInventory, Server server) {
         super(server.getHostName(), previousInventory, 5, 9);
         this.server = server;
+    }
+
+    public void open(Player player, ServerManagerResponse response){
+        open(player, response, 0);
+    }
+
+    public void open(Player player, ServerManagerResponse response, int page){
+        this.response = response;
+        this.page = page;
+        this.INVENTORY.open(player);
     }
 
     @Override
@@ -80,19 +89,68 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
                     }
                 }));
 
-        // Freeze
-        /*if (server.getStartingMethod().equals(Server.ServerStartingMethod.DYNAMIC))
-            contents.set(0, 7, ClickableItem.of(new ItemBuilder(Material.PACKED_ICE).setName("Freeze").build(),
-                    e -> {
-                        server.freeze();
-                        new ServersManagerInventory(this.INVENTORY, player).INVENTORY.open(player);
-                    }));*/
-
         // Demander au serveur si une configuration est possible ou néscessaire
-        if(requestConfigOnOpen) sendConfigRequest(player, "request_config", "", ServerManagerRequest.ItemAction.NONE, contents);
-        requestConfigOnOpen = true;
+        sendConfigRequest(player, "request_config", "", ServerManagerRequest.ItemAction.NONE);
 
-        this.contents = contents;
+        if(Objects.nonNull(response)){
+            val customConfigItems = new ArrayList<Triplet<Integer, Integer, ClickableItem>>();
+
+            contents.fillSquare(SlotPos.of(1, 0), SlotPos.of(3, columns - 1), lightGreyGlasses);
+
+            // loop all items
+            response.getActions().forEach(action -> {
+                if (action instanceof ServerManagerResponse.Items) {
+                    val itemsAction = (ServerManagerResponse.Items) action;
+
+                    itemsAction.getItems().forEach(itemInfo -> customConfigItems.add(new Triplet<>(itemInfo.getFirst(), itemInfo.getSecond(), item(player, itemInfo.getThird(), itemsAction.getType(), itemInfo.getFourth()))));
+                } else if (action instanceof ServerManagerResponse.PageItems) {
+                    val pageItemsAction = (ServerManagerResponse.PageItems) action;
+
+                    // Set items in pagination system
+                    val iterator = pageItemsAction.getItems().stream()
+                            .map(tuple -> item(player, tuple.getLeft(), pageItemsAction.getType(), tuple.getRight()))
+                            .skip(pageItemsAction.getMaxPerPage() * page)
+                            .limit(pageItemsAction.getMaxPerPage())
+                            .collect(Collectors.toList()).iterator();
+
+                    for(int row = 1; row < 3 && iterator.hasNext(); row++){
+                        for(int column = 0; column < 9 && iterator.hasNext(); column++){
+                            contents.set(row, column, iterator.next());
+                        }
+                    }
+
+                    // Previous
+                    if(page != 0)
+                        contents.set(rows - 1, 3, ClickableItem.of(pageItemsAction.getPreviousPageItem(), e -> this.open(player, response, --page)));
+
+                    // Next
+                    if(pageItemsAction.getItems().size() / pageItemsAction.getMaxPerPage() > page)
+                        contents.set(rows - 1, 3, ClickableItem.of(pageItemsAction.getNextPageItem(), e -> this.open(player, response, ++page)));
+                } else if (action instanceof ServerManagerResponse.ChatRequest) {
+                    val chatRequestAction = (ServerManagerResponse.ChatRequest) action;
+
+                    if (Objects.nonNull(chatRequestAction.getMessage()))
+                        player.sendMessage(chatRequestAction.getMessage());
+
+                    chatRequests.add(new Triplet<>(player, this, chatRequestAction.getType()));
+                    player.closeInventory();
+                    return;
+                } else if (action instanceof ServerManagerResponse.ChatResponse) {
+                    val chatresponseAction = (ServerManagerResponse.ChatResponse) action;
+
+                    if (Objects.nonNull(chatresponseAction.getMessage()))
+                        player.sendMessage(chatresponseAction.getMessage());
+                }
+            });
+
+            // If true will ignore
+            if (response.isFinished()) {
+                player.closeInventory();
+                return;
+            }
+
+            customConfigItems.forEach(triplet -> contents.set(triplet.getLeft(), triplet.getCenter(), triplet.getRight()));
+        }
     }
 
     @Override
@@ -121,11 +179,9 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
                             .collect(Collectors.toList()))
                     .build()));
         });
-
-        this.contents = contents;
     }
 
-    public void sendConfigRequest(@NonNull Player player, @NonNull String type, @NonNull String data, @NonNull ServerManagerRequest.ItemAction itemAction, @NonNull InventoryContents contents) {
+    public void sendConfigRequest(@NonNull Player player, @NonNull String type, @NonNull String data, @NonNull ServerManagerRequest.ItemAction itemAction) {
         // Create request
         val configPacket = new ServerManagerRequest();
 
@@ -136,88 +192,36 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
         configPacket.setItemAction(itemAction);
 
         // Show items on response
-        configPacket.onResponse = response -> {
-            // create list to temporary store items
-            val configItems = new ArrayList<ClickableItem>();
-            val customConfigItems = new ArrayList<Triplet<Integer, Integer, ClickableItem>>();
-
-            contents.fillSquare(SlotPos.of(1, 0), SlotPos.of(3, columns - 1), lightGreyGlasses);
-
-            // loop all items
-            response.getActions().forEach(action -> {
-                if (action instanceof ServerManagerResponse.Items) {
-                    val itemsAction = (ServerManagerResponse.Items) action;
-
-                    itemsAction.getItems().forEach(itemInfo -> {
-                        val i1 = itemInfo.getFirst();
-                        val i2 = itemInfo.getSecond();
-                        val item = ClickableItem.of(SingleItemSerialization.getItem(itemInfo.getThird()), e -> {
-                            ServerManagerRequest.ItemAction currentItemAction = ServerManagerRequest.ItemAction.NONE;
-                            switch (e.getClick()){
-                                case LEFT:
-                                    currentItemAction = ServerManagerRequest.ItemAction.LEFT_CLICK;
-                                    break;
-                                case SHIFT_LEFT:
-                                    currentItemAction = ServerManagerRequest.ItemAction.SHIFT_LEFT_CLICK;
-                                    break;
-                                case RIGHT:
-                                    currentItemAction = ServerManagerRequest.ItemAction.RIGHT_CLICK;
-                                    break;
-                                case SHIFT_RIGHT:
-                                    currentItemAction = ServerManagerRequest.ItemAction.SHIFT_RIGHT_CLICK;
-                                    break;
-                                case MIDDLE:
-                                    currentItemAction = ServerManagerRequest.ItemAction.MIDDLE_CLICK;
-                                    break;
-                                case DROP:
-                                    currentItemAction = ServerManagerRequest.ItemAction.DROP;
-                                    break;
-                            }
-                            if (!response.isFinished()) sendConfigRequest(player, itemsAction.getType(), itemInfo.getFourth(), currentItemAction, contents);
-                        });
-
-                        // slot hasn't been chosen
-                        if (i1 == -1 || i2 == -1)
-                            configItems.add(item);
-                        // slot has been chosen
-                        else
-                            customConfigItems.add(new Triplet<>(i1, i2, item));
-                    });
-                } else if (action instanceof ServerManagerResponse.ChatRequest) {
-                    val chatRequestAction = (ServerManagerResponse.ChatRequest) action;
-
-                    if (Objects.nonNull(chatRequestAction.getMessage()))
-                        player.sendMessage(chatRequestAction.getMessage());
-
-                    chatRequests.add(new Triplet<>(player, this, chatRequestAction.getType()));
-                    player.closeInventory();
-                    return;
-                } else if (action instanceof ServerManagerResponse.ChatResponse) {
-                    val chatresponseAction = (ServerManagerResponse.ChatResponse) action;
-
-                    if (Objects.nonNull(chatresponseAction.getMessage()))
-                        player.sendMessage(chatresponseAction.getMessage());
-                }
-            });
-
-            // If true will ignore
-            if (response.isFinished()) {
-                player.closeInventory();
-                return;
-            }
-
-            // Set items in pagination system
-            contents.pagination().setItems(configItems.toArray(new ClickableItem[0]));
-            contents.pagination().setItemsPerPage(27);
-
-            // Define how items are placed in inv
-            contents.pagination().addToIterator(contents.newIterator(SlotIterator.Type.HORIZONTAL, SlotPos.of(1, 0)));
-
-            //
-            customConfigItems.forEach(triplet -> contents.set(triplet.getLeft(), triplet.getCenter(), triplet.getRight()));
-        };
+        configPacket.onResponse = response -> this.open(player, response);
 
         // Send request
         Redis.publish(CommonTopics.SERVER_MANAGER, configPacket);
+    }
+
+    private ClickableItem item(Player player, ItemStack itemstack, String type, String action){
+        return ClickableItem.of(itemstack, e -> {
+            ServerManagerRequest.ItemAction currentItemAction = ServerManagerRequest.ItemAction.NONE;
+            switch (e.getClick()){
+                case LEFT:
+                    currentItemAction = ServerManagerRequest.ItemAction.LEFT_CLICK;
+                    break;
+                case SHIFT_LEFT:
+                    currentItemAction = ServerManagerRequest.ItemAction.SHIFT_LEFT_CLICK;
+                    break;
+                case RIGHT:
+                    currentItemAction = ServerManagerRequest.ItemAction.RIGHT_CLICK;
+                    break;
+                case SHIFT_RIGHT:
+                    currentItemAction = ServerManagerRequest.ItemAction.SHIFT_RIGHT_CLICK;
+                    break;
+                case MIDDLE:
+                    currentItemAction = ServerManagerRequest.ItemAction.MIDDLE_CLICK;
+                    break;
+                case DROP:
+                    currentItemAction = ServerManagerRequest.ItemAction.DROP;
+                    break;
+            }
+            sendConfigRequest(player, type, action, currentItemAction);
+        });
     }
 }

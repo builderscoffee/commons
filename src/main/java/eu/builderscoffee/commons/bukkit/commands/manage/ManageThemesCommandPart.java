@@ -4,7 +4,7 @@ import eu.builderscoffee.api.common.data.DataManager;
 import eu.builderscoffee.api.common.data.tables.BuildbattleThemeEntity;
 import eu.builderscoffee.commons.bukkit.CommonsBukkit;
 import eu.builderscoffee.commons.bukkit.commands.ManageCommand;
-import eu.builderscoffee.commons.bukkit.utils.CommandUtils;
+import eu.builderscoffee.commons.common.utils.CommandUtils;
 import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
 import lombok.val;
 import org.bukkit.command.CommandSender;

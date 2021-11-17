@@ -1,10 +1,12 @@
 package eu.builderscoffee.commons.bungeecord;
 
 import eu.builderscoffee.api.common.data.DataManager;
+import eu.builderscoffee.api.common.data.tables.Profil;
 import eu.builderscoffee.api.common.redisson.Redis;
 import eu.builderscoffee.api.common.redisson.RedisCredentials;
 import eu.builderscoffee.api.common.redisson.RedisTopic;
 import eu.builderscoffee.api.common.redisson.infos.Server;
+import eu.builderscoffee.commons.bungeecord.commands.MoveCommand;
 import eu.builderscoffee.commons.bungeecord.commands.PBanCommand;
 import eu.builderscoffee.commons.bungeecord.commands.PPardonCommand;
 import eu.builderscoffee.commons.bungeecord.configuration.MessageConfiguration;
@@ -14,22 +16,20 @@ import eu.builderscoffee.commons.bungeecord.listeners.PlayerListener;
 import eu.builderscoffee.commons.bungeecord.listeners.redisson.HeartBeatListener;
 import eu.builderscoffee.commons.bungeecord.listeners.redisson.ServersListListener;
 import eu.builderscoffee.commons.common.configuration.SettingsConfig;
-import eu.builderscoffee.commons.common.utils.Cache;
 import eu.builderscoffee.commons.common.utils.LuckPermsUtils;
 import eu.builderscoffee.commons.common.utils.ProfilCache;
 import lombok.Getter;
 import lombok.val;
 import net.luckperms.api.LuckPermsProvider;
 import net.md_5.bungee.api.ProxyServer;
-import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.plugin.Plugin;
 import org.redisson.api.RSortedSet;
 
 import java.net.InetSocketAddress;
+import java.util.Map;
 import java.util.Objects;
 
 import static eu.builderscoffee.api.common.configuration.Configuration.readOrCreateConfiguration;
-import static eu.builderscoffee.api.common.configuration.Configuration.writeConfiguration;
 
 /**
  * This class is the main class of the Commons Proxy plugin
@@ -41,7 +41,7 @@ public class CommonsBungeeCord extends Plugin {
     private static CommonsBungeeCord instance;
 
     //Configuration
-    private MessageConfiguration messages;
+    private Map<Profil.Languages, MessageConfiguration> messages;
     private PermissionConfiguration permissions;
 
     private SettingsConfig settings;
@@ -56,7 +56,7 @@ public class CommonsBungeeCord extends Plugin {
         instance = this;
 
         // Configuration
-        messages = readOrCreateConfiguration(this.getDescription().getName(), MessageConfiguration.class);
+        messages = readOrCreateConfiguration(this.getDescription().getName(), MessageConfiguration.class, Profil.Languages.class);
         permissions = readOrCreateConfiguration(this.getDescription().getName(), PermissionConfiguration.class);
         settings = readOrCreateConfiguration(this.getDescription().getName(), SettingsConfig.class);
 
@@ -81,14 +81,6 @@ public class CommonsBungeeCord extends Plugin {
             // Service Provider
             LuckPermsUtils.init(LuckPermsProvider.get());
 
-            // Check redirection server exist
-            val server = ProxyServer.getInstance().getServerInfo(messages.getServerRedirectName());
-            if (server == null) {
-                val newServer = (ServerInfo) getProxy().getServers().values().toArray()[0];
-                CommonsBungeeCord.getInstance().getMessages().setServerRedirectName(newServer.getName());
-                writeConfiguration(this.getDescription().getName(), messages);
-            }
-
             // Add started servers
             final RSortedSet<Server> servers = Redis.getRedissonClient().getSortedSet("servers");
             servers.stream()
@@ -101,6 +93,7 @@ public class CommonsBungeeCord extends Plugin {
             // Commands
             getProxy().getPluginManager().registerCommand(this, new PBanCommand());
             getProxy().getPluginManager().registerCommand(this, new PPardonCommand());
+            getProxy().getPluginManager().registerCommand(this, new MoveCommand());
 
             // Listeners
             getProxy().getPluginManager().registerListener(this, new ConnexionListener());

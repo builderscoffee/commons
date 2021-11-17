@@ -1,6 +1,7 @@
 package eu.builderscoffee.commons.bungeecord.configuration;
 
 import eu.builderscoffee.api.common.configuration.annotation.Configuration;
+import eu.builderscoffee.commons.bungeecord.configuration.messages.CommandConfigurationPart;
 import lombok.Data;
 import lombok.Getter;
 
@@ -25,6 +26,7 @@ public class MessageConfiguration {
     String banBroadcastMessage = "&6BuildersCoffee &7>> &6%author% &7a banni &6%player% &7pendent &6%time% &7pour: &f%reason%";
     @Getter
     List<String> whitelistRedirectMessagesKeywords = Arrays.asList("fermé", "closed");
-    String serverRedirectName = "hub";
     String serverRedirectionMessage = "&cLe serveur sur lequel vous étiez est maintenant en fermé, vous êtes désormais connecté au %server%.";
+
+    CommandConfigurationPart commands = new CommandConfigurationPart();
 }

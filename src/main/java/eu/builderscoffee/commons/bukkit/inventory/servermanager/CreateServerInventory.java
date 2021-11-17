@@ -84,7 +84,7 @@ public class CreateServerInventory extends DefaultAdminTemplateInventory {
                 }));
 
         // Plot
-        contents.set(2, 6, ClickableItem.of(new ItemBuilder(Material.WOOL, 1, (short) 7).setName("Plot").build(),
+        contents.set(2, 6, ClickableItem.of(new ItemBuilder(Material.WOOL, 1, (short) 7).setName("Plot").addLoreLine("§bServer mode: " + newServerMode).addLoreLine("").addLoreLine("§bShift click pour changer de mode").build(),
                 e -> {
                     if(e.isShiftClick()){
                         newServerMode = newServerMode.equals(SettingsConfig.PluginMode.PRODUCTION)? SettingsConfig.PluginMode.DEVELOPMENT : SettingsConfig.PluginMode.PRODUCTION;

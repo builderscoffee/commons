@@ -10,6 +10,5 @@ commands:
     description: Envoi un message dans le chat du staff
   pban:
     description: Permanent ban
-  database:
-    aliases: [ db ]
-    description: Database command
+  move:
+    description: Move command

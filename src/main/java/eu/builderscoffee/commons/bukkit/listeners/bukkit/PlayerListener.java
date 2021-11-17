@@ -138,8 +138,7 @@ public class PlayerListener implements Listener {
 
             ServerManagerInventory.getChatRequests().remove(triplet);
 
-            triplet.getCenter().sendConfigRequest(player, triplet.getRight(), event.getMessage(), ServerManagerRequest.ItemAction.NONE, triplet.getCenter().getContents());
-            triplet.getCenter().setRequestConfigOnOpen(false);
+            triplet.getCenter().sendConfigRequest(player, triplet.getRight(), event.getMessage(), ServerManagerRequest.ItemAction.NONE);
             triplet.getCenter().INVENTORY.open(player);
         }
         // Normal chat

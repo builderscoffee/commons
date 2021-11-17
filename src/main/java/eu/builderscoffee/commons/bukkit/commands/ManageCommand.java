@@ -3,7 +3,7 @@ package eu.builderscoffee.commons.bukkit.commands;
 import eu.builderscoffee.commons.bukkit.CommonsBukkit;
 import eu.builderscoffee.commons.bukkit.commands.manage.ManageSeasonsCommandPart;
 import eu.builderscoffee.commons.bukkit.commands.manage.ManageThemesCommandPart;
-import eu.builderscoffee.commons.bukkit.utils.CommandUtils;
+import eu.builderscoffee.commons.common.utils.CommandUtils;
 import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
 import lombok.Getter;
 import lombok.val;
