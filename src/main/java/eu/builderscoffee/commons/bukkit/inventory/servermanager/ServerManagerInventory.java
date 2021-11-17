@@ -90,9 +90,10 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
                 }));
 
         // Demander au serveur si une configuration est possible ou néscessaire
-        sendConfigRequest(player, "request_config", "", ServerManagerRequest.ItemAction.NONE);
-
-        if(Objects.nonNull(response)){
+        if(Objects.isNull(response)){
+            sendConfigRequest(player, "request_config", "", ServerManagerRequest.ItemAction.NONE);
+        }
+        else {
             val customConfigItems = new ArrayList<Triplet<Integer, Integer, ClickableItem>>();
 
             contents.fillSquare(SlotPos.of(1, 0), SlotPos.of(3, columns - 1), lightGreyGlasses);
