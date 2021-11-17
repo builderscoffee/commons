@@ -3,10 +3,8 @@ package eu.builderscoffee.commons.bukkit.inventory.servermanager;
 import eu.builderscoffee.api.bukkit.gui.ClickableItem;
 import eu.builderscoffee.api.bukkit.gui.SmartInventory;
 import eu.builderscoffee.api.bukkit.gui.content.InventoryContents;
-import eu.builderscoffee.api.bukkit.gui.content.SlotIterator;
 import eu.builderscoffee.api.bukkit.gui.content.SlotPos;
 import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
-import eu.builderscoffee.api.bukkit.utils.serializations.SingleItemSerialization;
 import eu.builderscoffee.api.common.redisson.Redis;
 import eu.builderscoffee.api.common.redisson.infos.Server;
 import eu.builderscoffee.commons.bukkit.inventory.OptionInventory;
@@ -18,7 +16,6 @@ import eu.builderscoffee.commons.common.redisson.topics.CommonTopics;
 import eu.builderscoffee.commons.common.utils.Triplet;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
 import lombok.val;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -46,16 +43,6 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
     public ServerManagerInventory(SmartInventory previousInventory, Server server) {
         super(server.getHostName(), previousInventory, 5, 9);
         this.server = server;
-    }
-
-    public void open(Player player, ServerManagerResponse response){
-        open(player, response, 0);
-    }
-
-    public void open(Player player, ServerManagerResponse response, int page){
-        this.response = response;
-        this.page = page;
-        this.INVENTORY.open(player);
     }
 
     @Override
@@ -91,11 +78,9 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
 
         // Demander au serveur si une configuration est possible ou néscessaire
         if(Objects.isNull(response)){
-            sendConfigRequest(player, "request_config", "", ServerManagerRequest.ItemAction.NONE);
+            sendConfigRequest(player, "request_config", "", ServerManagerRequest.ItemAction.NONE, contents);
         }
         else {
-            val customConfigItems = new ArrayList<Triplet<Integer, Integer, ClickableItem>>();
-
             contents.fillSquare(SlotPos.of(1, 0), SlotPos.of(3, columns - 1), lightGreyGlasses);
 
             // loop all items
@@ -103,13 +88,13 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
                 if (action instanceof ServerManagerResponse.Items) {
                     val itemsAction = (ServerManagerResponse.Items) action;
 
-                    itemsAction.getItems().forEach(itemInfo -> customConfigItems.add(new Triplet<>(itemInfo.getFirst(), itemInfo.getSecond(), item(player, itemInfo.getThird(), itemsAction.getType(), itemInfo.getFourth()))));
+                    itemsAction.getItems().forEach(itemInfo -> contents.set(itemInfo.getFirst(), itemInfo.getSecond(), item(player, contents, itemInfo.getThird(), itemsAction.getType(), itemInfo.getFourth())));
                 } else if (action instanceof ServerManagerResponse.PageItems) {
                     val pageItemsAction = (ServerManagerResponse.PageItems) action;
 
                     // Set items in pagination system
                     val iterator = pageItemsAction.getItems().stream()
-                            .map(tuple -> item(player, tuple.getLeft(), pageItemsAction.getType(), tuple.getRight()))
+                            .map(tuple -> item(player, contents, tuple.getLeft(), pageItemsAction.getType(), tuple.getRight()))
                             .skip(pageItemsAction.getMaxPerPage() * page)
                             .limit(pageItemsAction.getMaxPerPage())
                             .collect(Collectors.toList()).iterator();
@@ -122,11 +107,17 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
 
                     // Previous
                     if(page != 0)
-                        contents.set(rows - 1, 3, ClickableItem.of(pageItemsAction.getPreviousPageItem(), e -> this.open(player, response, --page)));
+                        contents.set(rows - 1, 3, ClickableItem.of(pageItemsAction.getPreviousPageItem(), e -> {
+                            page--;
+                            init(player, new InventoryContents.Impl(INVENTORY, player));
+                        }));
 
                     // Next
                     if(pageItemsAction.getItems().size() / pageItemsAction.getMaxPerPage() > page)
-                        contents.set(rows - 1, 3, ClickableItem.of(pageItemsAction.getNextPageItem(), e -> this.open(player, response, ++page)));
+                        contents.set(rows - 1, 3, ClickableItem.of(pageItemsAction.getNextPageItem(), e -> {
+                            page++;
+                            init(player, new InventoryContents.Impl(INVENTORY, player));
+                        }));
                 } else if (action instanceof ServerManagerResponse.ChatRequest) {
                     val chatRequestAction = (ServerManagerResponse.ChatRequest) action;
 
@@ -149,8 +140,6 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
                 player.closeInventory();
                 return;
             }
-
-            customConfigItems.forEach(triplet -> contents.set(triplet.getLeft(), triplet.getCenter(), triplet.getRight()));
         }
     }
 
@@ -182,7 +171,7 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
         });
     }
 
-    public void sendConfigRequest(@NonNull Player player, @NonNull String type, @NonNull String data, @NonNull ServerManagerRequest.ItemAction itemAction) {
+    public void sendConfigRequest(@NonNull Player player, @NonNull String type, @NonNull String data, @NonNull ServerManagerRequest.ItemAction itemAction, InventoryContents contents) {
         // Create request
         val configPacket = new ServerManagerRequest();
 
@@ -193,13 +182,17 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
         configPacket.setItemAction(itemAction);
 
         // Show items on response
-        configPacket.onResponse = response -> this.open(player, response);
+        configPacket.onResponse = response -> {
+            this.response = response;
+            //contents.fill(null);
+            init(player, contents);
+        };
 
         // Send request
         Redis.publish(CommonTopics.SERVER_MANAGER, configPacket);
     }
 
-    private ClickableItem item(Player player, ItemStack itemstack, String type, String action){
+    private ClickableItem item(Player player, InventoryContents contents, ItemStack itemstack, String type, String action){
         return ClickableItem.of(itemstack, e -> {
             ServerManagerRequest.ItemAction currentItemAction = ServerManagerRequest.ItemAction.NONE;
             switch (e.getClick()){
@@ -222,7 +215,7 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
                     currentItemAction = ServerManagerRequest.ItemAction.DROP;
                     break;
             }
-            sendConfigRequest(player, type, action, currentItemAction);
+            sendConfigRequest(player, type, action, currentItemAction, contents);
         });
     }
 }
