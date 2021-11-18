@@ -82,6 +82,7 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
 
         // Demander au serveur si une configuration est possible ou néscessaire
         if(Objects.isNull(response)){
+            contents.fillSquare(SlotPos.of(1, 0), SlotPos.of(3, columns - 1), greyGlasses);
             sendConfigRequest(player, "request_config", "", ServerManagerRequest.ItemAction.NONE, contents);
         }
         else {

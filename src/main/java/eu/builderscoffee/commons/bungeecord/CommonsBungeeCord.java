@@ -77,28 +77,27 @@ public class CommonsBungeeCord extends Plugin {
         getLogger().info("Connexion à la base de donnée...");
         DataManager.init(settings.getMySQL().toHikari());
 
-        if(!settings.getLoadMode().equals(SettingsConfig.LoadMode.LAZY)){
-            // Service Provider
-            LuckPermsUtils.init(LuckPermsProvider.get());
+        // Service Provider
+        LuckPermsUtils.init(LuckPermsProvider.get());
 
-            // Add started servers
-            final RSortedSet<Server> servers = Redis.getRedissonClient().getSortedSet("servers");
-            servers.stream()
-                    .filter(s -> Objects.isNull(ProxyServer.getInstance().getServerInfo(s.getHostName())))
-                    .forEach(s -> {
-                        val si = ProxyServer.getInstance().constructServerInfo(s.getHostName(), new InetSocketAddress(s.getHostAddress(), s.getHostPort()), "", false);
-                        ProxyServer.getInstance().getServers().put(si.getName(), si);
-                    });
+        // Add started servers
+        final RSortedSet<Server> servers = Redis.getRedissonClient().getSortedSet("servers");
+        servers.stream()
+                .filter(s -> Objects.isNull(ProxyServer.getInstance().getServerInfo(s.getHostName())))
+                .filter(s -> s.getServerType().equals(Server.ServerType.SPIGOT))
+                .forEach(s -> {
+                    val si = ProxyServer.getInstance().constructServerInfo(s.getHostName(), new InetSocketAddress(s.getHostAddress(), s.getHostPort()), "", false);
+                    ProxyServer.getInstance().getServers().put(si.getName(), si);
+                });
 
-            // Commands
-            getProxy().getPluginManager().registerCommand(this, new PBanCommand());
-            getProxy().getPluginManager().registerCommand(this, new PPardonCommand());
-            getProxy().getPluginManager().registerCommand(this, new MoveCommand());
+        // Commands
+        getProxy().getPluginManager().registerCommand(this, new PBanCommand());
+        getProxy().getPluginManager().registerCommand(this, new PPardonCommand());
+        getProxy().getPluginManager().registerCommand(this, new MoveCommand());
 
-            // Listeners
-            getProxy().getPluginManager().registerListener(this, new ConnexionListener());
-            getProxy().getPluginManager().registerListener(this, new PlayerListener());
-        }
+        // Listeners
+        getProxy().getPluginManager().registerListener(this, new ConnexionListener());
+        getProxy().getPluginManager().registerListener(this, new PlayerListener());
     }
 
     @Override

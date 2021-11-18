@@ -9,6 +9,7 @@ public class ServersManagerInventoryConfigurationPart {
     String createServer = "Creer un serveur";
     String manageTournaments = "Gérer les tournois";
     String serversActivities = "Activités des serveurs";
-    String serverLeftClick = "§aClic gauche pour gérer";
-    String serverRightClick = "§aClic droit pour y aller";
+    String serverLeftClick = "&aClic gauche pour gérer";
+    String serverRightClick = "&aClic droit pour y aller";
+    String serverStopOnRightClick = "&aClic droit pour stopper le serveur";
 }

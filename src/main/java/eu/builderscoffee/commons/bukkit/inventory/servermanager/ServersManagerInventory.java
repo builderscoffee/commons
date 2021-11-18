@@ -68,27 +68,39 @@ public class ServersManagerInventory extends DefaultAdminTemplateInventory {
                     .sorted()
                     .forEach(s -> {
                         val itemB = new ItemBuilder(Material.OBSERVER)
-                                .setName(s.getHostName() + " §7(" + s.getServerStatus().name().toLowerCase() + ")")
-                                .addLoreLine("§f" + capitalizeFirstLetter(s.getStartingMethod().name()) + " " + s.getServerType().name().toLowerCase() + " §bserver")
-                                .addLoreLine("§f" + s.getPlayerCount() + "§b/§f" + s.getPlayerMaximum() + " §bjoueurs");
-
-                        if (s.getProperties().entrySet().size() > 0) {
-                            itemB.addLoreLine("§bDonnées supplémentaires: ");
-                            itemB.addLoreLine(s.getProperties().entrySet().stream()
-                                    .map(entry -> "  §b" + entry.getKey() + ": §f" + entry.getValue())
-                                    .sorted(String::compareTo)
-                                    .collect(Collectors.toList()));
+                                .setName(s.getHostName() + " §7(" + s.getServerStatus().name().toLowerCase() + ")");
+                        if (s.getServerStatus().equals(Server.ServerStatus.STARTING))
+                            itemB.addLoreLine("§fEn attente d'une réponse")
+                                    .addLoreLine("")
+                                    .addLoreLine(messages.getServerStopOnRightClick().replace("&", "§"));
+                        else {
+                            itemB.addLoreLine("§f" + capitalizeFirstLetter(s.getStartingMethod().name()) + " " + s.getServerType().name().toLowerCase() + " §bserver")
+                                    .addLoreLine("§f" + s.getPlayerCount() + "§b/§f" + s.getPlayerMaximum() + " §bjoueurs");
+                            if (s.getProperties().entrySet().size() > 0) {
+                                itemB.addLoreLine("§bDonnées supplémentaires: ");
+                                itemB.addLoreLine(s.getProperties().entrySet().stream()
+                                        .map(entry -> "  §b" + entry.getKey() + ": §f" + entry.getValue())
+                                        .sorted(String::compareTo)
+                                        .collect(Collectors.toList()));
+                            }
+                            itemB.addLoreLine("")
+                                    .addLoreLine(messages.getServerLeftClick().replace("&", "§"))
+                                    .addLoreLine(messages.getServerRightClick().replace("&", "§"));
                         }
-                        serverItems.add(ClickableItem.of(itemB
-                                        .addLoreLine("")
-                                        .addLoreLine(messages.getServerLeftClick().replace("&", "§"))
-                                        .addLoreLine(messages.getServerRightClick().replace("&", "§"))
-                                        .build(),
+
+                        serverItems.add(ClickableItem.of(itemB.build(),
                                 e -> {
-                                    if (e.isLeftClick())
-                                        new ServerManagerInventory(this.INVENTORY, s).INVENTORY.open(player);
-                                    else if (e.isRightClick())
-                                        BungeeUtils.sendPlayerToServer(CommonsBukkit.getInstance(), player, s.getHostName());
+                                    if (s.getServerStatus().equals(Server.ServerStatus.STARTING)){
+                                        if (e.isRightClick()){
+                                            s.stop();
+                                        }
+                                    }
+                                    else{
+                                        if (e.isLeftClick())
+                                            new ServerManagerInventory(this.INVENTORY, s).INVENTORY.open(player);
+                                        else if (e.isRightClick())
+                                            BungeeUtils.sendPlayerToServer(CommonsBukkit.getInstance(), player, s.getHostName());
+                                    }
                                 }));
                     });
         // Add items in inventory

@@ -46,6 +46,7 @@ public class HeartBeatListener implements PacketListener {
         // Add server to servers list
         final RSortedSet<Server> servers = Redis.getRedissonClient().getSortedSet("servers");
         if(servers != null) {
+            if(servers.stream().anyMatch(s -> s.getHostName().equals(event.getServer().getHostName()))) servers.remove(event.getServer());
             servers.add(event.getServer());
         }
 
