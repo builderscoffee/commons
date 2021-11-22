@@ -40,8 +40,8 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
     private ServerManagerResponse response;
     private int page;
 
-    public ServerManagerInventory(SmartInventory previousInventory, Server server) {
-        super(server.getHostName(), previousInventory, 5, 9);
+    public ServerManagerInventory(Player player, Server server) {
+        super(server.getHostName(), new ServersManagerInventory(player).INVENTORY, 5, 9);
         this.server = server;
     }
 
@@ -71,7 +71,7 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
                                 this.INVENTORY,
                                 (e1, p1) -> {
                                     server.stop();
-                                    new ServersManagerInventory(this.INVENTORY, player).INVENTORY.open(player);
+                                    new ServersManagerInventory(player).INVENTORY.open(player);
                                 },
                                 (e2, p2) ->{
                                     this.INVENTORY.open(player);

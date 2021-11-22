@@ -26,8 +26,8 @@ public class ServersActivitiesInventory extends DefaultAdminTemplateInventory {
 
     private int state;
 
-    public ServersActivitiesInventory(SmartInventory previousInventory, Player player) {
-        super(MessageUtils.getMessageConfig(player).getInventory().getServersActivities().getTitle(), previousInventory, 5, 9);
+    public ServersActivitiesInventory(Player player) {
+        super(MessageUtils.getMessageConfig(player).getInventory().getServersActivities().getTitle(), new ServersManagerInventory(player).INVENTORY, 5, 9);
     }
 
     @Override

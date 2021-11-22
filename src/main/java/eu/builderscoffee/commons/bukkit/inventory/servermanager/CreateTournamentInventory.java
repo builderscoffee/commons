@@ -18,8 +18,8 @@ public class CreateTournamentInventory extends DefaultAdminTemplateInventory {
     private short teams = 10;
     private short plotsSize = 32;
 
-    public CreateTournamentInventory(SmartInventory previousInventory, Player player) {
-        super(MessageUtils.getMessageConfig(player).getInventory().getCreateTournament().getTitle(), previousInventory, 5, 9);
+    public CreateTournamentInventory(Player player) {
+        super(MessageUtils.getMessageConfig(player).getInventory().getCreateTournament().getTitle(), new TournamentInventory(player).INVENTORY, 5, 9);
     }
 
     @Override

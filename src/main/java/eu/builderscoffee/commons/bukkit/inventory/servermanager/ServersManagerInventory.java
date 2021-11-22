@@ -9,6 +9,7 @@ import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
 import eu.builderscoffee.api.common.redisson.Redis;
 import eu.builderscoffee.api.common.redisson.infos.Server;
 import eu.builderscoffee.commons.bukkit.CommonsBukkit;
+import eu.builderscoffee.commons.bukkit.inventory.network.NetworkInventory;
 import eu.builderscoffee.commons.bukkit.inventory.templates.DefaultAdminTemplateInventory;
 import eu.builderscoffee.commons.bukkit.utils.BungeeUtils;
 import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
@@ -25,8 +26,8 @@ import java.util.stream.Collectors;
  */
 public class ServersManagerInventory extends DefaultAdminTemplateInventory {
 
-    public ServersManagerInventory(SmartInventory previousInventory, Player player) {
-        super(MessageUtils.getMessageConfig(player).getInventory().getServerManager().getTitle(), previousInventory, 5, 9);
+    public ServersManagerInventory(Player player) {
+        super(MessageUtils.getMessageConfig(player).getInventory().getServerManager().getTitle(), new NetworkInventory(player).INVENTORY, 5, 9);
     }
 
     @Override
@@ -37,15 +38,15 @@ public class ServersManagerInventory extends DefaultAdminTemplateInventory {
 
         // Create server
         contents.set(rows - 1, 3, ClickableItem.of(new ItemBuilder(Material.NETHER_STAR).setName(messages.getCreateServer().replace("&", "§")).build(),
-                e -> new CreateServerInventory(this.INVENTORY, player).INVENTORY.open(player)));
+                e -> new CreateServerInventory(player).INVENTORY.open(player)));
 
         // Tournaments
         contents.set(rows - 1, 5, ClickableItem.of(new ItemBuilder(Material.BANNER).setName(messages.getManageTournaments().replace("&", "§")).build(),
-                e -> new TournamentInventory(this.INVENTORY, player).INVENTORY.open(player)));
+                e -> new TournamentInventory(player).INVENTORY.open(player)));
 
         // Server Activities
         contents.set(rows - 1, 7, ClickableItem.of(new ItemBuilder(Material.SIGN).setName(messages.getServersActivities().replace("&", "§")).build(),
-                e -> new ServersActivitiesInventory(this.INVENTORY, player).INVENTORY.open(player)));
+                e -> new ServersActivitiesInventory(player).INVENTORY.open(player)));
     }
 
     @Override
@@ -97,7 +98,7 @@ public class ServersManagerInventory extends DefaultAdminTemplateInventory {
                                     }
                                     else{
                                         if (e.isLeftClick())
-                                            new ServerManagerInventory(this.INVENTORY, s).INVENTORY.open(player);
+                                            new ServerManagerInventory(player, s).INVENTORY.open(player);
                                         else if (e.isRightClick())
                                             BungeeUtils.sendPlayerToServer(CommonsBukkit.getInstance(), player, s.getHostName());
                                     }

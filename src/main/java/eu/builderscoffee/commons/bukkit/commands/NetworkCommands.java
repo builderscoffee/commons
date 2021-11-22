@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
 public class NetworkCommands implements CommandExecutor {
 
     public static boolean argLength0(Player player) {
-        NetworkInventory.INVENTORY.open(player);
+        new NetworkInventory(player).INVENTORY.open(player);
         return true;
     }
 

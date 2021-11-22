@@ -7,10 +7,12 @@ import eu.builderscoffee.api.bukkit.gui.content.InventoryProvider;
 import eu.builderscoffee.api.bukkit.gui.content.SlotPos;
 import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
 import eu.builderscoffee.commons.bukkit.inventory.servermanager.ServersManagerInventory;
+import eu.builderscoffee.commons.bukkit.inventory.templates.DefaultTemplateInventory;
 import eu.builderscoffee.commons.bukkit.utils.BookUtil;
 import eu.builderscoffee.commons.bukkit.CommonsBukkit;
 import eu.builderscoffee.commons.bukkit.utils.BungeeUtils;
 import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
+import lombok.NonNull;
 import lombok.val;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -30,106 +32,38 @@ import java.util.List;
 /**
  * This inventory allows players to navigate through servers
  */
-public class NetworkInventory implements InventoryProvider {
+public class NetworkInventory extends DefaultTemplateInventory {
 
-    public static final SmartInventory INVENTORY = SmartInventory.builder()
-            .id("network")
-            .provider(new NetworkInventory())
-            .size(6, 9)
-            .title(ChatColor.WHITE + "Menu Builders Coffee")
-            .manager(CommonsBukkit.getInstance().getInventoryManager())
-            .build();
-    private final CommonsBukkit commonsBukkit = CommonsBukkit.getInstance();
-    private static final ClickableItem blackGlasses = ClickableItem.empty(new ItemBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 15)).setName("§a").build());
-    private static final ClickableItem greyGlasses = ClickableItem.empty(new ItemBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 7)).setName("§a").build());
-    private static final ClickableItem lightgreyGlasses = ClickableItem.empty(new ItemBuilder(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 8)).setName("§a").build());
+    public NetworkInventory(Player player) {
+        // Todo Title being translated
+        super("Menu de Builders Coffee", null, 5, 9);
+    }
 
     @Override
     public void init(Player player, InventoryContents contents) {
         val messages = MessageUtils.getMessageConfig(player);
-
-        //Fill Black borders
-        contents.fillRect(SlotPos.of(0, 0), SlotPos.of(4, 0), blackGlasses);
-        contents.fillRect(SlotPos.of(0, 8), SlotPos.of(4, 8), blackGlasses);
         //Fill Grey borders
-        contents.fillRect(SlotPos.of(0, 1), SlotPos.of(5, 1), greyGlasses);
-        contents.fillRect(SlotPos.of(0, 7), SlotPos.of(5, 7), greyGlasses);
-        // Fill Light Grey line
-        contents.fillRect(SlotPos.of(0, 3), SlotPos.of(0, 5), lightgreyGlasses);
-        contents.fillRect(SlotPos.of(5, 3), SlotPos.of(5, 5), lightgreyGlasses);
+        contents.fill(greyGlasses);
 
-        // Fill isolate grey glasses
-        contents.set(SlotPos.of(0, 2), greyGlasses);
-        contents.set(SlotPos.of(0, 6), greyGlasses);
-        contents.set(SlotPos.of(5, 2), greyGlasses);
-        contents.set(SlotPos.of(5, 6), greyGlasses);
+        // WIP
+        contents.set(2, 4, ClickableItem.empty(new ItemBuilder(Material.BARRIER).setName("§6Work in progress").build()));
 
-
-        // Serveur hub
-        contents.set(1, 3, ClickableItem.of(new ItemBuilder(Material.NETHER_STAR).setName(messages.getNetwork().getHubItem().replace("&", "§")).build(),
-                e -> BungeeUtils.sendPlayerToServer(commonsBukkit, player, "hub")));
-        // Serveur BuildBattle
-        contents.set(1, 5, ClickableItem.of(new ItemBuilder(Material.ENCHANTMENT_TABLE).setName(messages.getNetwork().getBuildBattleItem().replace("&", "§")).build(),
-                e -> BungeeUtils.sendPlayerToServer(commonsBukkit, player, "plot")));
-        // Régles du serveur
-        contents.set(3, 3, ClickableItem.of(new ItemBuilder(Material.BOOK_AND_QUILL).setName(messages.getNetwork().getRulesBookItem().replace("&", "§")).build(),
-                e -> {
-                    List<String> pages = new ArrayList<>();
-                    messages.getNetwork().getPages().forEach(s -> {
-                        TextComponent page0 = new TextComponent(s.replace("&", "§"));
-                        page0.addExtra("\n");
-                        pages.add(ComponentSerializer.toString(page0));
-                    });
-                    ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
-                    BookMeta meta = (BookMeta) book.getItemMeta();
-                    meta.setTitle("");
-                    meta.setAuthor("");
-                    BookUtil.setPages(meta, pages);
-                    book.setItemMeta(meta);
-                    BookUtil.openBook(book, player);
-                }));
-        // Nous soutenir
-        ItemStack diamond = new ItemBuilder(Material.DIAMOND).setName(messages.getNetwork().getSupportUsItem().replace("&", "§")).build();
-        ItemMeta diamondMeta = diamond.getItemMeta();
-        diamondMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        diamondMeta.addEnchant(Enchantment.LUCK, 1, false);
-        diamond.setItemMeta(diamondMeta);
-        contents.set(3, 4, ClickableItem.of(diamond, e -> {
-                    TextComponent message = new TextComponent(messages.getNetwork().getSupportChatMessage());
-                    message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, messages.getNetwork().getSupportLink()));
-                    player.spigot().sendMessage(message);
-                    player.closeInventory();
-                }));
-        // Expresso
-        contents.set(3, 5, ClickableItem.of(new ItemBuilder(Material.FLOWER_POT_ITEM).setName(messages.getNetwork().getExpressoItem().replace("&", "§")).build(),
-                e -> {
-                    TextComponent message = new TextComponent(messages.getNetwork().getExpressoChatMessage());
-                    message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, messages.getNetwork().getExpressoLink()));
-                    player.spigot().sendMessage(message);
-                    player.closeInventory();
-                }));
-
-        if(player.hasPermission(commonsBukkit.getPermissions().getServerManagerSee())){
+        if(player.hasPermission(CommonsBukkit.getInstance().getPermissions().getServerManagerSee())){
             // ServerManager
-            contents.set(5, 1, ClickableItem.of(new ItemBuilder(Material.PAPER).setName(messages.getNetwork().getServerManagerItem().replace("&", "§")).build(),
-                    e -> new ServersManagerInventory(INVENTORY, player).INVENTORY.open(player)));
+            contents.set(4, 1, ClickableItem.of(new ItemBuilder(Material.PAPER).setName(messages.getNetwork().getServerManagerItem().replace("&", "§")).build(),
+                    e -> new ServersManagerInventory(player).INVENTORY.open(player)));
         }
 
         // Quitter
-        contents.set(5, 0, ClickableItem.of(new ItemBuilder(Material.BARRIER).setName(messages.getNetwork().getCloseItem().replace("&", "§")).build(),
+        contents.set(4, 0, ClickableItem.of(new ItemBuilder(Material.BARRIER).setName(messages.getNetwork().getCloseItem().replace("&", "§")).build(),
                 e -> contents.inventory().close(player)));
 
         // Langues
-        contents.set(5, 7, ClickableItem.of(new ItemBuilder(Material.PAINTING).setName(messages.getNetwork().getLanguageItem().replace("&", "§")).build(),
-                e -> new LanguageInventory(INVENTORY, player).INVENTORY.open(player)));
+        contents.set(4, 7, ClickableItem.of(new ItemBuilder(Material.PAINTING).setName(messages.getNetwork().getLanguageItem().replace("&", "§")).build(),
+                e -> new LanguageInventory(player).INVENTORY.open(player)));
 
         // Cosmétiques
-        contents.set(5, 8, ClickableItem.of(new ItemBuilder(Material.CHEST).setName(messages.getNetwork().getCosmeticsItem().replace("&", "§")).build(),
+        contents.set(4, 8, ClickableItem.of(new ItemBuilder(Material.CHEST).setName(messages.getNetwork().getCosmeticsItem().replace("&", "§")).build(),
                 e -> player.sendMessage("§cIl n'y a pas de grains de café en stock")));
-    }
-
-    @Override
-    public void update(Player player, InventoryContents contents) {
-        // Nothing to do here
     }
 }

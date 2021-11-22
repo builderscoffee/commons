@@ -20,8 +20,8 @@ import org.bukkit.entity.Player;
  */
 public class LanguageInventory extends DefaultTemplateInventory {
 
-    public LanguageInventory(SmartInventory previousInventory, Player player) {
-        super(MessageUtils.getMessageConfig(player).getInventory().getLanguage().getTitle(), previousInventory);
+    public LanguageInventory(Player player) {
+        super(MessageUtils.getMessageConfig(player).getInventory().getLanguage().getTitle(), new NetworkInventory(player).INVENTORY);
     }
 
     @Override
@@ -43,7 +43,7 @@ public class LanguageInventory extends DefaultTemplateInventory {
                         EventHandler.getInstance().callEvent(new LanguageChangeEvent(player, value));
 
                         // Open network inventory
-                        NetworkInventory.INVENTORY.open(player);
+                        new NetworkInventory(player).INVENTORY.open(player);
                     }));
         }
     }

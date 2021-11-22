@@ -1,7 +1,6 @@
 package eu.builderscoffee.commons.bukkit.inventory.servermanager;
 
 import eu.builderscoffee.api.bukkit.gui.ClickableItem;
-import eu.builderscoffee.api.bukkit.gui.SmartInventory;
 import eu.builderscoffee.api.bukkit.gui.content.InventoryContents;
 import eu.builderscoffee.api.bukkit.gui.content.SlotPos;
 import eu.builderscoffee.api.bukkit.utils.ItemBuilder;
@@ -24,8 +23,8 @@ import org.redisson.api.RSortedSet;
  */
 public class CreateServerInventory extends DefaultAdminTemplateInventory {
 
-    public CreateServerInventory(SmartInventory previousInventory, Player player) {
-        super(MessageUtils.getMessageConfig(player).getInventory().getCreateServer().getTitle(), previousInventory, 5, 9);
+    public CreateServerInventory(Player player) {
+        super(MessageUtils.getMessageConfig(player).getInventory().getCreateServer().getTitle(), new ServersManagerInventory(player).INVENTORY, 5, 9);
     }
 
     private SettingsConfig.PluginMode newServerMode = SettingsConfig.PluginMode.PRODUCTION;
@@ -53,7 +52,7 @@ public class CreateServerInventory extends DefaultAdminTemplateInventory {
                                 this.INVENTORY,
                                 (e1, p1) -> {
                                     createServer("proxy");
-                                    new ServersManagerInventory(this.INVENTORY, player).INVENTORY.open(player);
+                                    new ServersManagerInventory(player).INVENTORY.open(player);
                                 },
                                 (e2, p2) ->{
                                     this.INVENTORY.open(player);
@@ -74,7 +73,7 @@ public class CreateServerInventory extends DefaultAdminTemplateInventory {
                                 this.INVENTORY,
                                 (e1, p1) -> {
                                     createServer("hub");
-                                    new ServersManagerInventory(this.INVENTORY, player).INVENTORY.open(player);
+                                    new ServersManagerInventory(player).INVENTORY.open(player);
                                 },
                                 (e2, p2) ->{
                                     this.INVENTORY.open(player);
@@ -96,7 +95,7 @@ public class CreateServerInventory extends DefaultAdminTemplateInventory {
                                 this.INVENTORY,
                                 (e1, p1) -> {
                                     createServer("plot");
-                                    new ServersManagerInventory(this.INVENTORY, player).INVENTORY.open(player);
+                                    new ServersManagerInventory(player).INVENTORY.open(player);
                                 },
                                 (e2, p2) ->{
                                     this.INVENTORY.open(player);
