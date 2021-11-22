@@ -1,9 +1,9 @@
-package eu.builderscoffee.commons.bungeecord.listeners;
+package eu.builderscoffee.commons.bungeecord.listeners.bukkit;
 
 import eu.builderscoffee.api.common.data.DataManager;
 import eu.builderscoffee.api.common.data.tables.ProfilEntity;
 import eu.builderscoffee.commons.bungeecord.CommonsBungeeCord;
-import eu.builderscoffee.commons.bungeecord.listeners.event.DataStatueEvent;
+import eu.builderscoffee.commons.bungeecord.events.DataStatueEvent;
 import lombok.val;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;

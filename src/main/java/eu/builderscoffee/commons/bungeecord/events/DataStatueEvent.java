@@ -1,4 +1,4 @@
-package eu.builderscoffee.commons.bungeecord.listeners.event;
+package eu.builderscoffee.commons.bungeecord.events;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

@@ -1,4 +1,4 @@
-package eu.builderscoffee.commons.bungeecord.listeners;
+package eu.builderscoffee.commons.bungeecord.listeners.bukkit;
 
 import com.google.common.collect.Iterables;
 import eu.builderscoffee.commons.bungeecord.CommonsBungeeCord;
