@@ -58,14 +58,21 @@ public class ManageThemesCommandPart extends ManageCommand.ManageCommandPart {
 
         sender.sendMessage(MessageUtils.getMessageConfig(sender).getCommand().getManage().getThemes().getList().replace("&", "§"));
         val data = DataManager.getBuildbattleThemeStore().select(BuildbattleThemeEntity.class).get();
-        data.stream().forEach(theme -> sender.sendMessage(messages.getManage().getThemes().getListFormat()
-                .replace("&", "§")
-                .replace("%name%", theme.getName())));
+        data.stream().forEach(theme -> {
+            sender.sendMessage(messages.getManage().getThemes().getListFormat()
+                    .replace("&", "§")
+                    .replace("%id%", String.valueOf(theme.getId())));
+            theme.getNames().forEach(translation -> {
+                sender.sendMessage(messages.getManage().getThemes().getListFormatNames()
+                        .replace("%lang%", translation.getLanguage().name())
+                        .replace("%name%", translation.getName()));
+            });
+        });
         return false;
     }
 
     public boolean add(CommandSender sender, String[] args){
-        val messages = MessageUtils.getMessageConfig(sender).getCommand();
+        /*val messages = MessageUtils.getMessageConfig(sender).getCommand();
         if(!sender.hasPermission(CommonsBukkit.getInstance().getPermissions().getCommandManageThemeChange())){
             sender.sendMessage(messages.getNoPremission().replace("&", "§"));
             return false;
@@ -102,13 +109,15 @@ public class ManageThemesCommandPart extends ManageCommand.ManageCommandPart {
 
         entities.forEach(DataManager.getBuildbattleThemeStore()::insert);
 
-        sender.sendMessage(messages.getManage().getThemes().getAdded().replace("&", "§"));
+        sender.sendMessage(messages.getManage().getThemes().getAdded().replace("&", "§"));*/
+
+        System.out.println("§6Work in progress");
 
         return false;
     }
 
     public boolean update(CommandSender sender, String[] args){
-        val messages = MessageUtils.getMessageConfig(sender).getCommand();
+        /*val messages = MessageUtils.getMessageConfig(sender).getCommand();
         if(!sender.hasPermission(CommonsBukkit.getInstance().getPermissions().getCommandManageThemeChange())){
             sender.sendMessage(messages.getNoPremission().replace("&", "§"));
             return false;
@@ -156,12 +165,15 @@ public class ManageThemesCommandPart extends ManageCommand.ManageCommandPart {
         DataManager.getBuildbattleThemeStore().update(entity);
 
         sender.sendMessage(MessageUtils.getMessageConfig(sender).getCommand().getManage().getThemes().getUpdated().replace("&", "§"));
+*/
+
+        System.out.println("§6Work in progress");
 
         return false;
     }
 
     public boolean delete(CommandSender sender, String[] args){
-        val messages = MessageUtils.getMessageConfig(sender).getCommand();
+        /*val messages = MessageUtils.getMessageConfig(sender).getCommand();
         if(!sender.hasPermission(CommonsBukkit.getInstance().getPermissions().getCommandManageThemeChange())){
             sender.sendMessage(messages.getNoPremission().replace("&", "§"));
             return false;
@@ -188,6 +200,9 @@ public class ManageThemesCommandPart extends ManageCommand.ManageCommandPart {
         DataManager.getBuildbattleThemeStore().delete(entity);
 
         sender.sendMessage(MessageUtils.getMessageConfig(sender).getCommand().getManage().getThemes().getDeleted().replace("&", "§"));
+         */
+
+        System.out.println("§6Work in progress");
 
         return false;
     }

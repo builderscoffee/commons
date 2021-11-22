@@ -11,7 +11,8 @@ public class ManageThemesCommandConfigurationPart {
     String nameNotExist = "&cLe nom du theme n'existe pas !";
     String namesUpdateNotCorrectFilled = "&cVous devez donner l'ancien nom comme le nouveau séparé d'un virgule !";
     String list = "&6List des themes:";
-    String listFormat = "&7 - %name%";
+    String listFormat = "&7 - %id%";
+    String listFormatNames = "&7   %lang% : %name%";
     String added = "&aTheme ajouté";
     String updated = "&aTheme modifié";
     String deleted = "&aTheme supprimé";
