@@ -75,12 +75,13 @@ public class ManageThemesCommandPart extends ManageCommand.ManageCommandPart {
                 .limit(5)
                 .forEach(theme -> {
                     sender.sendMessage(messages.getManage().getThemes().getListFormat()
-                            .replace("&", "§")
-                            .replace("%id%", String.valueOf(theme.getId())));
+                            .replace("%id%", String.valueOf(theme.getId()))
+                            .replace("&", "§"));
                     theme.getNames().forEach(translation -> {
                         sender.sendMessage(messages.getManage().getThemes().getListFormatNames()
                                 .replace("%lang%", translation.getLanguage().name())
-                                .replace("%name%", translation.getName()));
+                                .replace("%name%", translation.getName())
+                                .replace("&", "§"));
                     });
                 });
         return false;
@@ -93,12 +94,11 @@ public class ManageThemesCommandPart extends ManageCommand.ManageCommandPart {
             return false;
         }
 
-        val entity = new BuildbattleThemeEntity();
-        DataManager.getBuildbattleThemeStore().insert(entity);
+        // DO NOT USE REQUERY
+        // REQUERY DOES NOT ACCEPT AN ENTITY CREATION WITH ONLY AN AUTO INCREMENT
+        DataManager.getBuildbattleThemeStore().raw("INSERT INTO `buildbattles_themes` (`id`) VALUES (NULL);");
 
-        sender.sendMessage(messages.getManage().getThemes().getCreated()
-                .replace("%id%", String.valueOf(entity.getId()))
-                .replace("&", "§"));
+        sender.sendMessage(messages.getManage().getThemes().getCreated().replace("&", "§"));
 
         return false;
     }
@@ -119,7 +119,7 @@ public class ManageThemesCommandPart extends ManageCommand.ManageCommandPart {
         val arg3 = CommandUtils.getArgument(args, 3);
         val name = String.join(" ", arguments).trim();
 
-        if (arg2.isEmpty() || arg3.isEmpty() || name.isEmpty()) {
+        if (arg2.isEmpty()) {
             sender.sendMessage(messages.getManage().getThemes().getCommandEdit().replace("&", "§"));
             return false;
         }
@@ -139,6 +139,11 @@ public class ManageThemesCommandPart extends ManageCommand.ManageCommandPart {
             return false;
         }
 
+        if(arg3.isEmpty()){
+            sender.sendMessage(messages.getManage().getThemes().getCommandEdit().replace("&", "§"));
+            return false;
+        }
+
         val language = Arrays.stream(Profil.Languages.values())
                 .filter(lang -> lang.name().equalsIgnoreCase(arg3))
                 .findFirst()
@@ -154,6 +159,11 @@ public class ManageThemesCommandPart extends ManageCommand.ManageCommandPart {
             return false;
         }
 
+        if(name.isEmpty()){
+            sender.sendMessage(messages.getManage().getThemes().getCommandEdit().replace("&", "§"));
+            return false;
+        }
+
         val defaultBtn = new BuildbattleThemeNameEntity();
         defaultBtn.setTheme(entity);
         defaultBtn.setLanguage(language);
@@ -165,7 +175,7 @@ public class ManageThemesCommandPart extends ManageCommand.ManageCommandPart {
 
         translation.setName(name);
 
-        entity.getNames().add(translation);
+        DataManager.getBuildbattleThemeNameStore().upsert(translation);
 
         sender.sendMessage(messages.getManage().getThemes().getEdited()
                 .replace("%id%", String.valueOf(entity.getId()))
