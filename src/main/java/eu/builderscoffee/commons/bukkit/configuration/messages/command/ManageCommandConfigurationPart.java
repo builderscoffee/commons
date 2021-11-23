@@ -1,7 +1,7 @@
 package eu.builderscoffee.commons.bukkit.configuration.messages.command;
 
-import eu.builderscoffee.commons.bukkit.configuration.messages.command.themes.ManageSeasonsCommandConfigurationPart;
-import eu.builderscoffee.commons.bukkit.configuration.messages.command.themes.ManageThemesCommandConfigurationPart;
+import eu.builderscoffee.commons.bukkit.configuration.messages.command.manage.ManageSeasonsCommandConfigurationPart;
+import eu.builderscoffee.commons.bukkit.configuration.messages.command.manage.ManageThemesCommandConfigurationPart;
 import lombok.Data;
 
 @Data

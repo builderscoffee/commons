@@ -1,4 +1,4 @@
-package eu.builderscoffee.commons.bukkit.configuration.messages.command.themes;
+package eu.builderscoffee.commons.bukkit.configuration.messages.command.manage;
 
 import lombok.Data;
 
