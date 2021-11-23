@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 @Setter
 public class ServerManagerRequest extends RequestPacket<ServerManagerResponse> {
 
+    private String uuid;
     private String type;
     private String data;
     private ItemAction itemAction = ItemAction.NONE;

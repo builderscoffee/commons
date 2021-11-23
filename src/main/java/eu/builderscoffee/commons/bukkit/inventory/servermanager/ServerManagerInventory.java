@@ -164,6 +164,7 @@ public class ServerManagerInventory extends DefaultAdminTemplateInventory {
 
         // Define target server & action
         configPacket.setTargetServerName(server.getHostName());
+        configPacket.setUuid(player.getUniqueId().toString());
         configPacket.setType(type);
         configPacket.setData(data);
         configPacket.setItemAction(itemAction);
