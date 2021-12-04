@@ -16,6 +16,7 @@ import eu.builderscoffee.commons.bukkit.utils.MessageUtils;
 import lombok.val;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.redisson.api.RSortedSet;
 
 import java.util.ArrayList;
@@ -92,7 +93,7 @@ public class ServersManagerInventory extends DefaultAdminTemplateInventory {
                         serverItems.add(ClickableItem.of(itemB.build(),
                                 e -> {
                                     if (s.getServerStatus().equals(Server.ServerStatus.STARTING)){
-                                        if (e.isRightClick()){
+                                        if (e.getClick().equals(ClickType.DROP)){
                                             s.stop();
                                         }
                                     }
