@@ -74,7 +74,7 @@ public class ServersManagerInventory extends DefaultAdminTemplateInventory {
                         if (s.getServerStatus().equals(Server.ServerStatus.STARTING))
                             itemB.addLoreLine("§fEn attente d'une réponse")
                                     .addLoreLine("")
-                                    .addLoreLine(messages.getServerStopOnRightClick().replace("&", "§"));
+                                    .addLoreLine(messages.getServerStopOnDrop().replace("&", "§"));
                         else {
                             itemB.addLoreLine("§f" + capitalizeFirstLetter(s.getStartingMethod().name()) + " " + s.getServerType().name().toLowerCase() + " §bserver")
                                     .addLoreLine("§f" + s.getPlayerCount() + "§b/§f" + s.getPlayerMaximum() + " §bjoueurs");

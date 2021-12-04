@@ -11,5 +11,5 @@ public class ServersManagerInventoryConfigurationPart {
     String serversActivities = "Activités des serveurs";
     String serverLeftClick = "&aClic gauche pour gérer";
     String serverRightClick = "&aClic droit pour y aller";
-    String serverStopOnRightClick = "&aClic droit pour stopper le serveur";
+    String serverStopOnDrop = "&aDrop pour stopper le serveur";
 }
