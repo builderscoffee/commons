@@ -73,6 +73,12 @@ jobs:
           username: ${{ secrets.INFRA_USER }}
           password: ${{ secrets.INFRA_PASSWORD }}
 
+      #Delete old package from Github
+      - uses: smartsquaregmbh/delete-old-packages@v0.3.3
+        with:
+          names: |
+          1.0-SNAPSHOT
+
       # Deploy Package to Github
       - name: Publish to GitHub Packages Apache Maven
         run: mvn --batch-mode -B deploy
