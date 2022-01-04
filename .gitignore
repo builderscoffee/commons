@@ -114,3 +114,4 @@ fabric.properties
 .idea/codestream.xml
 .idea/uiDesigner.xml
 BuildersCoffeeCommons.iml
+/.idea/runConfigurations.xml
